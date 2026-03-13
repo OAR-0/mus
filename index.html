@@ -6,9 +6,28 @@
 <title>全域乐器</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Arial,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Arial,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;transition:none;}
+body.rotated-90{transform:rotate(90deg);transform-origin:center center;width:100vh;height:100vw;position:absolute;top:50%;left:50%;margin-left:-50vh;margin-top:-50vw;}
+body.rotated-180{transform:rotate(180deg);transform-origin:center center;}
+body.rotated-270{transform:rotate(270deg);transform-origin:center center;width:100vh;height:100vw;position:absolute;top:50%;left:50%;margin-left:-50vh;margin-top:-50vw;}
+body.rotated-90 .control, body.rotated-270 .control{width:100%;}
+body.rotated-90 .piano-container, body.rotated-270 .piano-container{width:100%;}
+body.rotated-90 .music-bar, body.rotated-270 .music-bar{width:100%;}
+body.rotated-90 #layoutToolbar, body.rotated-270 #layoutToolbar{width:100%;}
+body.toolbar-rotated-90 .control{width:52px;height:100%;flex-direction:column;position:fixed;left:0;top:0;border-right:1px solid #2a2a2a;border-bottom:none;padding:8px 0;z-index:30;}
+body.toolbar-rotated-180 .control{height:52px;width:100%;flex-direction:row;position:fixed;bottom:0;top:auto;left:0;border-top:1px solid #2a2a2a;border-right:1px solid #2a2a2a;padding:0 8px;z-index:30;}
+body.toolbar-rotated-270 .control{width:52px;height:100%;flex-direction:column;position:fixed;right:0;top:0;border-left:1px solid #2a2a2a;padding:8px 0;z-index:30;}
+body.toolbar-rotated-90 .setting-btn-wrap, body.toolbar-rotated-270 .setting-btn-wrap{width:100%;height:44px;border-right:none;position:sticky;top:0;background:#1a1a1a;}
+body.toolbar-rotated-180 .setting-btn-wrap{width:44px;height:100%;position:sticky;left:0;background:#1a1a1a;border-bottom:none;border-right:1px solid #2a2a2a;}
+body.toolbar-rotated-90 .user-center-wrap, body.toolbar-rotated-270 .user-center-wrap{width:100%;height:44px;position:sticky;bottom:0;background:#1a1a1a;border-top:1px solid #2a2a2a;}
+body.toolbar-rotated-180 .user-center-wrap{width:44px;height:100%;position:sticky;right:0;background:#1a1a1a;border-left:1px solid #2a2a2a;}
+body.toolbar-rotated-90 .inst-scroll, body.toolbar-rotated-270 .inst-scroll{flex-direction:column;height:auto;width:100%;padding:8px 0;overflow-y:auto;overflow-x:hidden;flex:1;}
+body.toolbar-rotated-180 .inst-scroll{flex-direction:row;width:100%;padding:0 8px;height:52px;overflow-x:auto;flex:1;}
+body.toolbar-rotated-90 .inst-scroll .btn, body.toolbar-rotated-270 .inst-scroll .btn{width:36px;height:36px;padding:0;font-size:11px;border-radius:8px;}
+body.toolbar-rotated-180 .inst-scroll .btn{padding:7px 13px;font-size:13px;border-radius:20px;}
 .control{height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#1a1a1a;border-bottom:1px solid #2a2a2a;padding:0 8px;overflow:visible;white-space:nowrap;position:relative;}
 .setting-btn-wrap{width:44px;height:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#1a1a1a;position:sticky;left:0;z-index:20;border-right:1px solid #2a2a2a;}
+.user-center-wrap{width:44px;height:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#1a1a1a;position:sticky;right:0;z-index:20;border-left:1px solid #2a2a2a;}
 .inst-scroll{display:flex;align-items:center;gap:6px;flex:1;overflow-x:auto;padding:0 8px;height:52px;scrollbar-width:none;}
 .inst-scroll::-webkit-scrollbar{display:none;}
 .inst-fade-right{position:absolute;right:0;top:0;width:36px;height:52px;pointer-events:none;background:linear-gradient(to right,transparent,#1a1a1a);z-index:10;}
@@ -19,15 +38,15 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
 .control::-webkit-scrollbar{display:none;}
 .btn{padding:7px 13px;border-radius:20px;border:1px solid #444;background:transparent;color:#aaa;font-size:13px;cursor:pointer;touch-action:manipulation;transition:all 0.15s;flex-shrink:0;}
 .btn.active{background:#0099ff;border-color:#0099ff;color:#fff;}
-.music-bar{height:48px;display:flex;align-items:center;padding:0 8px;background:#181818;border-bottom:1px solid #2a2a2a;flex-shrink:0;gap:5px;}
-.music-btn{font-size:15px;background:#222;border:1px solid #444;color:#fff;width:36px;height:34px;border-radius:8px;cursor:pointer;flex-shrink:0;touch-action:manipulation;transition:background 0.15s,transform 0.1s;display:flex;align-items:center;justify-content:center;}
+.music-bar{height:auto;min-height:48px;display:flex;align-items:flex-start;padding:0 8px;padding-bottom:10px;background:#181818;border-bottom:1px solid #2a2a2a;flex-shrink:0;gap:5px;overflow:visible;}
+.music-btn{font-size:15px;background:#222;border:1px solid #444;color:#fff;width:36px;height:34px;border-radius:8px;cursor:pointer;flex-shrink:0;touch-action:manipulation;transition:background 0.15s,transform 0.1s;display:flex;align-items:center;justify-content:center;align-self:flex-start;margin-top:7px;}
 .music-btn:active{background:#0099ff;transform:scale(0.92);}
-.score-wrap{flex:1;height:34px;overflow:hidden;display:flex;align-items:center;position:relative;background:#1a1a1a;border-radius:6px;border:1px solid #2a2a2a;cursor:grab;user-select:none;}
+.score-wrap{flex:1;min-height:34px;height:var(--score-height,34px);position:relative;background:#1a1a1a;border-radius:6px;border:1px solid #2a2a2a;cursor:grab;user-select:none;overflow:hidden;display:flex;align-items:center;margin:7px 0;margin-bottom:0;}
 .score-wrap:active{cursor:grabbing;}
-#scoreCanvas{position:absolute;left:0;top:0;height:34px;pointer-events:none;}
-.play-btn{font-size:13px;background:#222;border:1px solid #444;color:#0099ff;width:32px;height:34px;border-radius:8px;cursor:pointer;flex-shrink:0;touch-action:manipulation;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+#scoreCanvas{position:absolute;left:0;top:0;height:100% !important;pointer-events:none;}
+.play-btn{font-size:13px;background:#222;border:1px solid #444;color:#0099ff;width:32px;height:34px;border-radius:8px;cursor:pointer;flex-shrink:0;touch-action:manipulation;display:flex;align-items:center;justify-content:center;transition:all 0.15s;align-self:flex-start;margin-top:7px;}
 .play-btn:active{background:#0099ff33;transform:scale(0.92);}
-.auto-btn{font-size:15px;background:#222;border:1px solid #444;color:#555;width:32px;height:34px;border-radius:8px;cursor:pointer;flex-shrink:0;touch-action:manipulation;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+.auto-btn{font-size:15px;background:#222;border:1px solid #444;color:#555;width:32px;height:34px;border-radius:8px;cursor:pointer;flex-shrink:0;touch-action:manipulation;transition:all 0.15s;display:flex;align-items:center;justify-content:center;align-self:flex-start;margin-top:7px;}
 .auto-btn.on{color:#0099ff;} 
 .auto-btn:active{transform:scale(0.92);}
 
@@ -38,6 +57,12 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
   --octave-width: 100vw;
 }
 .piano-container{flex:1;overflow-y:auto;padding:0; -webkit-overflow-scrolling:touch;}
+body.toolbar-rotated-90 .piano-container{margin-left:56px;width:calc(100% - 56px);}
+body.toolbar-rotated-270 .piano-container{margin-right:56px;width:calc(100% - 56px);}
+body.toolbar-rotated-90 .music-bar{margin-left:56px;width:calc(100% - 56px);}
+body.toolbar-rotated-270 .music-bar{margin-right:56px;width:calc(100% - 56px);}
+body.toolbar-rotated-180 .piano-container{margin-bottom:52px;height:calc(100% - 52px);}
+body.toolbar-rotated-180 .music-bar{margin-bottom:52px;}
 .piano-container.horizontal{display:flex;flex-direction:column;overflow-x:hidden;overflow-y:auto;}
 .octave-row{display:flex;flex-direction:row;overflow:hidden;padding:10px 0;margin-bottom:var(--row-gap);border-bottom:1px solid #222;min-height:min-content;position:relative;}
 .octave-row-keys{display:flex;flex-direction:row;overflow-x:auto;flex:1;scrollbar-width:none;}
@@ -64,12 +89,37 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 16px;
   z-index: 100;
   width: 100%;
+  flex-shrink: 0;
+}
+body.toolbar-rotated-90 #layoutToolbar {
+  margin-left: 56px;
+  width: calc(100% - 56px);
+}
+body.toolbar-rotated-270 #layoutToolbar {
+  margin-right: 56px;
+  width: calc(100% - 56px);
 }
 #layoutToolbar.active {
   display: flex;
+}
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.toolbar-group-layout {
+  flex: 1;
+  justify-content: flex-start;
+}
+.toolbar-group-rotate {
+  justify-content: center;
+}
+.toolbar-group-action {
+  justify-content: flex-end;
 }
 .toolbar-item {
   display: flex;
@@ -118,6 +168,8 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
   border-radius: 4px;
 }
 .toolbar-btn-simple:active { background: #555; }
+.toolbar-btn-save { background: #0099ff; }
+.toolbar-btn-save:active { background: #0077cc; }
 
 .layout-mode-active .octave-group {
   cursor: grab;
@@ -218,16 +270,67 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
 .modal-cancel{margin-top:10px;width:100%;padding:11px;background:#2a2a2a;border:1px solid #333;border-radius:10px;color:#888;font-size:15px;cursor:pointer;touch-action:manipulation;transition:all 0.15s;}
 .modal-cancel:active{background:#333;color:#fff;}
 
-.edit-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1100;align-items:center;justify-content:center;}
+.song-modal{width:300px;max-width:95%;}
+.song-tabs{display:flex;gap:4px;margin-bottom:10px;border-bottom:1px solid #333;padding-bottom:8px;}
+.song-tab{flex:1;padding:8px 4px;background:transparent;border:none;color:#888;font-size:13px;cursor:pointer;border-radius:6px;transition:all 0.15s;}
+.song-tab:hover{background:#2a2a2a;}
+.song-tab.active{background:#0099ff;color:#fff;}
+.song-tab-content{min-height:150px;}
+.coming-soon{text-align:center;color:#666;padding:40px 20px;font-size:14px;}
+.tupu-speed-setting{display:flex;align-items:center;gap:8px;padding:10px;background:#1a1a1a;border-radius:8px;margin-bottom:10px;}
+.tupu-speed-setting label{font-size:13px;color:#aaa;}
+.tupu-speed-setting input[type="range"]{flex:1;height:4px;}
+.tupu-speed-setting span{font-size:13px;color:#0099ff;min-width:40px;}
+.tupu-controls{display:flex;gap:8px;margin-bottom:10px;}
+.tupu-btn{flex:1;padding:10px;background:#2a2a2a;border:1px solid #444;border-radius:8px;color:#eee;font-size:13px;cursor:pointer;}
+.tupu-btn:hover{background:#333;}
+.tupu-btn:active{background:#0099ff;color:#fff;}
+.tupu-settings{background:#1a1a1a;border-radius:8px;padding:10px;margin-bottom:10px;}
+.tupu-settings .tupu-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.tupu-settings .tupu-row:last-child{margin-bottom:0;}
+.tupu-settings label{font-size:12px;color:#aaa;min-width:70px;}
+.tupu-settings input[type="number"]{width:50px;padding:4px 6px;background:#111;border:1px solid #333;border-radius:4px;color:#eee;font-size:12px;}
+.tupu-settings input[type="range"]{flex:1;height:4px;}
+.tupu-settings span{font-size:12px;color:#0099ff;min-width:40px;}
+.tupu-preview-wrap{background:#111;border-radius:8px;overflow:hidden;margin-bottom:10px;}
+.tupu-preview{position:relative;width:100%;height:200px;overflow:hidden;background:#0a0a0a;}
+.tupu-placeholder{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#444;font-size:13px;}
+.tupu-image{width:100%;height:100%;object-fit:contain;display:none;}
+.tupu-mask-container{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}
+.tupu-mask{position:absolute;left:0;width:100%;background:rgba(0,0,0,0.7);pointer-events:auto;cursor:move;}
+.tupu-mask.active{background:rgba(0,153,255,0.3);border:1px solid #0099ff;}
+.tupu-mask-edge{position:absolute;cursor:ns-resize;}
+.tupu-mask-edge.top{top:-6px;left:0;width:100%;height:12px;cursor:ns-resize;}
+.tupu-mask-edge.bottom{bottom:-6px;left:0;width:100%;height:12px;cursor:ns-resize;}
+.tupu-mask-edge.left{left:-6px;top:0;width:12px;height:100%;cursor:ew-resize;}
+.tupu-mask-edge.right{right:-6px;top:0;width:12px;height:100%;cursor:ew-resize;}
+.tupu-global-controls{background:#1a1a1a;border-radius:8px;padding:10px;margin-bottom:10px;}
+.tupu-global-controls h4{font-size:11px;color:#666;margin:0 0 8px 0;text-transform:uppercase;letter-spacing:0.5px;}
+.tupu-global-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+.tupu-global-row:last-child{margin-bottom:0;}
+.tupu-global-row label{font-size:11px;color:#888;min-width:32px;}
+.tupu-global-row input[type="range"]{flex:1;height:3px;}
+.tupu-global-row span{font-size:11px;color:#0099ff;min-width:32px;text-align:right;}
+.tupu-btn-small{flex:1;padding:8px;background:#2a2a2a;border:1px solid #444;border-radius:6px;color:#aaa;font-size:12px;cursor:pointer;}
+.tupu-btn-small:hover{background:#333;color:#fff;}
+
+.tupu-edit-modal{padding:15px;}
+.tupu-edit-content{display:flex;flex:1;gap:15px;min-height:0;}
+.tupu-edit-left{width:200px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
+.tupu-edit-right{flex:1;display:flex;flex-direction:column;min-height:0;}
+.tupu-edit-right .tupu-preview-wrap{flex:1;display:flex;flex-direction:column;min-height:0;}
+.tupu-edit-right .tupu-preview{flex:1;min-height:300px;}
+
+.edit-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:1100;flex-direction:column;}
 .edit-overlay.show{display:flex;}
-.edit-modal{background:#1e1e1e;border:1px solid #333;border-radius:16px;width:92%;max-width:400px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.9);}
-.edit-modal h3{font-size:16px;color:#fff;margin-bottom:14px;text-align:center;}
+.edit-modal{background:#1e1e1e;border:1px solid #333;border-radius:0;width:100%;height:100%;padding:20px;box-shadow:none;display:flex;flex-direction:column;}
+.edit-modal h3{font-size:16px;color:#fff;margin-bottom:14px;text-align:center;flex-shrink:0;}
 .edit-modal label{display:block;font-size:12px;color:#888;margin-bottom:4px;margin-top:10px;}
 .edit-modal .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .edit-modal input,.edit-modal textarea{width:100%;background:#111;border:1px solid #444;border-radius:8px;color:#eee;padding:9px 12px;font-size:13px;font-family:inherit;resize:vertical;}
-.edit-modal textarea{height:100px;line-height:1.6;}
+.edit-modal textarea{flex:1;min-height:200px;line-height:1.6;}
 .hint{font-size:11px;color:#555;margin-top:6px;line-height:1.6;}
-.edit-modal .row{display:flex;gap:8px;margin-top:14px;}
+.edit-modal .row{display:flex;gap:8px;margin-top:14px;flex-shrink:0;}
 .edit-modal .row button{flex:1;padding:11px;border-radius:9px;border:none;font-size:14px;cursor:pointer;touch-action:manipulation;}
 .ok-btn{background:#0099ff;color:#fff;}
 .cancel-btn{background:#2a2a2a;color:#888;border:1px solid #333!important;}
@@ -351,6 +454,32 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
 .virtual-key::before{content:'';position:absolute;inset:0;border-radius:50%;filter:blur(8px);background:var(--vk-bg);z-index:-1;}
 .virtual-key.dragging{opacity:0.8;}
 </style>
+
+<style>
+/* ==== SCORE PANEL RESIZE + AUTO LAYOUT ==== */
+.score-wrap{
+  min-height:34px !important;
+  height:var(--score-height,34px);
+  position:relative;
+}
+#scoreCanvas{
+  height:100% !important;
+}
+.score-resize-bar{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:8px;
+  cursor:ns-resize;
+  z-index:10;
+  background:linear-gradient(to bottom, transparent 0%, rgba(0,153,255,0.3) 100%);
+}
+.score-resize-bar:hover{
+  background:linear-gradient(to bottom, transparent 0%, rgba(0,153,255,0.6) 100%);
+}
+</style>
+
 </head>
 <body>
 
@@ -358,25 +487,11 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
   <div class="setting-btn-wrap">
     <div class="setting-btn" id="mainSettingBtn">⚙️</div>
   </div>
-  <div class="inst-scroll">
-  <button class="btn active" data-inst="piano">钢琴</button>
-  <button class="btn" data-inst="guitar">吉他</button>
-  <button class="btn" data-inst="violin">小提琴</button>
-  <button class="btn" data-inst="xiao">箫</button>
-  <button class="btn" data-inst="dizi">笛子</button>
-  <button class="btn" data-inst="guzheng">古筝</button>
-  <button class="btn" data-inst="erhu">二胡</button>
-  <button class="btn" data-inst="pipa">琵琶</button>
-  <button class="btn" data-inst="drum">鼓</button>
-  <button class="btn" data-inst="bell">钟声</button>
-  <button class="btn" data-inst="suona">唢呐</button>
-  <button class="btn" data-inst="bass">贝斯</button>
-  <button class="btn" data-inst="drumkit">架子鼓</button>
-  <button class="btn" data-inst="saxophone">萨克斯</button>
-  <button class="btn" data-inst="cello">大提琴</button>
-  </div>
+  <div class="inst-scroll" id="instScroll"></div>
   <div class="inst-fade-right"></div>
-  <div class="user-center-btn" id="userCenterBtn">👤</div>
+  <div class="user-center-wrap">
+    <div class="user-center-btn" id="userCenterBtn">👤</div>
+  </div>
 </div>
 
 <div class="user-profile-overlay" id="userProfileOverlay">
@@ -406,28 +521,43 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
 </div>
 
 <div id="layoutToolbar">
-  <div class="toolbar-item">
-    <span class="toolbar-label">排数:</span>
-    <input type="range" class="toolbar-slider" id="sliderRows" min="1" max="7" step="1" value="7">
-    <input type="number" class="toolbar-input" id="inputRows" min="1" max="7" value="7">
+  <div class="toolbar-group toolbar-group-layout">
+    <div class="toolbar-item">
+      <span class="toolbar-label">排:</span>
+      <input type="range" class="toolbar-slider" id="sliderRows" min="1" max="7" step="1" value="7">
+      <input type="number" class="toolbar-input" id="inputRows" min="1" max="7" value="7">
+    </div>
+    <div class="toolbar-item">
+      <span class="toolbar-label">宽:</span>
+      <input type="range" class="toolbar-slider" id="sliderWidth" min="1" max="7" step="0.1" value="7">
+      <input type="number" class="toolbar-input" id="inputWidth" min="1" max="7" step="0.1" value="7">
+    </div>
+    <div class="toolbar-item">
+      <span class="toolbar-label">高:</span>
+      <input type="range" class="toolbar-slider" id="sliderHeight" min="80" max="300" step="10" value="140">
+      <input type="number" class="toolbar-input" id="inputHeight" min="80" max="300" value="140">
+    </div>
+    <div class="toolbar-item">
+      <span class="toolbar-label">隙:</span>
+      <input type="range" class="toolbar-slider" id="sliderGap" min="0" max="100" step="2" value="18">
+      <input type="number" class="toolbar-input" id="inputGap" min="0" max="100" value="18">
+    </div>
   </div>
-  <div class="toolbar-item">
-    <span class="toolbar-label">宽:</span>
-    <input type="range" class="toolbar-slider" id="sliderWidth" min="1" max="7" step="0.1" value="7">
-    <input type="number" class="toolbar-input" id="inputWidth" min="1" max="7" step="0.1" value="7">
+  <div class="toolbar-group toolbar-group-rotate">
+    <div class="toolbar-item">
+      <button class="toolbar-btn-simple" id="btnRotateScreen">🔄 旋转屏</button>
+    </div>
+    <div class="toolbar-item">
+      <button class="toolbar-btn-simple" id="btnToolbarPos">⬆ 旋转栏</button>
+    </div>
   </div>
-  <div class="toolbar-item">
-    <span class="toolbar-label">高:</span>
-    <input type="range" class="toolbar-slider" id="sliderHeight" min="80" max="300" step="10" value="140">
-    <input type="number" class="toolbar-input" id="inputHeight" min="80" max="300" value="140">
-  </div>
-  <div class="toolbar-item">
-    <span class="toolbar-label">行隙:</span>
-    <input type="range" class="toolbar-slider" id="sliderGap" min="0" max="100" step="2" value="18">
-    <input type="number" class="toolbar-input" id="inputGap" min="0" max="100" value="18">
-  </div>
-  <div class="toolbar-item">
-    <button class="toolbar-btn-simple" id="btnResetLayout">默认</button>
+  <div class="toolbar-group toolbar-group-action">
+    <div class="toolbar-item">
+      <button class="toolbar-btn-simple" id="btnResetLayout">默认</button>
+    </div>
+    <div class="toolbar-item">
+      <button class="toolbar-btn-simple toolbar-btn-save" id="btnSaveLayout">保存</button>
+    </div>
   </div>
 </div>
 
@@ -439,10 +569,6 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
   </div>
   <button class="play-btn" id="playBtn">▶</button>
   <button class="auto-btn" id="autoBtn">🔊</button>
-  <div id="octaveHint" style="font-size:11px;color:#555;white-space:nowrap;flex-shrink:0;padding:0 4px;text-align:center;line-height:1.3;transition:color 0.2s;">
-    <div style="color:#0099ff;font-size:13px;font-weight:600;" id="octaveNum">4</div>
-    <div>八度</div>
-  </div>
 </div>
 
 <div class="piano-container" id="container">
@@ -456,7 +582,6 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
       <button class="setting-btn-text" id="keybindingBtn">按键设置</button>
       <button class="setting-btn-text" id="virtualKeyBtn">虚拟按键</button>
       <button class="setting-btn-text" id="feedbackBtn">反馈建议</button>
-      <button class="setting-btn-text" id="exitBtn" style="color:#ff6666;">退出</button>
     </div>
   </div>
 </div>
@@ -504,10 +629,29 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="modal-title" style="font-size:12px;color:#666;font-weight:normal;">提示：<br>挪动滚动栏，进入跟弹模式</div>
-    <div class="song-list" id="songList"></div>
-    <button class="add-btn" id="addSongBtn">＋ 添加自定义歌曲</button>
+  <div class="modal song-modal">
+    <div class="song-tabs">
+      <button class="song-tab active" data-tab="jianpu">简谱</button>
+      <button class="song-tab" data-tab="tupu">图谱</button>
+      <button class="song-tab" data-tab="record">录制</button>
+      <button class="song-tab" data-tab="staff">五线谱</button>
+    </div>
+    <div class="song-tab-content" id="jianpuContent">
+      <div class="modal-title" style="font-size:12px;color:#666;font-weight:normal;">提示：<br>挪动滚动栏，进入跟弹模式</div>
+      <div class="song-list" id="songList"></div>
+      <button class="add-btn" id="addSongBtn">＋ 添加自定义歌曲</button>
+    </div>
+    <div class="song-tab-content" id="tupuContent" style="display:none;">
+      <div class="modal-title" style="font-size:12px;color:#666;font-weight:normal;">提示：<br>上传图片图谱，逐行播放</div>
+      <div class="song-list" id="tupuList"></div>
+      <button class="add-btn" id="addTupuBtn">＋ 添加自定义图谱</button>
+    </div>
+    <div class="song-tab-content" id="recordContent" style="display:none;">
+      <div class="coming-soon">录制功能开发中...</div>
+    </div>
+    <div class="song-tab-content" id="staffContent" style="display:none;">
+      <div class="coming-soon">五线谱功能开发中...</div>
+    </div>
     <button class="modal-cancel" id="modalCancel">关闭</button>
   </div>
 </div>
@@ -535,6 +679,63 @@ body{background:#111;color:#fff;font-family:'PingFang SC','Hiragino Sans GB',Ari
     <div class="row">
       <button class="cancel-btn" id="editCancel">取消</button>
       <button class="ok-btn" id="editOk">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="edit-overlay" id="tupuEditOverlay">
+  <div class="edit-modal tupu-edit-modal">
+    <h3 id="tupuEditTitle">编辑图谱</h3>
+    <div class="tupu-edit-content">
+      <div class="tupu-edit-left">
+        <div class="tupu-speed-setting">
+          <label>播放速度 (BPM)：</label>
+          <input type="number" id="tupuSpeed" min="30" max="240" step="1" value="80">
+        </div>
+        <div class="tupu-settings">
+          <div class="tupu-row">
+            <label>图谱名称：</label>
+            <input type="text" id="tupuName" placeholder="例：小星星">
+          </div>
+        </div>
+        <div class="tupu-controls">
+          <input type="file" id="tupuImageInput" accept="image/*" style="display:none;">
+          <button class="tupu-btn" id="tupuUploadBtn">上传图片</button>
+        </div>
+        <div class="tupu-actions">
+          <button class="tupu-btn-small" id="tupuAddRow">＋ 增加行</button>
+          <button class="tupu-btn-small" id="tupuDelRow">－ 删除行</button>
+        </div>
+        <div class="tupu-global-controls">
+          <h4>全局调整</h4>
+          <div class="tupu-global-row">
+            <label>宽度</label>
+            <input type="range" id="globalWidth" min="10" max="100" value="80" step="1">
+            <span id="globalWidthVal">80%</span>
+          </div>
+          <div class="tupu-global-row">
+            <label>高度</label>
+            <input type="range" id="globalHeight" min="10" max="200" value="60" step="1">
+            <span id="globalHeightVal">60px</span>
+          </div>
+          <div class="tupu-global-row">
+            <label>缝隙</label>
+            <input type="range" id="globalGap" min="0" max="80" value="10" step="1">
+            <span id="globalGapVal">10px</span>
+          </div>
+        </div>
+      </div>
+      <div class="tupu-edit-right">
+        <div class="tupu-preview-wrap">
+          <div class="tupu-preview" id="tupuPreview">
+            <div class="tupu-placeholder">点击上方按钮上传图片</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <button class="cancel-btn" id="tupuEditCancel">取消</button>
+      <button class="ok-btn" id="tupuEditOk">保存</button>
     </div>
   </div>
 </div>
@@ -570,6 +771,13 @@ document.write(
 (coverSupport ? ', viewport-fit=cover' : '') + '" />')
 let audioCtx = null;
 let currentInst = "piano";
+const INST_LIST = [
+  {v:"piano",t:"钢琴"},{v:"guitar",t:"吉他"},{v:"violin",t:"小提琴"},{v:"cello",t:"大提琴"},
+  {v:"xiao",t:"箫"},{v:"dizi",t:"笛子"},{v:"guzheng",t:"古筝"},{v:"erhu",t:"二胡"},
+  {v:"pipa",t:"琵琶"},{v:"drum",t:"鼓"},{v:"drumkit",t:"架子鼓"},{v:"bell",t:"钟声"},
+  {v:"suona",t:"唢呐"},{v:"bass",t:"贝斯"},{v:"saxophone",t:"萨克斯"}
+];
+let instOrder = null;
 const activeNodes = new Map();
 const touchMap = new Map();
 
@@ -592,6 +800,7 @@ let highlightNoteIdx = -1;
 
 let canvas, ctx;
 let tokens = []; 
+let currentTupu = null; 
 
 let isFollowing = false;
 let currentFollowIdx = 0;
@@ -700,6 +909,11 @@ try{ customSongs = JSON.parse(localStorage.getItem("pianoCustomSongs")||"[]"); }
 function saveCustom(){ try{ localStorage.setItem("pianoCustomSongs",JSON.stringify(customSongs)); }catch(e){} }
 function allSongs(){ return [...BUILT_IN, ...customSongs]; }
 
+let customTupus = [];
+try{ customTupus = JSON.parse(localStorage.getItem("pianoCustomTupus")||"[]"); }catch(e){}
+function saveTupus(){ try{ localStorage.setItem("pianoCustomTupus",JSON.stringify(customTupus)); }catch(e){} }
+function allTupus(){ return [...customTupus]; }
+
 const FS = 14;     
 const FONT_STR = FS+"px 'PingFang SC',Arial,sans-serif";
 const GAP = 12;     
@@ -732,18 +946,36 @@ function buildTokensAndNotes(song, addDelay = false) {
   if (addDelay && lines.length > 0) {
     lines = ["0000 " + lines[0], ...lines.slice(1)];
   }
-  const regex = /(【[高低][1-7]】|[0-7])|(-)|([·.])|(\|)|(\s+)|(_)/g;
-
+  
   lines.forEach(line => {
-      let matches = [...line.matchAll(regex)];
-      matches.forEach(m => {
-          let text = m[0];
-          if(m[5]) {
-              underscoreCount = 0;
-              return;
+      let i = 0;
+      while (i < line.length) {
+          let text = '';
+          let isNote = false;
+          let matched = false;
+          
+          let noteMatch = line.substr(i).match(/^【[高低][1-7]】|^[0-7]/);
+          if (noteMatch) {
+              text = noteMatch[0];
+              isNote = true;
+              i += text.length;
+              matched = true;
+          } else if (line[i] === '-' || line[i] === '·' || line[i] === '.' || line[i] === '|' || line[i] === '_') {
+              text = line[i];
+              i++;
+              matched = true;
+          } else if (line[i] === ' ' || line[i] === '\t') {
+              i++;
+              continue;
+          } else {
+              text = line[i];
+              i++;
+              matched = true;
           }
+          
+          if (!matched) continue;
+          
           let w = c2.measureText(text).width;
-          let isNote = !!m[1];
           let nIdx = -1;
 
           if (isNote) {
@@ -779,20 +1011,22 @@ function buildTokensAndNotes(song, addDelay = false) {
                  startTime: 0 
              };
              autoNotes.push(lastNoteObj);
-          } else if (m[2]) {
+          } else if (text === '-') {
              if(lastNoteObj) lastNoteObj.d += 1;
-          } else if (m[3]) {
+          } else if (text === '·' || text === '.') {
              if(lastNoteObj) {
                  lastNoteObj.dotCount += 1;
                  lastNoteObj.d = lastNoteObj.baseDur * (1.5 ** lastNoteObj.dotCount);
              }
-          } else if (m[4]) {
+          } else if (text === '|') {
              underscoreCount = 0;
-          } else if (m[6]) {
+          } else if (text === '_') {
              underscoreCount += 1;
+          } else {
+             underscoreCount = 0;
           }
           toks.push({ text, x: 0, w, isNote, noteIdx: nIdx });
-      });
+      }
   });
 
   let currentX = 0;
@@ -818,11 +1052,101 @@ function buildTokensAndNotes(song, addDelay = false) {
   return { tokens: toks, totalW: currentX + 400, autoNotes };
 }
 
-function drawScore() {
-  if (!ctx || !canvas.width) return;
+function updateTupuScale(){
+  if (!currentTupu || !currentTupu.img || !currentTupu.masks) return;
+  
+  const canvasHeight = canvas.height;
+  let totalWidth = 0;
+  const scaledMasks = [];
+  
+  currentTupu.masks.forEach(mask => {
+    const srcX = mask.left || 0;
+    const srcY = mask.top || 0;
+    const srcWidth = mask.width || currentTupu.img.width;
+    const srcHeight = mask.height || 0;
+    
+    if (srcHeight <= 0) return;
+    
+    const maskScaleRatio = canvasHeight / srcHeight;
+    const scaledMaskWidth = srcWidth * maskScaleRatio;
+    
+    scaledMasks.push({
+      srcX: srcX,
+      srcY: srcY,
+      srcWidth: srcWidth,
+      srcHeight: srcHeight,
+      x: totalWidth,
+      width: scaledMaskWidth,
+      height: canvasHeight
+    });
+    totalWidth += scaledMaskWidth;
+  });
+  
+  currentTupu.scaledMasks = scaledMasks;
+  currentTupu.totalWidth = totalWidth;
+  
+  canvas.width = totalWidth;
+  canvas.style.width = totalWidth + "px";
+}
+
+function getScoreMetrics() {
+  if (!canvas) return { fontSize: 14, gap: 12 };
+  const canvasHeight = canvas.height;
+  const fontSize = Math.max(14, Math.round(canvasHeight * 0.45));
+  const gap = Math.max(8, Math.round(fontSize * 0.85));
+  return { fontSize, gap };
+}
+
+function drawTupuScore() {
+  if (!ctx || !currentTupu || !currentTupu.img || !currentTupu.scaledMasks) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.font = FONT_STR;
-  const y = canvas.height / 2 + FS * 0.36;
+  
+  currentTupu.scaledMasks.forEach((mask) => {
+    ctx.save();
+    
+    ctx.drawImage(
+      currentTupu.img,
+      mask.srcX, mask.srcY, mask.srcWidth, mask.srcHeight,
+      mask.x, 0, mask.width, mask.height
+    );
+    
+    ctx.restore();
+  });
+}
+
+function drawScore() {
+  if (!ctx) return;
+  if (!tokens || tokens.length === 0) return;
+  
+  const { fontSize, gap } = getScoreMetrics();
+  
+  const cv = document.createElement("canvas");
+  const c2 = cv.getContext("2d");
+  c2.font = fontSize + "px 'PingFang SC',Arial,sans-serif";
+  
+  let totalW = 0;
+  for(let i=0; i<tokens.length; i++) {
+    const t = tokens[i];
+    const scaledW = c2.measureText(t.text).width;
+    const nextTok = tokens[i+1];
+    if(t.text === "_" || (nextTok && nextTok.text === "_")) {
+      totalW += scaledW;
+    } else {
+      totalW += scaledW + gap;
+    }
+  }
+  
+  if(totalW <= 0) totalW = 100;
+  
+  canvas.width = totalW;
+  canvas.style.width = totalW + "px";
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.font = fontSize + "px 'PingFang SC', 'Hiragino Sans GB', Arial, sans-serif";
+  ctx.textBaseline = "middle";
+  
+  const y = canvas.height / 2;
 
   const now = performance.now();
   const animElapsed = now - noteAnimStartTime;
@@ -835,37 +1159,40 @@ function drawScore() {
   const easeInOut = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
   const scale = animProgress > 0 ? 1 + 0.4 * Math.sin(easeInOut(animProgress) * Math.PI) : 1;
 
-  tokens.forEach((tok) => {
+  let scaledX = 0;
+  tokens.forEach((tok, i) => {
+    const scaledW = c2.measureText(tok.text).width;
     const isCurrentHighlight = tok.isNote && tok.noteIdx === highlightNoteIdx;
     const isAnimNote = tok.isNote && tok.noteIdx === animNoteIdx;
 
     if (isAnimNote) {
       ctx.save();
-      const textCenterX = tok.x + tok.w / 2;
+      const textCenterX = scaledX + scaledW / 2;
       const textCenterY = y;
       ctx.translate(textCenterX, textCenterY);
       ctx.scale(scale, scale);
       ctx.translate(-textCenterX, -textCenterY);
       ctx.fillStyle = "#0099ff";
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = "#0099ff";
       const displayText = tok.text === "0" ? " " : tok.text;
-      ctx.fillText(displayText, tok.x, y);
+      ctx.fillText(displayText, scaledX, y);
       ctx.restore();
     } else if (isCurrentHighlight) {
       ctx.fillStyle = "#0099ff";
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = "#0099ff";
       const displayText = tok.text === "0" ? " " : tok.text;
-      ctx.fillText(displayText, tok.x, y);
+      ctx.fillText(displayText, scaledX, y);
     } else {
       ctx.fillStyle = (tok.text === "|" || tok.text === "-" || tok.text === "_") ? "#888" : "#ddd";
-      ctx.shadowBlur = 0;
       const displayText = tok.text === "0" ? " " : tok.text;
-      ctx.fillText(displayText, tok.x, y);
+      ctx.fillText(displayText, scaledX, y);
+    }
+    
+    const nextTok = tokens[i+1];
+    if(tok.text === "_" || (nextTok && nextTok.text === "_")) {
+      scaledX += scaledW;
+    } else {
+      scaledX += scaledW + gap;
     }
   });
-  ctx.shadowBlur = 0;
 }
 
 function startScrollingSync() {
@@ -895,6 +1222,33 @@ function startScrollingSync() {
 
   drawScore();
 
+  let lastHighlightIdx = -1;
+  let lastCanvasOffX = canvasOffX;
+
+  const { fontSize, gap } = getScoreMetrics();
+  const cv = document.createElement("canvas");
+  const c2 = cv.getContext("2d");
+  c2.font = fontSize + "px 'PingFang SC',Arial,sans-serif";
+  
+  let totalW = 0;
+  for(let i=0; i<tokens.length; i++) {
+    const t = tokens[i];
+    const scaledW = c2.measureText(t.text).width;
+    const nextTok = tokens[i+1];
+    if(t.text === "_" || (nextTok && nextTok.text === "_")) {
+      totalW += scaledW;
+    } else {
+      totalW += scaledW + gap;
+    }
+  }
+  
+  const bpmBase = 85;
+  const beatMs = 60000 / bpmBase;
+  const estimatedDuration = Math.max(
+    notes.length > 0 ? (notes[notes.length - 1].startTime + notes[notes.length - 1].durationMs + 500) : 1000,
+    (totalW / 100) * beatMs * 2
+  );
+
   function step(now) {
     if(!isScrolling) return;
     let deltaTime = now - lastFrameTime;
@@ -913,23 +1267,51 @@ function startScrollingSync() {
         } else break;
     }
 
+    let targetX = 0;
     if(activeAn && !isDraggingScore){
         highlightNoteIdx = currentHL;
         currentFollowIdx = currentHL;
-        const targetX = tokens[activeAn.tokenIdx].x;
-        const fixedX = scoreWrap.clientWidth / 3 || 20;
-        canvasOffX = fixedX - targetX;
-        canvas.style.left = canvasOffX + "px";
+        
+        let scaledX = 0;
+        for(let i = 0; i < activeAn.tokenIdx; i++) {
+          const tok = tokens[i];
+          const scaledW = c2.measureText(tok.text).width;
+          const nextTok = tokens[i+1];
+          if(tok.text === "_" || (nextTok && nextTok.text === "_")) {
+            scaledX += scaledW;
+          } else {
+            scaledX += scaledW + gap;
+          }
+        }
+        targetX = scaledX;
         
         if(autoIdx !== highlightNoteIdx){
             playAutoNote(activeAn);
             autoIdx = highlightNoteIdx;
         }
+    } else if (!isDraggingScore && notes.length === 0) {
+        const progress = currentPlayTime / estimatedDuration;
+        targetX = Math.min(progress * totalW, totalW);
+    } else if (!isDraggingScore) {
+        const progress = currentPlayTime / estimatedDuration;
+        if (progress > 1) {
+            targetX = totalW;
+        }
+    }
+    
+    if (targetX > 0 || !isDraggingScore) {
+        const fixedX = scoreWrap.clientWidth / 3 || 20;
+        canvasOffX = fixedX - targetX;
+        canvas.style.left = canvasOffX + "px";
     }
 
-    drawScore();
-    const lastNote = notes[notes.length-1];
-    if (currentPlayTime > (lastNote ? lastNote.startTime + lastNote.durationMs + 500 : 1000)) {
+    if(highlightNoteIdx !== lastHighlightIdx || canvasOffX !== lastCanvasOffX) {
+      drawScore();
+      lastHighlightIdx = highlightNoteIdx;
+      lastCanvasOffX = canvasOffX;
+    }
+    
+    if (currentPlayTime > estimatedDuration) {
       currentFollowIdx = notes.length;
       stopAutoPlay();
       return;
@@ -953,8 +1335,27 @@ function playAutoNote(an) {
   stopNote("auto");
   if (an.n === "R") return;
 
-  const allMatchingKeys = container.querySelectorAll(`[data-note="${an.n}"]`);
+  let allMatchingKeys = container.querySelectorAll(`[data-note="${an.n}"]`);
   let visibleKeys = Array.from(allMatchingKeys).filter(isKeyVisible);
+
+  if (visibleKeys.length === 0) {
+    const noteMatch = an.n.match(/^([A-G]#?)(\d)$/);
+    if (noteMatch) {
+      const noteName = noteMatch[1];
+      const octave = parseInt(noteMatch[2]);
+      for (let altOct = 3; altOct <= 5; altOct++) {
+        if (altOct === octave) continue;
+        const altNote = noteName + altOct;
+        const altKeys = container.querySelectorAll(`[data-note="${altNote}"]`);
+        const altVisible = Array.from(altKeys).filter(isKeyVisible);
+        if (altVisible.length > 0) {
+          allMatchingKeys = altKeys;
+          visibleKeys = altVisible;
+          break;
+        }
+      }
+    }
+  }
 
   if (visibleKeys.length > 0) {
     if (!isMuted && !isMutedTemporarily) {
@@ -1399,7 +1800,24 @@ function startNote(tid, ns, overrideInst){
         // 滚动乐谱到当前音符
         const matchedNote = notes[matchedIdx];
         if(matchedNote && matchedNote.tokenIdx !== undefined) {
-          const targetX = tokens[matchedNote.tokenIdx].x;
+          const { fontSize, gap } = getScoreMetrics();
+          const cv = document.createElement("canvas");
+          const c2 = cv.getContext("2d");
+          c2.font = fontSize + "px 'PingFang SC',Arial,sans-serif";
+          
+          let scaledX = 0;
+          for(let i = 0; i < matchedNote.tokenIdx; i++) {
+            const tok = tokens[i];
+            const scaledW = c2.measureText(tok.text).width;
+            const nextTok = tokens[i+1];
+            if(tok.text === "_" || (nextTok && nextTok.text === "_")) {
+              scaledX += scaledW;
+            } else {
+              scaledX += scaledW + gap;
+            }
+          }
+          
+          const targetX = scaledX;
           const fixedX = scoreWrap.clientWidth / 3 || 20;
           canvasOffX = fixedX - targetX;
           canvas.style.left = canvasOffX + "px";
@@ -1517,8 +1935,6 @@ window.onload = function(){
   const layoutBtn = document.getElementById("layoutBtn");
   const feedbackBtn = document.getElementById("feedbackBtn");
   const keybindingBtn = document.getElementById("keybindingBtn");
-  const exitBtn = document.getElementById("exitBtn");
-
   const keybindingOverlay = document.getElementById("keybindingOverlay");
   const keybindingClose = document.getElementById("keybindingClose");
   const keybindingBody = document.getElementById("keybindingBody");
@@ -2005,12 +2421,197 @@ window.onload = function(){
   const sliderGap = document.getElementById("sliderGap");
   const inputGap = document.getElementById("inputGap");
   const btnResetLayout = document.getElementById("btnResetLayout");
+  const btnRotateScreen = document.getElementById("btnRotateScreen");
+  const instScroll = document.getElementById("instScroll");
 
-  mainSettingBtn.onclick = () => { settingOverlay.classList.add("show"); };
+  function renderInstButtons() {
+    instScroll.innerHTML = "";
+    const order = instOrder || INST_LIST.map(i => i.v);
+    order.forEach(instKey => {
+      const inst = INST_LIST.find(i => i.v === instKey);
+      if (!inst) return;
+      const btn = document.createElement("button");
+      btn.className = "btn" + (currentInst === instKey ? " active" : "");
+      btn.dataset.inst = instKey;
+      btn.textContent = inst.t;
+      btn.addEventListener("click", function() {
+        if (instDragging) return;
+        document.querySelectorAll(".control .btn").forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+        currentInst = this.dataset.inst;
+        saveSettings();
+      });
+      btn.addEventListener("mousedown", function(e) { startInstDrag(e, this); });
+      btn.addEventListener("touchstart", function(e) { startInstDrag(e, this); }, { passive: false });
+      instScroll.appendChild(btn);
+    });
+  }
+
+  let instDragBtn = null;
+  let instDragStartX = 0;
+  let instDragStartY = 0;
+  let instDragging = false;
+  let instDragClone = null;
+  let instLongPressTimer = null;
+  let instInsertLine = null;
+
+  function startInstDrag(e, btn) {
+    e.preventDefault();
+    const touch = e.touches ? e.touches[0] : e;
+    instDragBtn = btn;
+    instDragStartX = touch.clientX;
+    instDragStartY = touch.clientY;
+    instDragging = false;
+    clearTimeout(instLongPressTimer);
+    instLongPressTimer = setTimeout(() => {
+      instDragging = true;
+      instDragBtn.style.opacity = "0.3";
+      const rect = instDragBtn.getBoundingClientRect();
+      instDragClone = instDragBtn.cloneNode(true);
+      instDragClone.style.position = "fixed";
+      instDragClone.style.width = rect.width + "px";
+      instDragClone.style.height = rect.height + "px";
+      instDragClone.style.left = rect.left + "px";
+      instDragClone.style.top = rect.top + "px";
+      instDragClone.style.opacity = "0.8";
+      instDragClone.style.zIndex = "1000";
+      instDragClone.style.pointerEvents = "none";
+      instDragClone.style.background = instDragBtn.classList.contains("active") ? "#0099ff" : "#222";
+      instDragClone.style.borderColor = instDragBtn.classList.contains("active") ? "#0099ff" : "#444";
+      instDragClone.style.color = instDragBtn.classList.contains("active") ? "#fff" : "#aaa";
+      document.body.appendChild(instDragClone);
+      instDragBtn.style.visibility = "hidden";
+      instInsertLine = document.createElement("div");
+      instInsertLine.style.cssText = "position:absolute;width:2px;background:#0099ff;top:0;bottom:0;z-index:999;pointer-events:none;";
+      instScroll.style.position = "relative";
+      instScroll.appendChild(instInsertLine);
+    }, 300);
+  }
+
+  function updateInstDrag(e) {
+    if (!instDragging || !instDragClone) return;
+    const touch = e.touches ? e.touches[0] : e;
+    const x = touch.clientX;
+    const y = touch.clientY;
+    instDragClone.style.left = x - instDragClone.offsetWidth / 2 + "px";
+    instDragClone.style.top = y - instDragClone.offsetHeight / 2 + "px";
+    const btns = Array.from(instScroll.children).filter(b => b !== instDragBtn && b !== instInsertLine);
+    let insertIdx = btns.length;
+    for (let i = 0; i < btns.length; i++) {
+      const rect = btns[i].getBoundingClientRect();
+      const center = rect.left + rect.width / 2;
+      if (x < center) {
+        insertIdx = i;
+        break;
+      }
+    }
+    if (insertIdx < btns.length) {
+      const rect = btns[insertIdx].getBoundingClientRect();
+      instInsertLine.style.left = (rect.left - instScroll.getBoundingClientRect().left) + "px";
+      instInsertLine.style.top = "0";
+      instInsertLine.style.bottom = "0";
+    } else {
+      const lastBtn = btns[btns.length - 1];
+      if (lastBtn) {
+        const rect = lastBtn.getBoundingClientRect();
+        instInsertLine.style.left = (rect.right - instScroll.getBoundingClientRect().left) + "px";
+      }
+    }
+  }
+
+  function endInstDrag() {
+    clearTimeout(instLongPressTimer);
+    if (!instDragBtn) return;
+    if (instDragging && instDragClone && instInsertLine) {
+      const btns = Array.from(instScroll.children).filter(b => b !== instDragBtn && b !== instInsertLine);
+      let insertIdx = btns.length;
+      const insertX = parseInt(instInsertLine.style.left) || 0;
+      for (let i = 0; i < btns.length; i++) {
+        const rect = btns[i].getBoundingClientRect();
+        const center = rect.left - instScroll.getBoundingClientRect().left + rect.width / 2;
+        if (insertX < center) {
+          insertIdx = i;
+          break;
+        }
+      }
+      if (insertIdx < btns.length) {
+        instScroll.insertBefore(instDragBtn, btns[insertIdx]);
+      } else {
+        instScroll.appendChild(instDragBtn);
+      }
+      const order = Array.from(instScroll.children).filter(b => b.classList.contains("btn")).map(b => b.dataset.inst);
+      instOrder = order;
+      try { localStorage.setItem('instOrder', JSON.stringify(order)); } catch(e) {}
+    }
+    instDragBtn.style.visibility = "";
+    instDragBtn.style.opacity = "";
+    if (instDragClone) {
+      instDragClone.remove();
+      instDragClone = null;
+    }
+    if (instInsertLine) {
+      instInsertLine.remove();
+      instInsertLine = null;
+    }
+    instScroll.style.position = "";
+    instDragBtn = null;
+    instDragging = false;
+  }
+
+  document.addEventListener("mousemove", updateInstDrag);
+  document.addEventListener("touchmove", updateInstDrag, { passive: false });
+  document.addEventListener("mouseup", endInstDrag);
+  document.addEventListener("touchend", endInstDrag);
+  document.addEventListener("touchcancel", endInstDrag);
+
+  mainSettingBtn.onclick = (e) => {
+    const modal = settingOverlay.querySelector('.modal');
+    if (modal) {
+      const rect = e.target.getBoundingClientRect();
+      const modalWidth = modal.offsetWidth || 180;
+      const modalHeight = modal.offsetHeight || 200;
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      const gap = 10;
+      
+      let left, top;
+      
+      if (document.body.classList.contains('toolbar-rotated-90')) {
+        left = rect.right + gap;
+        top = rect.top;
+      } else if (document.body.classList.contains('toolbar-rotated-180')) {
+        left = rect.left;
+        top = rect.top - modalHeight - gap;
+      } else if (document.body.classList.contains('toolbar-rotated-270')) {
+        left = rect.left - modalWidth - gap;
+        top = rect.top;
+      } else {
+        left = rect.right + gap;
+        top = rect.top;
+      }
+      
+      if (left + modalWidth + gap > screenWidth) {
+        left = screenWidth - modalWidth - gap;
+      }
+      if (left < gap) {
+        left = gap;
+      }
+      if (top + modalHeight + gap > screenHeight) {
+        top = screenHeight - modalHeight - gap;
+      }
+      if (top < gap) {
+        top = gap;
+      }
+      
+      modal.style.position = 'fixed';
+      modal.style.left = left + 'px';
+      modal.style.top = top + 'px';
+      modal.style.margin = '0';
+    }
+    settingOverlay.classList.add("show");
+  };
   settingOverlay.onclick = (e) => { if (e.target === settingOverlay) settingOverlay.classList.remove("show"); };
   feedbackBtn.onclick = () => { showAppAlert("个人开发，联系待定…"); settingOverlay.classList.remove("show"); };
-  exitBtn.onclick = () => { settingOverlay.classList.remove("show"); };
-
   keybindingBtn.onclick = () => {
     keybindingBackup = JSON.parse(JSON.stringify(pcKeyMap));
     renderKeybindings();
@@ -2372,6 +2973,8 @@ window.onload = function(){
               });
               noteSel.onchange = () => { row.notes[nIdx].n = noteSel.value; };
               noteRow2.appendChild(noteSel);
+              const dInputWrap = document.createElement("div");
+              dInputWrap.style.cssText = "display:flex;align-items:center;gap:3px;";
               // 延迟输入
               const dInput = document.createElement("input");
               dInput.type = "number"; dInput.min = "0"; dInput.max = "5000"; dInput.step = "50";
@@ -2380,7 +2983,12 @@ window.onload = function(){
               dInput.placeholder = "延迟";
               dInput.style.cssText = "width:56px;padding:3px 5px;border-radius:5px;border:1px solid #444;background:#111;color:#eee;font-size:11px;";
               dInput.onchange = () => { row.notes[nIdx].delay = parseInt(dInput.value) || 0; };
-              noteRow2.appendChild(dInput);
+              dInputWrap.appendChild(dInput);
+              const dUnit = document.createElement("span");
+              dUnit.textContent = "ms";
+              dUnit.style.cssText = "font-size:11px;color:#888;";
+              dInputWrap.appendChild(dUnit);
+              noteRow2.appendChild(dInputWrap);
               // 删除音符
               const rmBtn = document.createElement("button");
               rmBtn.className = "kb-remove-key-btn"; rmBtn.textContent = "-";
@@ -2538,26 +3146,39 @@ window.onload = function(){
       settingOverlay.classList.remove("show");
       renderPiano(); // 重新渲染以显示控制条
       enableOctaveDragging();
+      updateLayoutToolbarPosition();
     } else {
-      // 退出布局模式：恢复乐谱状态
-      tokens = [...savedScoreState.tokens];
-      currentSong = savedScoreState.currentSong;
-      isFollowing = savedScoreState.isFollowing;
-      isAutoPlaying = savedScoreState.isAutoPlaying;
-      highlightNoteIdx = savedScoreState.highlightNoteIdx;
-      animNoteIdx = savedScoreState.animNoteIdx;
-      
-      // 显示乐谱画布
-      canvas.style.display = "block";
-      
-      // 重新绘制乐谱
-      canvas.width = scoreWrap.clientWidth;
-      drawScore();
-      
-      renderPiano(); // 重新渲染以隐藏控制条
-      disableOctaveDragging();
+      exitLayoutMode();
     }
   };
+
+  function exitLayoutMode() {
+    if (!isLayoutMode) return;
+    
+    isLayoutMode = false;
+    layoutBtn.classList.remove("active");
+    layoutToolbar.classList.remove("active");
+    container.classList.remove("layout-mode-active");
+    document.body.classList.remove("layout-mode-active");
+    
+    // 退出布局模式：恢复乐谱状态
+    tokens = [...savedScoreState.tokens];
+    currentSong = savedScoreState.currentSong;
+    isFollowing = savedScoreState.isFollowing;
+    isAutoPlaying = savedScoreState.isAutoPlaying;
+    highlightNoteIdx = savedScoreState.highlightNoteIdx;
+    animNoteIdx = savedScoreState.animNoteIdx;
+    
+    // 显示乐谱画布
+    canvas.style.display = "block";
+    
+    // 重新绘制乐谱
+    canvas.width = scoreWrap.clientWidth;
+    drawScore();
+    
+    renderPiano(); // 重新渲染以隐藏控制条
+    disableOctaveDragging();
+  }
 
   btnResetLayout.onclick = () => {
     sliderRows.value = 7; inputRows.value = 7;
@@ -2565,7 +3186,147 @@ window.onload = function(){
     sliderHeight.value = 140; inputHeight.value = 140;
     sliderGap.value = 18; inputGap.value = 18;
     updateLayout(); renderPiano();
+    settingOverlay.classList.remove("show");
   };
+
+  const btnSaveLayout = document.getElementById("btnSaveLayout");
+  btnSaveLayout.onclick = () => {
+    saveLayoutSettings();
+    exitLayoutMode();
+    settingOverlay.classList.remove("show");
+  };
+
+  function saveLayoutSettings() {
+    const settings = {
+      rows: parseInt(sliderRows.value),
+      width: parseFloat(sliderWidth.value),
+      height: parseInt(sliderHeight.value),
+      gap: parseInt(sliderGap.value),
+      screenRotation: '',
+      toolbarRotation: ''
+    };
+    const screenRotations = ['', 'rotated-90', 'rotated-180', 'rotated-270'];
+    const toolbarRotations = ['', 'toolbar-rotated-90', 'toolbar-rotated-180', 'toolbar-rotated-270'];
+    for (const r of screenRotations) {
+      if (document.body.classList.contains(r)) {
+        settings.screenRotation = r;
+        break;
+      }
+    }
+    for (const r of toolbarRotations) {
+      if (document.body.classList.contains(r)) {
+        settings.toolbarRotation = r;
+        break;
+      }
+    }
+    try {
+      localStorage.setItem("pianoLayoutSettings", JSON.stringify(settings));
+    } catch (e) {}
+  }
+
+  function loadLayoutSettings() {
+    try {
+      const saved = localStorage.getItem("pianoLayoutSettings");
+      if (saved) {
+        const settings = JSON.parse(saved);
+        sliderRows.value = settings.rows || 7; inputRows.value = settings.rows || 7;
+        sliderWidth.value = settings.width || 7; inputWidth.value = settings.width || 7;
+        sliderHeight.value = settings.height || 140; inputHeight.value = settings.height || 140;
+        sliderGap.value = settings.gap || 18; inputGap.value = settings.gap || 18;
+        if (settings.screenRotation) {
+          const screenRotations = ['', 'rotated-90', 'rotated-180', 'rotated-270'];
+          for (const r of screenRotations) {
+            document.body.classList.remove(r);
+          }
+          document.body.classList.add(settings.screenRotation);
+        }
+        if (settings.toolbarRotation) {
+          const toolbarRotations = ['', 'toolbar-rotated-90', 'toolbar-rotated-180', 'toolbar-rotated-270'];
+          for (const r of toolbarRotations) {
+            document.body.classList.remove(r);
+          }
+          document.body.classList.add(settings.toolbarRotation);
+          const labels = ['⬆ 顶栏', '⬅ 右边', '⬇ 底栏', '➡ 左边'];
+          const idx = toolbarRotations.indexOf(settings.toolbarRotation);
+          if (idx >= 0 && idx < labels.length) {
+            btnToolbarPos.textContent = labels[idx];
+          }
+        }
+        updateLayout();
+        renderPiano();
+      }
+    } catch (e) {}
+  }
+  loadLayoutSettings();
+
+  btnRotateScreen.onclick = () => {
+    const rotations = ['', 'rotated-90', 'rotated-180', 'rotated-270'];
+    let currentIdx = 0;
+    for (let i = 1; i < rotations.length; i++) {
+      if (document.body.classList.contains(rotations[i])) {
+        currentIdx = i;
+        break;
+      }
+    }
+    if (rotations[currentIdx]) {
+      document.body.classList.remove(rotations[currentIdx]);
+    }
+    const nextIdx = (currentIdx + 1) % rotations.length;
+    if (rotations[nextIdx]) {
+      document.body.classList.add(rotations[nextIdx]);
+    }
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
+  };
+
+  const btnToolbarPos = document.getElementById("btnToolbarPos");
+  btnToolbarPos.onclick = () => {
+    const rotations = ['', 'toolbar-rotated-90', 'toolbar-rotated-180', 'toolbar-rotated-270'];
+    let currentIdx = 0;
+    for (let i = 1; i < rotations.length; i++) {
+      if (document.body.classList.contains(rotations[i])) {
+        currentIdx = i;
+        break;
+      }
+    }
+    if (rotations[currentIdx]) {
+      document.body.classList.remove(rotations[currentIdx]);
+    }
+    const nextIdx = (currentIdx + 1) % rotations.length;
+    if (rotations[nextIdx]) {
+      document.body.classList.add(rotations[nextIdx]);
+    }
+    const labels = ['⬆ 顶栏', '⬅ 右边', '⬇ 底栏', '➡ 左边'];
+    btnToolbarPos.textContent = labels[nextIdx];
+    try { localStorage.setItem('toolbarRotation', nextIdx.toString()); } catch(e) {}
+    
+    updateLayoutToolbarPosition();
+  };
+  
+  function updateLayoutToolbarPosition() {
+    const layoutToolbar = document.getElementById('layoutToolbar');
+    const settingBtnWrap = document.querySelector('.setting-btn-wrap');
+    if (!layoutToolbar || !settingBtnWrap) return;
+    
+    if (document.body.classList.contains('toolbar-rotated-90') || 
+        document.body.classList.contains('toolbar-rotated-270')) {
+      const rect = settingBtnWrap.getBoundingClientRect();
+      layoutToolbar.style.top = rect.height + 'px';
+    } else {
+      layoutToolbar.style.top = '';
+    }
+  }
+  
+  try {
+    const savedRotation = parseInt(localStorage.getItem('toolbarRotation') || '0');
+    if (savedRotation > 0) {
+      document.body.classList.add('toolbar-rotated-' + (savedRotation * 90));
+      const labels = ['⬆ 顶栏', '⬅ 右边', '⬇ 底栏', '➡ 左边'];
+      btnToolbarPos.textContent = labels[savedRotation];
+      updateLayoutToolbarPosition();
+    }
+  } catch(e) {}
 
   function updateLayout() {
     const widthLevel = parseFloat(sliderWidth.value) || 4;
@@ -2659,13 +3420,6 @@ window.onload = function(){
     }
   }
 
-  const INST_LIST = [
-    {v:"piano",t:"钢琴"},{v:"guitar",t:"吉他"},{v:"violin",t:"小提琴"},{v:"cello",t:"大提琴"},
-    {v:"xiao",t:"箫"},{v:"dizi",t:"笛子"},{v:"guzheng",t:"古筝"},{v:"erhu",t:"二胡"},
-    {v:"pipa",t:"琵琶"},{v:"drum",t:"鼓"},{v:"drumkit",t:"架子鼓"},{v:"bell",t:"钟声"},
-    {v:"suona",t:"唢呐"},{v:"bass",t:"贝斯"},{v:"saxophone",t:"萨克斯"}
-  ];
-
   function applyRowColors(rowEl, rowIdx) {
     const cfg = rowColorMap[rowIdx];
     if (!cfg) return;
@@ -2684,8 +3438,11 @@ window.onload = function(){
     if (rowCount === 7) {
       focusOctaves = [7, 6, 5, 4, 3, 2, 1];
     } else {
-      let start = 4 + Math.floor(rowCount / 2);
-      for(let r=0; r<rowCount; r++) focusOctaves.push(Math.max(1, Math.min(7, start - r)));
+      let start = 5 + Math.floor(rowCount / 2);
+      for(let r=0; r<rowCount; r++) {
+        let octave = Math.max(1, Math.min(7, start - r));
+        if (octave !== 4) focusOctaves.push(octave);
+      }
     }
     for (let rowIdx = 0; rowIdx < rowCount; rowIdx++) {
       const rowEl = document.createElement("div");
@@ -2693,7 +3450,6 @@ window.onload = function(){
       rowEl.style.position = "relative";
       rowEl.dataset.rowIdx = rowIdx;
       const currentFocusOctave = focusOctaves[rowIdx];
-      if (currentFocusOctave === 4) rowEl.id = "middle-octave";
 
       // 布局模式：行左侧设置面板（乐器+配色）
       if (isLayoutMode) {
@@ -2780,7 +3536,7 @@ window.onload = function(){
         }
       });
       const allRows = Array.from(container.querySelectorAll(".octave-row"));
-      const midOctRow = allRows.find((r, idx) => focusOctaves[idx] === 4) || allRows[Math.floor(rowCount/2)];
+      const midOctRow = allRows[Math.floor(rowCount/2)];
       if (midOctRow) {
         const containerHeight = container.clientHeight;
         container.scrollTop = midOctRow.offsetTop - (containerHeight / 2) + (midOctRow.offsetHeight / 2);
@@ -2788,8 +3544,13 @@ window.onload = function(){
     }, 150);
   }
 
-  canvas.height = 34;
-  canvas.style.height = "34px";
+  function syncCanvasHeight() {
+    const h = scoreWrap ? scoreWrap.offsetHeight : 34;
+    canvas.height = h;
+  }
+  
+  syncCanvasHeight();
+  setTimeout(syncCanvasHeight, 100);
 
   document.querySelectorAll(".control .btn").forEach(btn => {
     btn.onclick = function(){
@@ -2834,10 +3595,13 @@ window.onload = function(){
   }
 
   function loadSong(song) {
-    stopAutoPlay(); currentSong = song;
+    stopAutoPlay(); 
+    currentSong = song;
+    currentTupu = null;
     const built = buildTokensAndNotes(song);
     tokens = built.tokens; currentSong.autoNotes = built.autoNotes;
-    canvas.width = built.totalW; canvas.style.width = built.totalW + "px";
+    canvas.height = scoreWrap && scoreWrap.offsetHeight > 0 ? scoreWrap.offsetHeight : 34;
+    canvas.style.height = canvas.height + "px";
     currentPlayTime = 0; canvasOffX = 20; canvas.style.left = "20px";
     isFollowing = true; currentFollowIdx = 0;
     highlightNoteIdx = (currentSong.autoNotes && currentSong.autoNotes.length > 0) ? 0 : -1;
@@ -2845,10 +3609,13 @@ window.onload = function(){
   }
 
   function loadSongWithDelay(song) {
-    stopAutoPlay(); currentSong = song;
+    stopAutoPlay(); 
+    currentSong = song;
+    currentTupu = null;
     const built = buildTokensAndNotes(song, true);
     tokens = built.tokens; currentSong.autoNotes = built.autoNotes;
-    canvas.width = built.totalW; canvas.style.width = built.totalW + "px";
+    canvas.height = scoreWrap && scoreWrap.offsetHeight > 0 ? scoreWrap.offsetHeight : 34;
+    canvas.style.height = canvas.height + "px";
     currentPlayTime = 0; canvasOffX = 20; canvas.style.left = "20px";
     isFollowing = true;
     // 跳过前置休止符，让 currentFollowIdx 指向第一个真实音符
@@ -2860,9 +3627,56 @@ window.onload = function(){
     animNoteIdx = -1; drawScore();
   }
 
-  function openModal(){ modalOverlay.classList.add("show"); renderSongList(); }
+  function openModal(e){ 
+    const modal = modalOverlay.querySelector('.modal');
+    if (modal && e) {
+      const rect = e.target.getBoundingClientRect();
+      const modalWidth = modal.offsetWidth || 300;
+      const modalHeight = modal.offsetHeight || 400;
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+      const gap = 10;
+      
+      let left, top;
+      
+      if (document.body.classList.contains('toolbar-rotated-90')) {
+        left = rect.right + gap;
+        top = rect.top;
+      } else if (document.body.classList.contains('toolbar-rotated-180')) {
+        left = rect.left;
+        top = rect.top - modalHeight - gap;
+      } else if (document.body.classList.contains('toolbar-rotated-270')) {
+        left = rect.left - modalWidth - gap;
+        top = rect.top;
+      } else {
+        left = rect.right + gap;
+        top = rect.top;
+      }
+      
+      if (left + modalWidth + gap > screenWidth) {
+        left = screenWidth - modalWidth - gap;
+      }
+      if (left < gap) {
+        left = gap;
+      }
+      if (top + modalHeight + gap > screenHeight) {
+        top = screenHeight - modalHeight - gap;
+      }
+      if (top < gap) {
+        top = gap;
+      }
+      
+      modal.style.position = 'fixed';
+      modal.style.left = left + 'px';
+      modal.style.top = top + 'px';
+      modal.style.margin = '0';
+    }
+    modalOverlay.classList.add("show"); 
+    renderSongList(); 
+    renderTupuList(); 
+  }
   function closeModal(){ modalOverlay.classList.remove("show"); }
-  musicBtn.onclick = function() {
+  musicBtn.onclick = function(e) {
     if (isLayoutMode) {
       // 布局模式下，将歌曲设置为无
       autoBtn.classList.remove("active");
@@ -2877,11 +3691,658 @@ window.onload = function(){
       showAppAlert("布局模式下不能选择歌曲");
       return;
     }
-    openModal();
+    openModal(e);
   };
   modalCancel.onclick = closeModal;
 
-  let editingIdx = -1;
+  document.querySelectorAll('.song-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.song-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.song-tab-content').forEach(c => c.style.display = 'none');
+      const tabName = tab.dataset.tab;
+      document.getElementById(tabName + 'Content').style.display = 'block';
+    });
+  });
+
+  const tupuSpeed = document.getElementById('tupuSpeed');
+  const tupuImageInput = document.getElementById('tupuImageInput');
+  const tupuUploadBtn = document.getElementById('tupuUploadBtn');
+  const tupuPreview = document.getElementById('tupuPreview');
+  const tupuAddRow = document.getElementById('tupuAddRow');
+  const tupuDelRow = document.getElementById('tupuDelRow');
+  const tupuList = document.getElementById('tupuList');
+  const addTupuBtn = document.getElementById('addTupuBtn');
+  const tupuEditOverlay = document.getElementById('tupuEditOverlay');
+  const tupuEditCancel = document.getElementById('tupuEditCancel');
+  const tupuEditOk = document.getElementById('tupuEditOk');
+  const tupuName = document.getElementById('tupuName');
+
+  let tupuImageData = null;
+  let tupuMasks = [];
+  let tupuPlaying = false;
+  let tupuPlayIdx = 0;
+  let tupuPlayTimer = null;
+  let editingTupuIdx = -1;
+
+  function renderTupuList() {
+    if (!tupuList) return;
+    tupuList.innerHTML = "";
+    const noneItem = document.createElement("div");
+    noneItem.className = "song-item";
+    noneItem.style.minHeight = "auto";
+    noneItem.style.padding = "10px 16px";
+    noneItem.innerHTML = `<div class="song-info" style="padding:0;"><div class="song-name">无</div></div>`;
+    noneItem.onclick = () => {
+      stopAutoPlay();
+      stopTupuScrolling();
+      currentSong = null;
+      currentTupu = null;
+      tokens = [];
+      canvas.width = 0;
+      canvas.style.width = "0px";
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      closeModal();
+    };
+    tupuList.appendChild(noneItem);
+    allTupus().forEach((tupu, idx) => {
+      const item = document.createElement("div");
+      item.className = "song-item";
+      item.innerHTML = `<div class="song-info"><div class="song-name">${tupu.name}</div></div><div class="item-actions"><button class="edit-opt">编辑</button><button class="del-opt">删除</button></div>`;
+      item.onclick = (e) => {
+        if (e.target.closest(".item-actions")) return;
+        loadTupuWithDelay(tupu);
+        closeModal();
+        startTupuScrolling();
+      };
+      item.querySelector(".edit-opt").onclick = (e) => { e.stopPropagation(); openTupuEditDialog(tupu, idx); };
+      item.querySelector(".del-opt").onclick = (e) => {
+        e.stopPropagation();
+        if (confirm(`确定要删除《${tupu.name}》吗？`)) {
+          customTupus.splice(idx, 1);
+          saveTupus();
+          renderTupuList();
+        }
+      };
+      tupuList.appendChild(item);
+    });
+  }
+
+  let tupuScrollX = 0;
+  let tupuScrollRAF = null;
+  let tupuLastFrameTime = 0;
+  let isTupuScrolling = false;
+  let currentTupuSpeed = 1.0;
+  
+  function loadTupu(tupu) {
+    if (!tupu.image) return;
+    
+    stopAutoPlay();
+    stopTupuScrolling();
+    currentSong = null;
+    tokens = [];
+    currentTupu = tupu;
+    tupuScrollX = 0;
+    
+    canvas.height = scoreWrap ? scoreWrap.offsetHeight : canvas.height;
+    
+    const img = new Image();
+    img.onload = function() {
+      const canvasHeight = canvas.height;
+      currentTupu.img = img;
+      
+      let totalWidth = 0;
+      const scaledMasks = [];
+      (tupu.masks || []).forEach(mask => {
+        const srcX = mask.left || 0;
+        const srcY = mask.top || 0;
+        const srcWidth = mask.width || img.width;
+        const srcHeight = mask.height || 0;
+        
+        if (srcHeight <= 0) return;
+        
+        const maskScaleRatio = canvasHeight / srcHeight;
+        const scaledMaskWidth = srcWidth * maskScaleRatio;
+        
+        scaledMasks.push({
+          srcX: srcX,
+          srcY: srcY,
+          srcWidth: srcWidth,
+          srcHeight: srcHeight,
+          x: totalWidth,
+          width: scaledMaskWidth,
+          height: canvasHeight
+        });
+        totalWidth += scaledMaskWidth;
+      });
+      currentTupu.scaledMasks = scaledMasks;
+      currentTupu.totalWidth = totalWidth;
+      
+      canvas.width = totalWidth;
+      canvas.style.width = totalWidth + "px";
+      canvasOffX = 20;
+      canvas.style.left = "20px";
+      tupuScrollX = 0;
+      
+      drawTupuScore();
+    };
+    img.src = tupu.image;
+  }
+  
+  function loadTupuWithDelay(tupu) {
+    if (!tupu.image) return;
+    
+    stopAutoPlay();
+    stopTupuScrolling();
+    currentSong = null;
+    tokens = [];
+    currentTupu = tupu;
+    tupuScrollX = 0;
+    
+    canvas.height = scoreWrap ? scoreWrap.offsetHeight : canvas.height;
+    
+    const img = new Image();
+    img.onload = function() {
+      const canvasHeight = canvas.height;
+      currentTupu.img = img;
+      
+      let totalWidth = 0;
+      const scaledMasks = [];
+      (tupu.masks || []).forEach(mask => {
+        const srcX = mask.left || 0;
+        const srcY = mask.top || 0;
+        const srcWidth = mask.width || img.width;
+        const srcHeight = mask.height || 0;
+        
+        if (srcHeight <= 0) return;
+        
+        const maskScaleRatio = canvasHeight / srcHeight;
+        const scaledMaskWidth = srcWidth * maskScaleRatio;
+        
+        scaledMasks.push({
+          srcX: srcX,
+          srcY: srcY,
+          srcWidth: srcWidth,
+          srcHeight: srcHeight,
+          x: totalWidth,
+          width: scaledMaskWidth,
+          height: canvasHeight
+        });
+        totalWidth += scaledMaskWidth;
+      });
+      currentTupu.scaledMasks = scaledMasks;
+      currentTupu.totalWidth = totalWidth;
+      
+      canvas.width = totalWidth;
+      canvas.style.width = totalWidth + "px";
+      canvasOffX = 20;
+      canvas.style.left = "20px";
+      tupuScrollX = 0;
+      
+      drawTupuScore();
+    };
+    img.src = tupu.image;
+  }
+
+  function openTupuEditDialog(tupu, idx) {
+    editingTupuIdx = idx;
+    if (tupu) {
+      if (tupuName) tupuName.value = tupu.name || '';
+      tupuImageData = tupu.image || null;
+      tupuMasks = tupu.masks || [];
+      if (tupuSpeed) tupuSpeed.value = tupu.speed || 80;
+    } else {
+      if (tupuName) tupuName.value = '';
+      tupuImageData = null;
+      tupuMasks = [];
+      if (tupuSpeed) tupuSpeed.value = 80;
+    }
+    renderTupuPreview();
+    if (tupuEditOverlay) tupuEditOverlay.classList.add("show");
+  }
+
+  function closeTupuEditDialog() {
+    if (tupuEditOverlay) tupuEditOverlay.classList.remove("show");
+    editingTupuIdx = -1;
+  }
+
+  if (addTupuBtn) {
+    addTupuBtn.onclick = () => openTupuEditDialog(null, -1);
+  }
+  if (tupuEditCancel) {
+    tupuEditCancel.onclick = closeTupuEditDialog;
+  }
+  if (tupuEditOk) {
+    tupuEditOk.onclick = () => {
+      const name = tupuName ? tupuName.value.trim() : '未命名图谱';
+      if (!tupuImageData) {
+        showAppAlert('请先上传图片');
+        return;
+      }
+      // Convert preview-relative coords to image-relative coords for drawImage
+      const imgEl = tupuPreview ? tupuPreview.querySelector('img') : null;
+      const previewImgLeft = imgEl ? (tupuPreview.offsetWidth - imgEl.offsetWidth) / 2 : 0;
+      const previewImgTop = imgEl ? (tupuPreview.offsetHeight - imgEl.offsetHeight) / 2 : 0;
+      // scaleRatio from preview img size to actual img size
+      const previewImgW = imgEl ? imgEl.offsetWidth : 1;
+      const previewImgH = imgEl ? imgEl.offsetHeight : 1;
+      const actualImg = new Image();
+      actualImg.onload = function() {
+        const rx = previewImgW > 0 ? actualImg.width / previewImgW : 1;
+        const ry = previewImgH > 0 ? actualImg.height / previewImgH : 1;
+        const tupuData = {
+          name: name,
+          image: tupuImageData,
+          speed: parseFloat(tupuSpeed ? tupuSpeed.value : 80),
+          masks: tupuMasks.map(mask => ({
+            top: ((mask.top || 0) - previewImgTop) * ry,
+            height: (mask.height || 60) * ry,
+            left: ((mask.left !== undefined ? mask.left : previewImgLeft) - previewImgLeft) * rx,
+            width: (mask.width || previewImgW) * rx
+          }))
+        };
+        if (editingTupuIdx >= 0) {
+          customTupus[editingTupuIdx] = tupuData;
+        } else {
+          customTupus.push(tupuData);
+        }
+        saveTupus();
+        closeTupuEditDialog();
+        renderTupuList();
+      };
+      actualImg.src = tupuImageData;
+    };
+  }
+
+  if (tupuUploadBtn) tupuUploadBtn.onclick = () => tupuImageInput.click();
+  
+  if (tupuImageInput) {
+    tupuImageInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        tupuImageData = ev.target.result;
+        renderTupuPreview();
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+
+  if (tupuAddRow) {
+    tupuAddRow.onclick = () => {
+      if (!tupuImageData) {
+        showAppAlert('请先上传图片');
+        return;
+      }
+      const previewHeight = tupuPreview.offsetHeight;
+      const previewWidth = tupuPreview.offsetWidth;
+      const newMaskHeight = 50;
+      const newMaskWidth = (currentImgWidth || previewWidth) * 0.8;
+      const newTop = Math.max(0, previewHeight - newMaskHeight);
+      const newLeft = (currentImgLeft || 0) + ((currentImgWidth || previewWidth) - newMaskWidth) / 2;
+      tupuMasks.push({
+        top: newTop,
+        height: newMaskHeight,
+        left: newLeft,
+        width: newMaskWidth
+      });
+      renderTupuPreview();
+    };
+  }
+
+  if (tupuDelRow) {
+    tupuDelRow.onclick = () => {
+      if (tupuMasks.length > 0) {
+        tupuMasks.pop();
+        renderTupuPreview();
+      }
+    };
+  }
+
+  // Global sliders: width%, height px, gap px
+  const globalWidth = document.getElementById('globalWidth');
+  const globalWidthVal = document.getElementById('globalWidthVal');
+  const globalHeight = document.getElementById('globalHeight');
+  const globalHeightVal = document.getElementById('globalHeightVal');
+  const globalGap = document.getElementById('globalGap');
+  const globalGapVal = document.getElementById('globalGapVal');
+
+  function applyGlobalSliders() {
+    if (!tupuImageData || tupuMasks.length === 0) return;
+    const imgEl = tupuPreview.querySelector('img');
+    if (!imgEl) return;
+    const imgWidth = imgEl.offsetWidth;
+    const imgLeft = (tupuPreview.offsetWidth - imgWidth) / 2;
+    const widthPct = parseFloat(globalWidth.value) / 100;
+    const newWidth = imgWidth * widthPct;
+    const newHeight = parseFloat(globalHeight.value);
+    const newGap = parseFloat(globalGap.value);
+    const centerLeft = imgLeft + (imgWidth - newWidth) / 2;
+
+    let curTop = tupuMasks[0] ? tupuMasks[0].top : 0;
+    tupuMasks.forEach((mask, i) => {
+      if (i === 0) curTop = mask.top;
+      mask.top = curTop;
+      mask.height = newHeight;
+      mask.left = centerLeft;
+      mask.width = newWidth;
+      curTop += newHeight + newGap;
+    });
+    updateMaskDisplay();
+  }
+
+  if (globalWidth) {
+    globalWidth.oninput = () => {
+      globalWidthVal.textContent = globalWidth.value + '%';
+      applyGlobalSliders();
+    };
+  }
+  if (globalHeight) {
+    globalHeight.oninput = () => {
+      globalHeightVal.textContent = globalHeight.value + 'px';
+      applyGlobalSliders();
+    };
+  }
+  if (globalGap) {
+    globalGap.oninput = () => {
+      globalGapVal.textContent = globalGap.value + 'px';
+      applyGlobalSliders();
+    };
+  }
+
+  function renderTupuPreview() {
+    if (!tupuPreview) return;
+    tupuPreview.innerHTML = '';
+    if (!tupuImageData) {
+      tupuPreview.innerHTML = '<div class="tupu-placeholder">点击上方按钮上传图片</div>';
+      return;
+    }
+
+    const img = new Image();
+    img.src = tupuImageData;
+    img.onload = function() {
+      tupuPreview.innerHTML = '';
+      
+      const imgWrapper = document.createElement('div');
+      imgWrapper.style.cssText = 'position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;';
+      
+      const imgEl = document.createElement('img');
+      imgEl.src = tupuImageData;
+      imgEl.style.cssText = 'max-width:100%;max-height:100%;display:block;';
+      imgWrapper.appendChild(imgEl);
+      tupuPreview.appendChild(imgWrapper);
+      
+      imgEl.onload = function() {
+        const imgWidth = imgEl.offsetWidth;
+        const imgHeight = imgEl.offsetHeight;
+        const imgLeft = (tupuPreview.offsetWidth - imgWidth) / 2;
+        const imgTop = (tupuPreview.offsetHeight - imgHeight) / 2;
+        
+        currentImgLeft = imgLeft;
+        currentImgWidth = imgWidth;
+        
+        if (tupuMasks.length === 0) {
+          const initialMaskHeight = Math.min(60, imgHeight / 3);
+          const initialMaskWidth = imgWidth * 0.8;
+          const initialMaskLeft = imgLeft + (imgWidth - initialMaskWidth) / 2;
+          tupuMasks = [
+            { top: imgTop, height: initialMaskHeight, left: initialMaskLeft, width: initialMaskWidth },
+            { top: imgTop + initialMaskHeight + 10, height: initialMaskHeight, left: initialMaskLeft, width: initialMaskWidth },
+            { top: imgTop + (initialMaskHeight + 10) * 2, height: initialMaskHeight, left: initialMaskLeft, width: initialMaskWidth }
+          ];
+        } else {
+          // Masks are stored in image-relative coords; convert to preview coords
+          // Detect if they appear to be image-coords (left < imgLeft, since imgLeft > 0 typically)
+          // Use a flag: if mask.left is well within image pixel range, they're image coords
+          const needsConvert = tupuMasks[0] && (tupuMasks[0].left === undefined || tupuMasks[0].left < imgLeft - 5);
+          if (needsConvert) {
+            const rx = img.naturalWidth > 0 ? imgWidth / img.naturalWidth : 1;
+            const ry = img.naturalHeight > 0 ? imgHeight / img.naturalHeight : 1;
+            tupuMasks = tupuMasks.map(mask => ({
+              top: (mask.top || 0) * ry + imgTop,
+              height: (mask.height || 60) * ry,
+              left: (mask.left || 0) * rx + imgLeft,
+              width: (mask.width || img.naturalWidth) * rx
+            }));
+          }
+        }
+        
+        const maskContainer = document.createElement('div');
+        maskContainer.className = 'tupu-mask-container';
+        maskContainer.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;';
+        
+        // Dark overlay canvas: covers entire preview, punched out by mask boxes (inverted mask)
+        const overlayCanvas = document.createElement('canvas');
+        overlayCanvas.width = tupuPreview.offsetWidth;
+        overlayCanvas.height = tupuPreview.offsetHeight;
+        overlayCanvas.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;';
+        maskContainer.appendChild(overlayCanvas);
+        
+        // Draw inverted mask: fill dark, then cut holes where masks are
+        function redrawOverlay() {
+          const ctx = overlayCanvas.getContext('2d');
+          ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+          ctx.fillStyle = 'rgba(0,0,0,0.72)';
+          ctx.fillRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+          ctx.globalCompositeOperation = 'destination-out';
+          tupuMasks.forEach(mask => {
+            ctx.fillStyle = 'rgba(0,0,0,1)';
+            ctx.fillRect(mask.left || currentImgLeft, mask.top, mask.width || currentImgWidth, mask.height);
+          });
+          ctx.globalCompositeOperation = 'source-over';
+        }
+        
+        maskContainer.redrawOverlay = redrawOverlay;
+        redrawOverlay();
+        
+        tupuMasks.forEach((mask, idx) => {
+          const maskEl = document.createElement('div');
+          maskEl.className = 'tupu-mask';
+          maskEl.dataset.idx = idx;
+          maskEl.style.cssText = `position:absolute;left:${mask.left !== undefined ? mask.left : imgLeft}px;top:${mask.top}px;width:${mask.width || imgWidth}px;height:${mask.height}px;background:transparent;border:2px dashed rgba(0,153,255,0.8);cursor:move;pointer-events:auto;z-index:10;box-sizing:border-box;`;
+          
+          const topEdge = document.createElement('div');
+          topEdge.className = 'tupu-mask-edge top';
+          topEdge.dataset.edge = 'top';
+          topEdge.dataset.idx = idx;
+          
+          const bottomEdge = document.createElement('div');
+          bottomEdge.className = 'tupu-mask-edge bottom';
+          bottomEdge.dataset.edge = 'bottom';
+          bottomEdge.dataset.idx = idx;
+          
+          const leftEdge = document.createElement('div');
+          leftEdge.className = 'tupu-mask-edge left';
+          leftEdge.dataset.edge = 'left';
+          leftEdge.dataset.idx = idx;
+          
+          const rightEdge = document.createElement('div');
+          rightEdge.className = 'tupu-mask-edge right';
+          rightEdge.dataset.edge = 'right';
+          rightEdge.dataset.idx = idx;
+          
+          maskEl.appendChild(topEdge);
+          maskEl.appendChild(bottomEdge);
+          maskEl.appendChild(leftEdge);
+          maskEl.appendChild(rightEdge);
+          maskContainer.appendChild(maskEl);
+          
+          mask.el = maskEl;
+          
+          maskEl.addEventListener('mousedown', startMaskDrag);
+          maskEl.addEventListener('touchstart', startMaskDrag, { passive: false });
+        });
+        
+        tupuPreview.appendChild(maskContainer);
+      };
+    };
+  }
+
+  let maskDragData = null;
+  let currentImgLeft = 0;
+  let currentImgWidth = 0;
+
+  function startMaskDrag(e) {
+    e.preventDefault();
+    const touch = e.touches ? e.touches[0] : e;
+    const target = e.target;
+    const mask = target.closest('.tupu-mask');
+    if (!mask) return;
+
+    const idx = parseInt(mask.dataset.idx);
+    const isTopEdge = target.classList.contains('tupu-mask-edge') && target.dataset.edge === 'top';
+    const isBottomEdge = target.classList.contains('tupu-mask-edge') && target.dataset.edge === 'bottom';
+    const isLeftEdge = target.classList.contains('tupu-mask-edge') && target.dataset.edge === 'left';
+    const isRightEdge = target.classList.contains('tupu-mask-edge') && target.dataset.edge === 'right';
+
+    let mode = 'move';
+    if (isTopEdge) mode = 'top';
+    else if (isBottomEdge) mode = 'bottom';
+    else if (isLeftEdge) mode = 'left';
+    else if (isRightEdge) mode = 'right';
+
+    maskDragData = {
+      idx: idx,
+      startX: touch.clientX,
+      startY: touch.clientY,
+      startTop: tupuMasks[idx].top,
+      startHeight: tupuMasks[idx].height,
+      startLeft: tupuMasks[idx].left || currentImgLeft,
+      startWidth: tupuMasks[idx].width || currentImgWidth,
+      mode: mode
+    };
+
+    document.addEventListener('mousemove', doMaskDrag);
+    document.addEventListener('mouseup', endMaskDrag);
+    document.addEventListener('touchmove', doMaskDrag, { passive: false });
+    document.addEventListener('touchend', endMaskDrag);
+  }
+
+  function doMaskDrag(e) {
+    if (!maskDragData) return;
+    e.preventDefault();
+    const touch = e.touches ? e.touches[0] : e;
+    const deltaX = touch.clientX - maskDragData.startX;
+    const deltaY = touch.clientY - maskDragData.startY;
+    const idx = maskDragData.idx;
+    const previewHeight = tupuPreview.offsetHeight;
+    const previewWidth = tupuPreview.offsetWidth;
+
+    if (maskDragData.mode === 'move') {
+      let newTop = maskDragData.startTop + deltaY;
+      let newLeft = maskDragData.startLeft + deltaX;
+      newTop = Math.max(0, Math.min(previewHeight - tupuMasks[idx].height, newTop));
+      newLeft = Math.max(0, Math.min(previewWidth - tupuMasks[idx].width, newLeft));
+      tupuMasks[idx].top = newTop;
+      tupuMasks[idx].left = newLeft;
+    } else if (maskDragData.mode === 'top') {
+      let newTop = maskDragData.startTop + deltaY;
+      let newHeight = maskDragData.startHeight - deltaY;
+      if (newTop >= 0 && newHeight >= 20) {
+        tupuMasks[idx].top = newTop;
+        tupuMasks[idx].height = newHeight;
+      }
+    } else if (maskDragData.mode === 'bottom') {
+      let newHeight = maskDragData.startHeight + deltaY;
+      newHeight = Math.max(20, Math.min(previewHeight - tupuMasks[idx].top, newHeight));
+      tupuMasks[idx].height = newHeight;
+    } else if (maskDragData.mode === 'left') {
+      let newLeft = maskDragData.startLeft + deltaX;
+      let newWidth = maskDragData.startWidth - deltaX;
+      if (newLeft >= 0 && newWidth >= 20) {
+        tupuMasks[idx].left = newLeft;
+        tupuMasks[idx].width = newWidth;
+      }
+    } else if (maskDragData.mode === 'right') {
+      let newWidth = maskDragData.startWidth + deltaX;
+      newWidth = Math.max(20, Math.min(previewWidth - tupuMasks[idx].left, newWidth));
+      tupuMasks[idx].width = newWidth;
+    }
+    
+    updateMaskDisplay();
+  }
+
+  function updateMaskDisplay() {
+    const imgEl = tupuPreview.querySelector('img');
+    if (!imgEl) return;
+    
+    currentImgWidth = imgEl.offsetWidth;
+    currentImgLeft = (tupuPreview.offsetWidth - currentImgWidth) / 2;
+    
+    tupuMasks.forEach((mask, idx) => {
+      if (mask.el) {
+        mask.el.style.top = mask.top + 'px';
+        mask.el.style.height = mask.height + 'px';
+        mask.el.style.left = (mask.left !== undefined ? mask.left : currentImgLeft) + 'px';
+        mask.el.style.width = (mask.width || currentImgWidth) + 'px';
+      }
+    });
+    
+    // Redraw inverted overlay: dark everywhere except inside mask boxes
+    const maskContainer = tupuPreview.querySelector('.tupu-mask-container');
+    if (maskContainer && maskContainer.redrawOverlay) {
+      maskContainer.redrawOverlay();
+    }
+  }
+
+  function endMaskDrag() {
+    maskDragData = null;
+    document.removeEventListener('mousemove', doMaskDrag);
+    document.removeEventListener('mouseup', endMaskDrag);
+    document.removeEventListener('touchmove', doMaskDrag);
+    document.removeEventListener('touchend', endMaskDrag);
+  }
+
+  function startTupuScrolling() {
+    if (!currentTupu) return;
+    
+    isTupuScrolling = false;
+    cancelAnimationFrame(tupuScrollRAF);
+    
+    tupuScrollX = 0;
+    canvasOffX = 20;
+    canvas.style.left = "20px";
+    
+    isTupuScrolling = true;
+    tupuLastFrameTime = performance.now();
+    
+    currentTupuSpeed = (currentTupu.speed || 80) / 80;
+    
+    drawTupuScore();
+    stepTupuScrolling();
+  }
+
+  function stepTupuScrolling() {
+    if (!isTupuScrolling || !currentTupu) return;
+    
+    const now = performance.now();
+    const deltaTime = now - tupuLastFrameTime;
+    tupuLastFrameTime = now;
+    
+    if (!isDraggingScore) {
+      const avgMaskWidth = currentTupu.scaledMasks.length > 0 
+        ? currentTupu.totalWidth / currentTupu.scaledMasks.length 
+        : 100;
+      const scrollSpeed = avgMaskWidth * currentTupuSpeed / 2000;
+      tupuScrollX += deltaTime * scrollSpeed;
+      
+      if (tupuScrollX >= currentTupu.totalWidth) {
+        tupuScrollX = 0;
+      }
+      
+      canvasOffX = 20 - tupuScrollX;
+      canvas.style.left = canvasOffX + "px";
+    }
+    
+    tupuScrollRAF = requestAnimationFrame(stepTupuScrolling);
+  }
+
+  function stopTupuScrolling() {
+    isTupuScrolling = false;
+    cancelAnimationFrame(tupuScrollRAF);
+    tupuScrollRAF = null;
+  }
   function openEditDialog(song, idx){
     editingIdx = idx;
     document.getElementById("editTitle").textContent = song ? "编辑简谱" : "添加自定义歌曲";
@@ -2911,6 +4372,19 @@ window.onload = function(){
   };
 
   playBtn.onclick = () => {
+    if (currentTupu) {
+      if (isTupuScrolling) {
+        stopTupuScrolling();
+        playBtn.classList.remove("on");
+        playBtn.textContent = "▶";
+      } else {
+        startTupuScrolling();
+        playBtn.classList.add("on");
+        playBtn.textContent = "⏸";
+      }
+      return;
+    }
+    
     if(!currentSong) return;
     if(isScrolling) pauseAutoPlay();
     else startScrollingSync();
@@ -2928,35 +4402,62 @@ window.onload = function(){
   };
 
   const startScoreDrag = (x) => {
-    if(!currentSong) return;
+    if(!currentSong && !currentTupu) return;
     isDraggingScore = true; dragStartX = x; dragStartOffX = canvasOffX;
     playSpeed = 0; isMutedTemporarily = true;
     cancelAnimationFrame(scrollRAF); isScrolling = false;
+    cancelAnimationFrame(tupuScrollRAF); isTupuScrolling = false;
     stopNote("auto");
     container.querySelectorAll(".auto-hi").forEach(k => k.classList.remove("auto-hi"));
     cancelAnimationFrame(animRAF);
   };
   const moveScoreDrag = (x) => {
-    if(!isDraggingScore || !currentSong) return;
+    if(!isDraggingScore) return;
+    if(!currentSong && !currentTupu) return;
+    
     const dx = x - dragStartX;
     canvasOffX = dragStartOffX + dx;
     canvas.style.left = canvasOffX + "px";
-    const fixedX = scoreWrap.clientWidth / 3 || 20;
-    const targetTokenX = fixedX - canvasOffX;
-    let closestAn = currentSong.autoNotes[0];
-    let minDiff = Infinity, closestIdx = 0;
-    currentSong.autoNotes.forEach((an, i) => {
-      let diff = Math.abs(tokens[an.tokenIdx].x - targetTokenX);
-      if(diff < minDiff) { minDiff = diff; closestAn = an; closestIdx = i; }
-    });
-    highlightNoteIdx = closestIdx; currentFollowIdx = closestIdx;
-    currentPlayTime = closestAn ? closestAn.startTime : 0;
-    drawScore();
+    
+    if (currentSong) {
+      const { fontSize, gap } = getScoreMetrics();
+      const cv = document.createElement("canvas");
+      const c2 = cv.getContext("2d");
+      c2.font = fontSize + "px 'PingFang SC',Arial,sans-serif";
+      
+      const fixedX = scoreWrap.clientWidth / 3 || 20;
+      const targetTokenX = fixedX - canvasOffX;
+      let closestAn = currentSong.autoNotes[0];
+      let minDiff = Infinity, closestIdx = 0;
+      currentSong.autoNotes.forEach((an, i) => {
+        let scaledX = 0;
+        for(let j = 0; j < an.tokenIdx; j++) {
+          const tok = tokens[j];
+          const scaledW = c2.measureText(tok.text).width;
+          const nextTok = tokens[j+1];
+          if(tok.text === "_" || (nextTok && nextTok.text === "_")) {
+            scaledX += scaledW;
+          } else {
+            scaledX += scaledW + gap;
+          }
+        }
+        let diff = Math.abs(scaledX - targetTokenX);
+        if(diff < minDiff) { minDiff = diff; closestAn = an; closestIdx = i; }
+      });
+      highlightNoteIdx = closestIdx; currentFollowIdx = closestIdx;
+      currentPlayTime = closestAn ? closestAn.startTime : 0;
+      drawScore();
+    }
   };
   const endScoreDrag = () => {
+    if (!isDraggingScore) return;
     isDraggingScore = false; isMutedTemporarily = false;
     isScrolling = false; cancelAnimationFrame(scrollRAF);
-    isFollowing = true; currentFollowIdx = highlightNoteIdx;
+    isTupuScrolling = false; cancelAnimationFrame(tupuScrollRAF);
+    
+    if (currentSong) {
+      isFollowing = true; currentFollowIdx = highlightNoteIdx;
+    }
     stopNote("auto");
     container.querySelectorAll(".auto-hi").forEach(k => k.classList.remove("auto-hi"));
   };
@@ -3040,20 +4541,6 @@ window.onload = function(){
   let currentBaseOctave = 4;
   const pressedKeysMap = new Map();
 
-  // 八度提示：短暂高亮并显示当前八度
-  let octaveHintTimer = null;
-  function showOctaveHint() {
-    const el = document.getElementById("octaveNum");
-    if (!el) return;
-    el.textContent = currentBaseOctave;
-    el.style.color = "#fff";
-    el.parentElement.style.color = "#aaa";
-    clearTimeout(octaveHintTimer);
-    octaveHintTimer = setTimeout(() => {
-      el.style.color = "#0099ff";
-      el.parentElement.style.color = "#555";
-    }, 600);
-  }
   let mouseNote = null;
   let mouseRowEl = null;
 
@@ -3128,10 +4615,10 @@ window.onload = function(){
       }
     }
     if (pcKeyMap.control.prevOctave.includes(code)) {
-      currentBaseOctave = Math.max(1, currentBaseOctave - 1); saveSettings(); showOctaveHint(); return;
+      currentBaseOctave = Math.max(1, currentBaseOctave - 1); saveSettings(); return;
     }
     if (pcKeyMap.control.nextOctave.includes(code)) {
-      currentBaseOctave = Math.min(7, currentBaseOctave + 1); saveSettings(); showOctaveHint(); return;
+      currentBaseOctave = Math.min(7, currentBaseOctave + 1); saveSettings(); return;
     }
     for (const note in pcKeyMap.fixed.octave5) {
       if (pcKeyMap.fixed.octave5[note].includes(code)) {
@@ -3236,10 +4723,12 @@ window.onload = function(){
       const settings = JSON.parse(localStorage.getItem('pianoSettings') || '{}');
       if (settings.currentInst) {
         currentInst = settings.currentInst;
-        document.querySelectorAll('.control .btn').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.inst === currentInst);
-        });
       }
+      try {
+        const savedOrder = localStorage.getItem('instOrder');
+        if (savedOrder) instOrder = JSON.parse(savedOrder);
+      } catch(e) {}
+      renderInstButtons();
       if (settings.isMuted !== undefined) {
         isMuted = settings.isMuted;
         autoBtn.classList.toggle("on", isMuted);
@@ -3260,8 +4749,7 @@ window.onload = function(){
       sliderGap.value = savedRowGap; inputGap.value = savedRowGap;
       currentWidthScale = savedWidthScale;
       if (settings.currentBaseOctave) currentBaseOctave = settings.currentBaseOctave;
-      const octaveNumEl = document.getElementById("octaveNum");
-      if (octaveNumEl) octaveNumEl.textContent = currentBaseOctave;
+
       loadRowConfig();
       renderPiano();
     } catch (e) {
@@ -3303,10 +4791,12 @@ window.onload = function(){
   window.addEventListener('orientationchange', () => { setTimeout(() => renderVirtualKeys(), 300); });
 
   setTimeout(() => {
-    const midOct = document.getElementById("middle-octave");
-    if(midOct) {
+    if (container.children.length > 0) {
       const containerRect = container.getBoundingClientRect();
-      container.scrollTop = midOct.offsetTop - (containerRect.height / 2) + (midOct.offsetHeight / 2);
+      const midRow = container.children[Math.floor(container.children.length / 2)];
+      if (midRow) {
+        container.scrollTop = midRow.offsetTop - (containerRect.height / 2) + (midRow.offsetHeight / 2);
+      }
     }
   }, 100);
 
@@ -3334,5 +4824,190 @@ window.onload = function(){
   drawScore();
 };
 </script>
+
+<script>
+(function(){
+
+const wrap=document.querySelector(".score-wrap");
+const musicBar=document.querySelector(".music-bar");
+if(!wrap || !musicBar) return;
+
+const bar=document.createElement("div");
+bar.className="score-resize-bar";
+wrap.appendChild(bar);
+
+let resizing=false;
+let startY=0;
+let startH=0;
+let isScoreFullscreen = false;
+let savedScoreHeight = 34;
+
+function updateFullscreenBtn(h){
+ let full=document.getElementById("scoreFullscreenBtn");
+ const halfHeight = window.innerHeight / 2;
+ 
+ let position = { top: '10px', left: '10px', right: 'auto', bottom: 'auto' };
+ 
+ if (document.body.classList.contains('toolbar-rotated-90')) {
+   position = { top: '10px', left: '66px', right: 'auto', bottom: 'auto' };
+ } else if (document.body.classList.contains('toolbar-rotated-180')) {
+   position = { top: 'auto', left: '10px', right: 'auto', bottom: '62px' };
+ } else if (document.body.classList.contains('toolbar-rotated-270')) {
+   position = { top: '10px', left: 'auto', right: '66px', bottom: 'auto' };
+ }
+ 
+ const shouldShow = h > halfHeight || isScoreFullscreen;
+ 
+ if(shouldShow){
+   if(!full){
+     full=document.createElement("button");
+     full.id="scoreFullscreenBtn";
+     full.innerText="⛶";
+     full.style.cssText="position:fixed;width:40px;height:40px;border-radius:8px;border:1px solid #444;background:#222;color:#fff;font-size:18px;cursor:pointer;z-index:9999;display:flex;align-items:center;justify-content:center;";
+     full.onclick=toggleScoreFullscreen;
+     document.body.appendChild(full);
+   }
+   full.style.top = position.top;
+   full.style.left = position.left;
+   full.style.right = position.right;
+   full.style.bottom = position.bottom;
+   full.innerText = isScoreFullscreen ? "⛶" : "⛶";
+ }else{
+   if(full) full.remove();
+ }
+}
+
+function toggleScoreFullscreen(){
+ const playBtn = document.getElementById('playBtn');
+ const autoBtn = document.getElementById('autoBtn');
+ 
+ if(isScoreFullscreen){
+   musicBar.style.position = '';
+   musicBar.style.top = '';
+   musicBar.style.left = '';
+   musicBar.style.right = '';
+   musicBar.style.bottom = '';
+   musicBar.style.width = '';
+   musicBar.style.height = '';
+   musicBar.style.zIndex = '';
+   musicBar.style.background = '';
+   
+   wrap.style.position = '';
+   wrap.style.margin = '';
+   
+   if(playBtn) playBtn.style.display = '';
+   if(autoBtn) autoBtn.style.display = '';
+   
+   wrap.style.setProperty("--score-height", savedScoreHeight + "px");
+   if (canvas && scoreWrap) {
+     canvas.height = savedScoreHeight;
+     canvas.style.height = savedScoreHeight + "px";
+     if (currentTupu && currentTupu.img && currentTupu.masks) {
+       updateTupuScale();
+       drawTupuScore();
+     }
+     if (tokens && tokens.length > 0) {
+       drawScore();
+     }
+   }
+   isScoreFullscreen = false;
+ }else{
+   savedScoreHeight = wrap.offsetHeight;
+   
+   musicBar.style.position = 'fixed';
+   musicBar.style.top = '0';
+   musicBar.style.left = '0';
+   musicBar.style.right = '0';
+   musicBar.style.bottom = '0';
+   musicBar.style.width = '100%';
+   musicBar.style.height = '100%';
+   musicBar.style.zIndex = '9998';
+   musicBar.style.background = 'rgba(0,0,0,0.95)';
+   
+   wrap.style.position = 'absolute';
+   wrap.style.left = '0';
+   wrap.style.right = '0';
+   wrap.style.margin = '0';
+   
+   if(playBtn) playBtn.style.display = 'none';
+   if(autoBtn) autoBtn.style.display = 'none';
+   
+   const maxH = window.innerHeight;
+   wrap.style.setProperty("--score-height", maxH + "px");
+   if (canvas && scoreWrap) {
+     canvas.height = maxH;
+     canvas.style.height = maxH + "px";
+     if (currentTupu && currentTupu.img && currentTupu.masks) {
+       updateTupuScale();
+       drawTupuScore();
+     }
+     if (tokens && tokens.length > 0) {
+       drawScore();
+     }
+   }
+   isScoreFullscreen = true;
+ }
+ updateFullscreenBtn(wrap.offsetHeight);
+}
+
+function startResize(e){
+ resizing=true;
+ const touch = e.touches ? e.touches[0] : e;
+ startY=touch.clientY;
+ startH=wrap.offsetHeight;
+ document.body.style.userSelect = "none";
+ document.body.style.cursor = "ns-resize";
+ if(e.preventDefault) e.preventDefault();
+ if(e.stopPropagation) e.stopPropagation();
+}
+
+function moveResize(e){
+ if(!resizing) return;
+ e.preventDefault();
+ const touch = e.touches ? e.touches[0] : e;
+ let deltaY=touch.clientY-startY;
+ let h=startH+deltaY;
+ if(h<34)h=34;
+ wrap.style.setProperty("--score-height",h+"px");
+ 
+ if (canvas && scoreWrap) {
+   canvas.height = h;
+   canvas.style.height = h + "px";
+   if (currentTupu && currentTupu.img && currentTupu.masks) {
+     updateTupuScale();
+     drawTupuScore();
+   }
+   if (tokens && tokens.length > 0) {
+     drawScore();
+   }
+ }
+ 
+ updateFullscreenBtn(h);
+}
+
+function endResize(){
+ if(!resizing) return;
+ resizing=false;
+ document.body.style.userSelect = "";
+ document.body.style.cursor = "";
+}
+
+bar.addEventListener("mousedown",startResize);
+bar.addEventListener("touchstart",startResize, {passive:false});
+document.addEventListener("mousemove",moveResize);
+document.addEventListener("touchmove",moveResize, {passive:false});
+document.addEventListener("mouseup",endResize);
+document.addEventListener("touchend",endResize);
+document.addEventListener("touchcancel",endResize);
+
+updateFullscreenBtn(wrap.offsetHeight);
+
+window.addEventListener('resize', () => {
+  updateFullscreenBtn(wrap.offsetHeight);
+});
+
+})();
+</script>
+
 </body>
 </html>
