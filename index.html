@@ -28,29 +28,25 @@ body.landscape-mode .piano-container{width:100%;}
 body.landscape-mode .music-bar{width:calc(100% - 52px);margin-left:52px;}
 body.landscape-mode #layoutToolbar{width:calc(100% - 52px);margin-left:52px;margin-right:0;}
 body.landscape-mode .tupu-edit-modal{padding:10px;}
-body.landscape-mode .tupu-edit-nav{margin-bottom:10px;}
 body.landscape-mode .tupu-edit-content{flex-direction:row;}
 body.landscape-mode .tupu-edit-left{width:180px;max-height:100%;overflow-y:auto;padding-right:10px;}
 body.landscape-mode .tupu-edit-right{flex:1;min-height:0;}
 body.landscape-mode .tupu-edit-right .tupu-preview-wrap{height:100%;margin-bottom:0;}
 body.landscape-mode .tupu-edit-right .tupu-preview{height:100%;min-height:0;}
-body.landscape-mode .tupu-controls{display:none;}
 body.landscape-mode .tupu-preview{cursor:pointer;}
 
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode{padding:8px;}
-body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-nav{margin-bottom:8px;}
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-content{flex-direction:column;}
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-right{order:-1;flex:none;height:50%;}
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-right .tupu-preview-wrap{height:100%;margin-bottom:0;}
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-right .tupu-preview{height:100%;min-height:0;}
-body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-left{width:100%;flex:none;height:auto;max-height:35%;overflow-x:auto;overflow-y:hidden;display:flex;flex-direction:row;gap:12px;padding:8px 0;}
-body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-left>div{flex-shrink:0;min-width:160px;background:#1a1a1a;border-radius:8px;padding:10px;}
-body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-settings,
-body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-speed-setting,
+body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-left{width:100%;flex:none;height:auto;max-height:35%;overflow-x:auto;overflow-y:hidden;display:flex;flex-direction:row;gap:8px;padding:3px 0;}
+body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-left>div{flex-shrink:0;min-width:130px;background:#1a1a1a;border-radius:4px;padding:6px;}
+body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-top-row,
+body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-page-nav,
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-actions,
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-global-controls,
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-mask-props{margin-bottom:0;margin-top:0;}
-body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-controls{display:none;}
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-preview{cursor:pointer;}
 body.toolbar-rotated-90 .control{width:52px;height:100%;flex-direction:column;position:fixed;left:0;top:0;border-right:1px solid #2a2a2a;border-bottom:none;padding:8px 0;z-index:30;justify-content:space-between;}
 body.toolbar-rotated-180 .control{height:52px;width:100%;flex-direction:row;position:fixed;bottom:0;top:auto;left:0;border-top:1px solid #2a2a2a;border-right:1px solid #2a2a2a;padding:0 8px;z-index:30;}
@@ -329,21 +325,6 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
 .song-tab.active{background:#0099ff;color:#fff;}
 .song-tab-content{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
 .coming-soon{text-align:center;color:#666;padding:40px 20px;font-size:14px;}
-.tupu-speed-setting{display:flex;align-items:center;gap:8px;padding:10px;background:#1a1a1a;border-radius:8px;margin-bottom:10px;}
-.tupu-speed-setting label{font-size:13px;color:#aaa;}
-.tupu-speed-setting input[type="range"]{flex:1;height:4px;}
-.tupu-speed-setting span{font-size:13px;color:#0099ff;min-width:40px;}
-.tupu-controls{display:flex;gap:8px;margin-bottom:10px;}
-.tupu-btn{flex:1;padding:10px;background:#2a2a2a;border:1px solid #444;border-radius:8px;color:#eee;font-size:13px;cursor:pointer;}
-.tupu-btn:hover{background:#333;}
-.tupu-btn:active{background:#0099ff;color:#fff;}
-.tupu-settings{background:#1a1a1a;border-radius:8px;padding:10px;margin-bottom:10px;}
-.tupu-settings .tupu-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.tupu-settings .tupu-row:last-child{margin-bottom:0;}
-.tupu-settings label{font-size:12px;color:#aaa;min-width:70px;}
-.tupu-settings input[type="number"]{width:50px;padding:4px 6px;background:#111;border:1px solid #333;border-radius:4px;color:#eee;font-size:12px;}
-.tupu-settings input[type="range"]{flex:1;height:4px;}
-.tupu-settings span{font-size:12px;color:#0099ff;min-width:40px;}
 .tupu-preview-wrap{background:#111;border-radius:8px;overflow:hidden;margin-bottom:10px;}
 .tupu-preview{position:relative;width:100%;height:200px;overflow:hidden;background:#0a0a0a;}
 .tupu-placeholder{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#444;font-size:13px;}
@@ -356,13 +337,6 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
 .tupu-mask-edge.bottom{bottom:-6px;left:0;width:100%;height:12px;cursor:ns-resize;}
 .tupu-mask-edge.left{left:-6px;top:0;width:12px;height:100%;cursor:ew-resize;}
 .tupu-mask-edge.right{right:-6px;top:0;width:12px;height:100%;cursor:ew-resize;}
-.tupu-global-controls{background:#1a1a1a;border-radius:8px;padding:10px;margin-bottom:10px;}
-.tupu-global-controls h4{font-size:11px;color:#666;margin:0 0 8px 0;text-transform:uppercase;letter-spacing:0.5px;}
-.tupu-global-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
-.tupu-global-row:last-child{margin-bottom:0;}
-.tupu-global-row label{font-size:11px;color:#888;min-width:32px;}
-.tupu-global-row input[type="range"]{flex:1;height:3px;}
-.tupu-global-row span{font-size:11px;color:#0099ff;min-width:32px;text-align:right;}
 .tupu-mask-props{background:#1a1a1a;border-radius:8px;padding:10px;margin-top:10px;}
 .tupu-mask-props h4{font-size:12px;color:#0099ff;margin:0 0 10px 0;}
 .tupu-prop-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
@@ -370,24 +344,39 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
 .tupu-prop-row label{font-size:11px;color:#888;min-width:32px;}
 .tupu-prop-row input[type="number"]{flex:1;background:#2a2a2a;border:1px solid #444;border-radius:4px;color:#fff;font-size:11px;padding:4px 6px;text-align:right;}
 .tupu-prop-row span{font-size:11px;color:#666;}
-.tupu-btn-small{flex:1;padding:8px;background:#2a2a2a;border:1px solid #444;border-radius:6px;color:#aaa;font-size:12px;cursor:pointer;}
-.tupu-btn-small:hover{background:#333;color:#fff;}
 
 .tupu-edit-modal{padding:15px;}
-.tupu-edit-nav{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:15px;flex-shrink:0;}
-.tupu-nav-btn{background:#2a2a2a;color:#888;border:1px solid #333;border-radius:8px;padding:8px 14px;font-size:18px;cursor:pointer;line-height:1;}
+.tupu-top-row{display:flex;flex-direction:row;gap:6px;margin-bottom:4px;width:100%;height:24px;}
+.tupu-name-input{flex:4;background:#111;border:1px solid #444;border-radius:4px;color:#eee;padding:2px 6px;font-size:14px;height:24px;box-sizing:border-box;}
+.tupu-speed-input{flex:1;background:#111;border:1px solid #444;border-radius:4px;color:#eee;padding:2px 6px;font-size:14px;height:24px;box-sizing:border-box;text-align:center;}
+.tupu-speed-input::-webkit-inner-spin-button,.tupu-speed-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.tupu-speed-input[type=number]{-moz-appearance:textfield;}
+.tupu-page-nav{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:4px;flex-shrink:0;width:100%;height:24px;}
+.tupu-nav-btn{background:#2a2a2a;color:#888;border:1px solid #333;border-radius:6px;padding:4px 8px;font-size:14px;cursor:pointer;line-height:1;}
 .tupu-nav-btn:hover{background:#333;color:#fff;}
 .tupu-nav-btn:disabled{opacity:0.4;cursor:not-allowed;}
-.tupu-action-btn{background:#2a2a2a;color:#888;border:1px solid #333;border-radius:8px;padding:8px 14px;font-size:20px;cursor:pointer;line-height:1;}
+.tupu-action-btn{background:#2a2a2a;color:#888;border:1px solid #333;border-radius:6px;padding:4px 8px;font-size:16px;cursor:pointer;line-height:1;}
 .tupu-action-btn:hover{background:#333;color:#fff;}
 .tupu-delete-btn{background:#aa2222;color:#fff;border:none;}
 .tupu-delete-btn:hover{background:#cc3333;}
-#tupuNavInfo{color:#888;font-size:13px;min-width:60px;text-align:center;}
+#tupuNavInfo{color:#888;font-size:12px;min-width:40px;text-align:center;}
 .tupu-edit-content{display:flex;flex:1;gap:15px;min-height:0;}
-.tupu-edit-left{width:200px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
+.tupu-edit-left{width:200px;flex-shrink:0;display:flex;flex-direction:column;gap:4px;overflow-y:auto;}
+.tupu-edit-left-row{display:flex;gap:8px;align-items:flex-start;}
+.tupu-left-col{display:flex;flex-direction:column;gap:4px;flex:1;}
+.tupu-right-col{display:flex;flex-direction:column;gap:4px;flex:1;}
 .tupu-edit-right{flex:1;display:flex;flex-direction:column;min-height:0;}
 .tupu-edit-right .tupu-preview-wrap{flex:1;display:flex;flex-direction:column;min-height:0;}
 .tupu-edit-right .tupu-preview{flex:1;min-height:300px;}
+.tupu-actions{display:flex;gap:4px;margin-bottom:2px;height:24px;}
+.tupu-btn-small{flex:1;padding:4px 6px;background:#2a2a2a;border:1px solid #444;border-radius:4px;color:#aaa;font-size:12px;cursor:pointer;height:24px;}
+.tupu-btn-small:hover{background:#333;color:#fff;}
+.tupu-global-controls{padding:0;margin:0;}
+.tupu-global-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;height:24px;}
+.tupu-global-row:last-child{margin-bottom:0;}
+.tupu-global-row label{font-size:11px;color:#888;min-width:30px;}
+.tupu-global-row input[type="range"]{flex:1;height:4px;}
+.tupu-global-row span{font-size:11px;color:#0099ff;min-width:30px;text-align:right;}
 
 .edit-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:1100;flex-direction:column;}
 .edit-overlay.show{display:flex;}
@@ -811,51 +800,47 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
 
 <div class="edit-overlay" id="tupuEditOverlay">
   <div class="edit-modal tupu-edit-modal">
-    <div class="tupu-edit-nav">
-      <button class="tupu-nav-btn" id="tupuPrevBtn">◀</button>
-      <span id="tupuNavInfo">1 / 1</span>
-      <button class="tupu-nav-btn" id="tupuNextBtn">▶</button>
-      <button class="tupu-action-btn" id="tupuAddBtn">＋</button>
-      <button class="tupu-action-btn tupu-delete-btn" id="tupuDeleteBtn">－</button>
-    </div>
     <div class="tupu-edit-content">
       <div class="tupu-edit-left">
-        <div class="tupu-settings">
-          <div class="tupu-row">
-            <label>名称：</label>
-            <input type="text" id="tupuName" placeholder="例：小星星">
+        <div class="tupu-edit-left-row">
+          <div class="tupu-left-col">
+            <div class="tupu-top-row">
+              <input type="text" id="tupuName" placeholder="乐谱名称" class="tupu-name-input" maxlength="8">
+              <input type="number" id="tupuSpeed" min="30" max="240" step="1" value="80" placeholder="速度BPM" class="tupu-speed-input" maxlength="4">
+            </div>
+            <div class="tupu-page-nav">
+              <button class="tupu-nav-btn" id="tupuPrevBtn">◀</button>
+              <span id="tupuNavInfo">1 / 1</span>
+              <button class="tupu-nav-btn" id="tupuNextBtn">▶</button>
+              <button class="tupu-action-btn" id="tupuAddBtn">＋</button>
+              <button class="tupu-action-btn tupu-delete-btn" id="tupuDeleteBtn">－</button>
+            </div>
+            <div class="tupu-actions">
+              <button class="tupu-btn-small" id="tupuAddRow">＋ 增加行</button>
+              <button class="tupu-btn-small" id="tupuDelRow">－ 删除行</button>
+            </div>
+          </div>
+          <div class="tupu-right-col">
+            <div class="tupu-global-controls">
+              <div class="tupu-global-row">
+                <label>宽度</label>
+                <input type="range" id="globalWidth" min="10" max="100" value="80" step="1">
+                <span id="globalWidthVal">80%</span>
+              </div>
+              <div class="tupu-global-row">
+                <label>高度</label>
+                <input type="range" id="globalHeight" min="1" max="50" value="10" step="0.5">
+                <span id="globalHeightVal">10%</span>
+              </div>
+              <div class="tupu-global-row">
+                <label>间距</label>
+                <input type="range" id="globalGap" min="0" max="20" value="2" step="0.5">
+                <span id="globalGapVal">2%</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="tupu-speed-setting">
-          <label>播放速度 (BPM)：</label>
-          <input type="number" id="tupuSpeed" min="30" max="240" step="1" value="80">
-        </div>
-        <div class="tupu-controls">
-          <input type="file" id="tupuImageInput" accept="image/*" style="display:none;">
-          <button class="tupu-btn" id="tupuUploadBtn">上传图片</button>
-        </div>
-        <div class="tupu-actions">
-          <button class="tupu-btn-small" id="tupuAddRow">＋ 增加行</button>
-          <button class="tupu-btn-small" id="tupuDelRow">－ 删除行</button>
-        </div>
-        <div class="tupu-global-controls">
-          <h4>全局调整</h4>
-          <div class="tupu-global-row">
-            <label>宽度</label>
-            <input type="range" id="globalWidth" min="10" max="100" value="80" step="1">
-            <span id="globalWidthVal">80%</span>
-          </div>
-          <div class="tupu-global-row">
-            <label>高度</label>
-            <input type="range" id="globalHeight" min="1" max="50" value="10" step="0.5">
-            <span id="globalHeightVal">10%</span>
-          </div>
-          <div class="tupu-global-row">
-            <label>间距</label>
-            <input type="range" id="globalGap" min="0" max="20" value="2" step="0.5">
-            <span id="globalGapVal">2%</span>
-          </div>
-        </div>
+        <input type="file" id="tupuImageInput" accept="image/*" style="display:none;">
         <div class="tupu-mask-props" id="maskPropsPanel" style="display:none;">
           <h4>选中遮罩属性</h4>
           <div class="tupu-prop-row">
@@ -5512,7 +5497,6 @@ window.onload = function(){
 
   const tupuSpeed = document.getElementById('tupuSpeed');
   const tupuImageInput = document.getElementById('tupuImageInput');
-  const tupuUploadBtn = document.getElementById('tupuUploadBtn');
   const tupuPreview = document.getElementById('tupuPreview');
   const tupuAddRow = document.getElementById('tupuAddRow');
   const tupuDelRow = document.getElementById('tupuDelRow');
@@ -5857,23 +5841,19 @@ window.onload = function(){
   if (tupuDeleteBtn) {
     tupuDeleteBtn.onclick = () => {
       if (editingPages.length > 1) {
-        window.appConfirm('确定要删除当前页吗？', function() {
-          editingPages.splice(editingPageIdx, 1);
-          if (editingPageIdx >= editingPages.length) {
-            editingPageIdx = editingPages.length - 1;
-          }
-          loadCurrentPage();
-          updateTupuNavInfo();
-        });
+        editingPages.splice(editingPageIdx, 1);
+        if (editingPageIdx >= editingPages.length) {
+          editingPageIdx = editingPages.length - 1;
+        }
+        loadCurrentPage();
+        updateTupuNavInfo();
       } else if (editingPages.length === 1) {
-        window.appConfirm('这是最后一页，删除后将清空当前图谱。确定要删除吗？', function() {
-          editingPages = [];
-          editingPageIdx = 0;
-          tupuImageData = null;
-          tupuMasks = [];
-          renderTupuPreview();
-          updateTupuNavInfo();
-        });
+        editingPages = [];
+        editingPageIdx = 0;
+        tupuImageData = null;
+        tupuMasks = [];
+        renderTupuPreview();
+        updateTupuNavInfo();
       }
     };
   }
@@ -5927,8 +5907,6 @@ window.onload = function(){
       closeTupuEditDialog();
     };
   }
-
-  if (tupuUploadBtn) tupuUploadBtn.onclick = () => tupuImageInput.click();
   
   if (tupuImageInput) {
     tupuImageInput.onchange = (e) => {
