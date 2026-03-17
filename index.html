@@ -36,12 +36,12 @@ body.landscape-mode .tupu-edit-right .tupu-preview{height:100%;min-height:0;}
 body.landscape-mode .tupu-preview{cursor:pointer;}
 
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode{padding:8px;}
-body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-content{flex-direction:column;}
-body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-right{order:-1;flex:none;height:50%;}
+body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-content{flex-direction:column;align-items:center;}
+body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-right{order:-1;flex:none;height:50%;width:100%;}
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-right .tupu-preview-wrap{height:100%;margin-bottom:0;}
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-right .tupu-preview{height:100%;min-height:0;}
-body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-left{width:100%;flex:none;height:auto;max-height:35%;overflow-x:auto;overflow-y:hidden;display:flex;flex-direction:row;gap:8px;padding:3px 0;}
-body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-left>div{flex-shrink:0;min-width:130px;background:#1a1a1a;border-radius:4px;padding:6px;}
+body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-left{width:auto;max-width:280px;flex:none;height:auto;max-height:40%;overflow-y:auto;padding:6px;}
+body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-edit-left-row{width:100%;}
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-top-row,
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-page-nav,
 body:not(.landscape-mode) .tupu-edit-modal.tupu-portrait-mode .tupu-actions,
@@ -337,12 +337,11 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
 .tupu-mask-edge.bottom{bottom:-6px;left:0;width:100%;height:12px;cursor:ns-resize;}
 .tupu-mask-edge.left{left:-6px;top:0;width:12px;height:100%;cursor:ew-resize;}
 .tupu-mask-edge.right{right:-6px;top:0;width:12px;height:100%;cursor:ew-resize;}
-.tupu-mask-props{background:#1a1a1a;border-radius:8px;padding:10px;margin-top:10px;}
-.tupu-mask-props h4{font-size:12px;color:#0099ff;margin:0 0 10px 0;}
-.tupu-prop-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.tupu-mask-props{padding:0;margin-top:4px;}
+.tupu-prop-row{display:flex;align-items:center;gap:4px;margin-bottom:4px;height:24px;}
 .tupu-prop-row:last-child{margin-bottom:0;}
-.tupu-prop-row label{font-size:11px;color:#888;min-width:32px;}
-.tupu-prop-row input[type="number"]{flex:1;background:#2a2a2a;border:1px solid #444;border-radius:4px;color:#fff;font-size:11px;padding:4px 6px;text-align:right;}
+.tupu-prop-row label{font-size:11px;color:#888;min-width:26px;}
+.tupu-prop-row input[type="number"]{flex:1;background:#2a2a2a;border:1px solid #444;border-radius:4px;color:#fff;font-size:11px;padding:2px 4px;text-align:right;height:24px;box-sizing:border-box;}
 .tupu-prop-row span{font-size:11px;color:#666;}
 
 .tupu-edit-modal{padding:15px;}
@@ -819,8 +818,6 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
               <button class="tupu-btn-small" id="tupuAddRow">＋ 增加行</button>
               <button class="tupu-btn-small" id="tupuDelRow">－ 删除行</button>
             </div>
-          </div>
-          <div class="tupu-right-col">
             <div class="tupu-global-controls">
               <div class="tupu-global-row">
                 <label>宽度</label>
@@ -838,32 +835,27 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
                 <span id="globalGapVal">2%</span>
               </div>
             </div>
+            <div class="tupu-mask-props" id="maskPropsPanel" style="display:none;">
+              <div class="tupu-prop-row">
+                <label>左边</label>
+                <input type="number" id="maskLeftPct" min="0" max="100" step="0.01" value="0">
+                <span>%</span>
+                <label>右边</label>
+                <input type="number" id="maskRightPct" min="0" max="100" step="0.01" value="100">
+                <span>%</span>
+              </div>
+              <div class="tupu-prop-row">
+                <label>上边</label>
+                <input type="number" id="maskTopPct" min="0" max="100" step="0.01" value="0">
+                <span>%</span>
+                <label>下边</label>
+                <input type="number" id="maskBottomPct" min="0" max="100" step="0.01" value="100">
+                <span>%</span>
+              </div>
+            </div>
           </div>
         </div>
         <input type="file" id="tupuImageInput" accept="image/*" style="display:none;">
-        <div class="tupu-mask-props" id="maskPropsPanel" style="display:none;">
-          <h4>选中遮罩属性</h4>
-          <div class="tupu-prop-row">
-            <label>左边</label>
-            <input type="number" id="maskLeftPct" min="0" max="100" step="0.01" value="0">
-            <span>%</span>
-          </div>
-          <div class="tupu-prop-row">
-            <label>右边</label>
-            <input type="number" id="maskRightPct" min="0" max="100" step="0.01" value="100">
-            <span>%</span>
-          </div>
-          <div class="tupu-prop-row">
-            <label>上边</label>
-            <input type="number" id="maskTopPct" min="0" max="100" step="0.01" value="0">
-            <span>%</span>
-          </div>
-          <div class="tupu-prop-row">
-            <label>下边</label>
-            <input type="number" id="maskBottomPct" min="0" max="100" step="0.01" value="100">
-            <span>%</span>
-          </div>
-        </div>
       </div>
       <div class="tupu-edit-right">
         <div class="tupu-preview-wrap">
@@ -6104,12 +6096,10 @@ window.onload = function(){
     if (!tupuImageData) {
       const placeholder = document.createElement('div');
       placeholder.className = 'tupu-placeholder';
-      placeholder.textContent = isMobileMode ? '点击此处上传图片' : '点击上方按钮上传图片';
+      placeholder.textContent = '点击此处上传图片';
       tupuPreview.appendChild(placeholder);
       
-      if (isMobileMode) {
-        tupuPreview.onclick = () => tupuImageInput.click();
-      }
+      tupuPreview.onclick = () => tupuImageInput.click();
       selectedMaskIdx = -1;
       updateMaskPropsPanel();
       return;
@@ -6136,7 +6126,7 @@ window.onload = function(){
       let currentTranslateY = 0;
       
       const updateImageTransform = () => {
-        imgEl.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
+        imgWrapper.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
       };
       
       if (isMobileMode) {
@@ -6286,7 +6276,7 @@ window.onload = function(){
           maskEl.addEventListener('touchstart', startMaskDrag, { passive: false });
         });
         
-        tupuPreview.appendChild(maskContainer);
+        imgWrapper.appendChild(maskContainer);
         
         if (selectedMaskIdx >= 0 && selectedMaskIdx < tupuMasks.length) {
           highlightSelectedMask();
