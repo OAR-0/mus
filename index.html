@@ -96,8 +96,8 @@ body.toolbar-rotated-180 .control .auto-btn{margin:0 4px;}
 
 :root {
   --key-width-scale: 7;
-  --key-height: 140px;
-  --row-gap: 18px;
+  --key-height: 80px;
+  --row-gap: 0px;
   --octave-width: 100vw;
 }
 .piano-container{flex:1;overflow-y:auto;padding:0; -webkit-overflow-scrolling:touch;}
@@ -579,13 +579,13 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
     </div>
     <div class="toolbar-item">
       <span class="toolbar-label">高:</span>
-      <input type="range" class="toolbar-slider" id="sliderHeight" min="80" max="300" step="10" value="140">
-      <input type="number" class="toolbar-input" id="inputHeight" min="80" max="300" value="140">
+      <input type="range" class="toolbar-slider" id="sliderHeight" min="80" max="300" step="10" value="80">
+      <input type="number" class="toolbar-input" id="inputHeight" min="80" max="300" value="80">
     </div>
     <div class="toolbar-item">
       <span class="toolbar-label">隙:</span>
-      <input type="range" class="toolbar-slider" id="sliderGap" min="0" max="100" step="2" value="18">
-      <input type="number" class="toolbar-input" id="inputGap" min="0" max="100" value="18">
+      <input type="range" class="toolbar-slider" id="sliderGap" min="0" max="100" step="2" value="0">
+      <input type="number" class="toolbar-input" id="inputGap" min="0" max="100" value="0">
     </div>
   </div>
   <div class="toolbar-group toolbar-group-rotate">
@@ -598,9 +598,6 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
   </div>
   <div class="toolbar-group toolbar-group-action">
     <div class="toolbar-item">
-      <button class="toolbar-btn-simple" id="btnResetLayout">默认</button>
-    </div>
-    <div class="toolbar-item">
       <button class="toolbar-btn-simple toolbar-btn-save" id="btnSaveLayout">保存</button>
     </div>
   </div>
@@ -610,6 +607,7 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
   <div class="score-wrap" id="scoreWrap">
     <canvas id="scoreBgCanvas" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
     <canvas id="scoreCanvas" style="z-index:1;"></canvas>
+    <canvas id="scoreOverlayCanvas" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:2;"></canvas>
     <div class="layout-drag-hint" id="layoutDragHint">布局模式里可以左右拖动琴键位置，点击布局模式恢复正常模式</div>
   </div>
 </div>
@@ -949,7 +947,7 @@ let rowColorMap = {}; // rowIdx -> {white: '#fff', black: '#000'}
 let rowDynamicMap = {}; // rowIdx -> boolean (true=动态, false=静态)
 let rowOctaveOffsetMap = {}; // rowIdx -> number (八度偏移量)
 
-let currentWidthScale = 4;
+let currentWidthScale = 1;
 
 let noteAnimStartTime = 0;
 let animRAF = null;
@@ -1248,78 +1246,30 @@ function drawRainbowGridBackground() {
   var ctx = bctx;
   var w = scoreW;
 
-  // --- Cyberpunk grid background (fixed, does not scroll) ---
+  // --- Gradient background (smooth, no texture) ---
 
   // 1. Deep dark base
-  ctx.fillStyle = '#04040f';
+  ctx.fillStyle = '#0a0a18';
   ctx.fillRect(0, 0, w, h);
 
-  // 2. Subtle radial glow at center
-  var grd = ctx.createRadialGradient(scoreW / 2, h / 2, 0, scoreW / 2, h / 2, Math.max(scoreW, h) * 0.7);
-  grd.addColorStop(0, 'rgba(0, 220, 255, 0.07)');
-  grd.addColorStop(0.5, 'rgba(160, 0, 255, 0.04)');
+  // 2. Vertical gradient from top to bottom (smooth)
+  var vGrd = ctx.createLinearGradient(0, 0, 0, h);
+  vGrd.addColorStop(0, 'rgba(0, 180, 220, 0.08)');
+  vGrd.addColorStop(0.3, 'rgba(100, 0, 180, 0.05)');
+  vGrd.addColorStop(0.7, 'rgba(100, 0, 180, 0.05)');
+  vGrd.addColorStop(1, 'rgba(160, 0, 255, 0.08)');
+  ctx.fillStyle = vGrd;
+  ctx.fillRect(0, 0, w, h);
+
+  // 3. Subtle radial glow at center (smaller radius for smoother look)
+  var grd = ctx.createRadialGradient(scoreW / 2, h / 2, 0, scoreW / 2, h / 2, Math.min(scoreW, h) * 0.6);
+  grd.addColorStop(0, 'rgba(0, 200, 255, 0.06)');
+  grd.addColorStop(0.5, 'rgba(140, 0, 220, 0.03)');
   grd.addColorStop(1, 'rgba(0, 0, 0, 0)');
   ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, scoreW, h);
+  ctx.fillRect(0, 0, w, h);
 
-  // 3. Grid cell size: aim for ~18-24px cells, snapped to integer
-  var cellSize = Math.max(14, Math.round(Math.min(scoreW, h * 3) / 28));
-
-  // 4. Minor grid lines (thin, dark cyan)
-  ctx.lineWidth = 0.5;
-  ctx.strokeStyle = 'rgba(0, 255, 240, 0.10)';
-  ctx.beginPath();
-  for (var x = 0; x <= scoreW; x += cellSize) {
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-  }
-  for (var y = 0; y <= h; y += cellSize) {
-    ctx.moveTo(0, y);
-    ctx.lineTo(scoreW, y);
-  }
-  ctx.stroke();
-
-  // 5. Major grid lines every 4 cells (brighter cyan with magenta accent)
-  var majorStep = cellSize * 4;
-  ctx.lineWidth = 1;
-  // Horizontal major — cyan
-  ctx.strokeStyle = 'rgba(0, 230, 255, 0.32)';
-  ctx.beginPath();
-  for (var y = 0; y <= h; y += majorStep) {
-    ctx.moveTo(0, y);
-    ctx.lineTo(scoreW, y);
-  }
-  ctx.stroke();
-  // Vertical major — magenta/purple
-  ctx.strokeStyle = 'rgba(180, 0, 255, 0.28)';
-  ctx.beginPath();
-  for (var x = 0; x <= scoreW; x += majorStep) {
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-  }
-  ctx.stroke();
-
-  // 6. Intersection dots at major crossings
-  var dotR = Math.max(1, cellSize * 0.08);
-  ctx.fillStyle = 'rgba(0, 255, 240, 0.55)';
-  for (var xi = 0; xi <= scoreW; xi += majorStep) {
-    for (var yi = 0; yi <= h; yi += majorStep) {
-      ctx.beginPath();
-      ctx.arc(xi, yi, dotR, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  // 7. Horizontal scan-line glow strips (subtle)
-  var scanH = Math.max(2, Math.round(h * 0.12));
-  var scanGrd = ctx.createLinearGradient(0, h * 0.35, 0, h * 0.35 + scanH);
-  scanGrd.addColorStop(0, 'rgba(0, 220, 255, 0)');
-  scanGrd.addColorStop(0.5, 'rgba(0, 220, 255, 0.06)');
-  scanGrd.addColorStop(1, 'rgba(0, 220, 255, 0)');
-  ctx.fillStyle = scanGrd;
-  ctx.fillRect(0, h * 0.35, scoreW, scanH);
-
-  // 8. Top & bottom edge neon lines
+  // 4. Top & bottom edge neon lines
   ctx.lineWidth = 1.5;
   ctx.strokeStyle = 'rgba(0, 230, 255, 0.5)';
   ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(scoreW, 0); ctx.stroke();
@@ -1371,11 +1321,68 @@ function drawRainbowGridBackground() {
     
     ctx.restore();
     
-    // Draw playhead explosion effects (fixed position, doesn't scroll)
-    var nowPerf2 = performance.now();
+    // Draw lane gradient effects (from string to 2/3 of scroll bar)
+    var nowPerfGrad = performance.now();
     var currentH2 = scoreWrap ? scoreWrap.offsetHeight : 170;
     var LANE_COUNT2 = 5;
     var laneH2 = currentH2 / LANE_COUNT2;
+    var gradDuration = 500; // 渐变持续时间
+    var gradStartX = playheadBgX; // 起点：琴弦位置
+    var gradEndX = scoreW * 2 / 3; // 终点：滚动栏2/3位置
+    
+    _laneGradientFx = _laneGradientFx.filter(function(gfx) {
+      var age = nowPerfGrad - gfx.t0;
+      if (age > gradDuration) return false;
+      var prog = age / gradDuration;
+      
+      // 计算轨道位置
+      var laneTop = gfx.lane * laneH2;
+      var laneHeight = laneH2;
+      
+      // 渐变从琴弦位置开始，向右延伸到2/3位置
+      var currentEndX = gradStartX + (gradEndX - gradStartX) * Math.min(1, prog * 1.5);
+      
+      // 将颜色调亮（增加亮度）
+      var brightColor = gfx.color;
+      // 解析hex颜色并调亮
+      if (brightColor.charAt(0) === '#') {
+        var hex = brightColor.slice(1);
+        var r = parseInt(hex.substr(0, 2), 16);
+        var g = parseInt(hex.substr(2, 2), 16);
+        var b = parseInt(hex.substr(4, 2), 16);
+        // 增加亮度（向白色靠近）
+        r = Math.min(255, Math.round(r + (255 - r) * 0.4));
+        g = Math.min(255, Math.round(g + (255 - g) * 0.4));
+        b = Math.min(255, Math.round(b + (255 - b) * 0.4));
+        brightColor = 'rgba(' + r + ',' + g + ',' + b + ', 1)';
+      }
+      
+      // 创建水平渐变
+      var grad = ctx.createLinearGradient(gradStartX, 0, currentEndX, 0);
+      var alpha = (1 - prog) * 1.0; // 透明度随时间衰减（再提高透明度）
+      grad.addColorStop(0, brightColor);
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = grad;
+      ctx.fillRect(gradStartX, laneTop, currentEndX - gradStartX, laneHeight);
+      ctx.restore();
+      
+      return true;
+    });
+    
+    // Draw lane dividers (fixed, doesn't scroll)
+    var LANE_COUNT_DIV = 5;
+    var laneHDiv = h / LANE_COUNT_DIV;
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    for (var i = 1; i < LANE_COUNT_DIV; i++) {
+      ctx.beginPath(); ctx.moveTo(0, i * laneHDiv); ctx.lineTo(scoreW, i * laneHDiv); ctx.stroke();
+    }
+    
+    // Draw playhead explosion effects (fixed position, doesn't scroll)
+    var nowPerf2 = performance.now();
     // Scale factor based on current height vs base height
     var baseHeight = 170;
     var scaleFactor = currentH2 / baseHeight;
@@ -1392,7 +1399,7 @@ function drawRainbowGridBackground() {
       if (exp.drawRipple) {
         var rippleCenterX = playheadBgX;
         var rippleCenterY = expY;
-        var maxRippleRadius = 40 * scaleFactor;
+        var maxRippleRadius = 60 * scaleFactor;
         
         // Outer ring
         var outerRadius = prog * maxRippleRadius;
@@ -1481,6 +1488,209 @@ function drawRainbowGridBackground() {
         }
         return true;
       });
+    }
+    
+    // Draw score on overlay canvas (above notes)
+    var overlayCanvas = document.getElementById('scoreOverlayCanvas');
+    if (overlayCanvas) {
+      var octx = overlayCanvas.getContext('2d');
+      if (octx) {
+        // Sync overlay canvas dimensions to scoreWrap
+        if (overlayCanvas.width !== scoreW) overlayCanvas.width = scoreW;
+        if (overlayCanvas.height !== h) overlayCanvas.height = h;
+        octx.clearRect(0, 0, scoreW, h);
+        
+        // Only draw score if currently playing recording (录制乐谱)
+        // Check if the recording tab is active
+        var recordTab = document.querySelector('.song-tab[data-tab="record"]');
+        var isRecordTabActive = recordTab && recordTab.classList.contains('active');
+        
+        if (!isRecordTabActive) {
+          octx.clearRect(0, 0, scoreW, h);
+          return;
+        }
+        
+        // Draw hit statistics on the left side - 横排版，左上角
+        // 统计字体大小比分数小很多，限制在12-18像素
+        var statsFs = Math.round(h * 0.08);
+        statsFs = Math.max(12, Math.min(18, statsFs));
+        var statsMargin = 10; // 固定左边间距为10像素
+        var statsTopMargin = 8; // 顶部间距
+        var shapeR = statsFs * 0.25; // 统一图形半径
+        var lineWidth = 1; // 描边宽度
+        var itemGap = statsFs * 1.2; // 每项之间的间距（减小）
+        var textColor = '#a0a0a0'; // 文字颜色，暗一点
+        
+        octx.save();
+        octx.font = statsFs + 'px Arial, sans-serif'; // 去掉bold
+        octx.textBaseline = 'middle';
+        octx.textAlign = 'left';
+        octx.fillStyle = textColor;
+        octx.strokeStyle = '#a0a0a0'; // 统一描边颜色
+        octx.lineWidth = lineWidth;
+        
+        var currentX = statsMargin;
+        var centerY = statsTopMargin + statsFs / 2;
+        
+        // Perfect - 实心圆形 + 中间描边
+        octx.beginPath();
+        octx.arc(currentX + shapeR, centerY, shapeR, 0, Math.PI * 2);
+        octx.fillStyle = '#a0a0a0';
+        octx.fill();
+        octx.stroke(); // 中间描边
+        currentX += shapeR * 2 + 4;
+        octx.fillText(_recPlayState.perfectCount.toString(), currentX, centerY);
+        currentX += statsFs + itemGap;
+        
+        // Great - 实心菱形 + 中间描边
+        octx.beginPath();
+        octx.moveTo(currentX + shapeR, centerY - shapeR);
+        octx.lineTo(currentX + shapeR * 2, centerY);
+        octx.lineTo(currentX + shapeR, centerY + shapeR);
+        octx.lineTo(currentX, centerY);
+        octx.closePath();
+        octx.fillStyle = '#a0a0a0';
+        octx.fill();
+        octx.stroke(); // 中间描边
+        currentX += shapeR * 2 + 4;
+        octx.fillText(_recPlayState.greatCount.toString(), currentX, centerY);
+        currentX += statsFs + itemGap;
+        
+        // Right - 空心菱形（中间描边）
+        octx.beginPath();
+        octx.moveTo(currentX + shapeR, centerY - shapeR);
+        octx.lineTo(currentX + shapeR * 2, centerY);
+        octx.lineTo(currentX + shapeR, centerY + shapeR);
+        octx.lineTo(currentX, centerY);
+        octx.closePath();
+        octx.stroke(); // 中间描边
+        currentX += shapeR * 2 + 4;
+        octx.fillStyle = textColor;
+        octx.fillText(_recPlayState.rightCount.toString(), currentX, centerY);
+        currentX += statsFs + itemGap;
+        
+        // Miss - 空心圆形（中间描边）
+        octx.beginPath();
+        octx.arc(currentX + shapeR, centerY, shapeR, 0, Math.PI * 2);
+        octx.stroke(); // 中间描边
+        currentX += shapeR * 2 + 4;
+        octx.fillStyle = textColor;
+        octx.fillText(_recPlayState.missCount.toString(), currentX, centerY);
+        
+        octx.restore();
+        
+        // Draw score text - fixed position, doesn't scroll
+        // 分数显示在滚动栏中上下居中，与右边对齐，间距为滚动栏长度的20分之1
+        var scoreRightMargin = scoreW / 20;
+        var scoreTextX = scoreW - scoreRightMargin;
+        var scoreTextY = h / 2;
+        var scoreTextFs = Math.round(h * 0.18);
+        // 限制分数字体大小在28-46像素范围内（不包括播放完成后的放大效果）
+        scoreTextFs = Math.max(28, Math.min(46, scoreTextFs));
+        
+        // Score animation when finished
+        var scoreAnimFs = scoreTextFs;
+        var scoreAnimX = scoreTextX;
+        var scoreAnimY = scoreTextY;
+        var scoreAnimAlpha = 0.95;
+        
+        if (_recPlayState.scoreAnimStart) {
+          var animElapsed = performance.now() - _recPlayState.scoreAnimStart;
+          var animDur = 900;
+          var displayDur = 2000; // Display for 2 seconds after animation
+          
+          var animProg = Math.min(1, animElapsed / animDur);
+          var easeOut = 1 - Math.pow(1 - animProg, 3);
+          // Target: center of scroll bar (滚动栏中间)
+          var targetX = scoreW / 2;
+          var targetY = h / 2;
+          var targetFs = scoreTextFs * 1.5;
+          // Animate from saved starting position to center
+          var startX = _recPlayState.scoreAnimStartX || scoreTextX;
+          var startY = _recPlayState.scoreAnimStartY || scoreTextY;
+          scoreAnimX = startX + (targetX - startX) * easeOut;
+          scoreAnimY = startY + (targetY - startY) * easeOut;
+          scoreAnimFs = scoreTextFs + (targetFs - scoreTextFs) * easeOut;
+          scoreAnimAlpha = 0.95;
+        }
+        
+        // Draw score text
+        var comboText = 'COMBO';
+        var scoreValue = Math.round(_recPlayState.currentScore).toString();
+        
+        // Score scale animation when score increases (centered scaling) - only for score value
+        var scoreScale = 1;
+        if (typeof _scoreAnim !== 'undefined' && _scoreAnim.active) {
+          var scoreAnimElapsed = performance.now() - _scoreAnim.startTime;
+          if (scoreAnimElapsed < _scoreAnim.duration) {
+            var scoreProg = scoreAnimElapsed / _scoreAnim.duration;
+            // Scale up then down: peak at 0.3 progress
+            if (scoreProg < 0.3) {
+              scoreScale = 1 + (scoreProg / 0.3) * 0.6; // scale up to 1.6x
+            } else {
+              scoreScale = 1.6 - ((scoreProg - 0.3) / 0.7) * 0.6; // scale down to 1x
+            }
+          } else {
+            _scoreAnim.active = false;
+          }
+        }
+        
+        // COMBO字体小一点，分数值字体不变
+        var comboFs = Math.round(scoreAnimFs * 0.5); // COMBO字体是分数的一半
+        var scoreValueFs = scoreAnimFs * scoreScale; // 分数值有动画
+        
+        // 计算位置 - 同一行，分数值在左，COMBO在右
+        var textY = scoreAnimY;
+        
+        octx.save();
+        octx.textBaseline = 'middle';
+        octx.globalAlpha = scoreAnimAlpha;
+        
+        // 先测量COMBO宽度
+        octx.font = 'bold italic ' + Math.round(comboFs) + 'px Arial, sans-serif';
+        var comboWidth = octx.measureText(comboText).width;
+        
+        // 绘制COMBO（不参与动画，描边效果弱化）
+        if (_recPlayState.scoreAnimStart) {
+          octx.textAlign = 'center';
+        } else {
+          octx.textAlign = 'right';
+        }
+        // 弱化的描边效果
+        octx.strokeStyle = '#ffd700';
+        octx.lineWidth = 1;
+        octx.shadowColor = '#ffd700';
+        octx.shadowBlur = 2;
+        octx.strokeText(comboText, scoreAnimX, textY);
+        // 再绘制白色填充
+        octx.fillStyle = '#fffef0';
+        octx.shadowBlur = 0;
+        octx.fillText(comboText, scoreAnimX, textY);
+        
+        // 绘制分数值（参与动画，在COMBO左边）
+        octx.font = 'bold italic ' + Math.round(scoreValueFs) + 'px Arial, sans-serif';
+        var scoreValueWidth = octx.measureText(scoreValue).width;
+        // 分数值位置 = COMBO左边位置 - COMBO宽度 - 间距
+        var scoreValueX = scoreAnimX - comboWidth - scoreAnimFs * 0.2;
+        
+        if (_recPlayState.scoreAnimStart) {
+          octx.textAlign = 'center';
+        } else {
+          octx.textAlign = 'right';
+        }
+        // 先绘制金色描边
+        octx.strokeStyle = '#ffd700';
+        octx.lineWidth = 2;
+        octx.shadowColor = '#ffd700';
+        octx.shadowBlur = 4;
+        octx.strokeText(scoreValue, scoreValueX, textY);
+        // 再绘制白色填充
+        octx.fillStyle = '#fffef0';
+        octx.shadowBlur = 0;
+        octx.fillText(scoreValue, scoreValueX, textY);
+        
+        octx.restore();
+      }
     }
   }
 }
@@ -1686,6 +1896,9 @@ function _textWidth(note, fs) {
 // ── hit effects ─────────────────────────────────────────────────────
 var _hitFx = [];
 
+// ── lane gradient effects (from string to 2/3 of scroll bar) ────────
+var _laneGradientFx = [];
+
 // ── play state ──────────────────────────────────────────────────────
 var _recPlayState = null;
 
@@ -1718,11 +1931,13 @@ function _startPausedVibrationLoop() {
       return;
     }
     
-    // Continue looping while vibration is active or explosions exist
+    // Continue looping while vibration is active, explosions exist, gradient effects exist, or hit effects exist
     var hasVibration = _playheadVibration.active;
     var hasExplosions = _playheadExplosions.length > 0;
+    var hasGradientFx = _laneGradientFx.length > 0;
+    var hasHitFx = _hitFx.length > 0;
     
-    if (hasVibration || hasExplosions) {
+    if (hasVibration || hasExplosions || hasGradientFx || hasHitFx) {
       drawRecordScore(_recPlayState.pausedElapsed || 0, performance.now());
       _pausedVibrationRaf = requestAnimationFrame(loop);
     } else {
@@ -1854,13 +2069,27 @@ window._checkRecHit = function(note, instEn, nowMs) {
       var lane  = (ti * 3 + ni) % 5;
       var x     = n._x * scale;
       var y     = lane * laneH + (laneH - bh) / 2;
-      _hitFx.push({ x:x, y:y, bw:bw, bh:bh, tier:tier, t0:performance.now() });
+      var noteCol = _noteOctColor(n.note); // 音符块的颜色
+      _hitFx.push({ x:x, y:y, bw:bw, bh:bh, tier:tier, noteColor:noteCol, t0:performance.now() });
+      
+      // Add lane gradient effect (from string to 2/3 of scroll bar)
+      var noteCol = _noteOctColor(n.note); // 使用音符块的颜色
+      _laneGradientFx.push({
+        lane: lane,
+        color: noteCol,
+        t0: performance.now()
+      });
       
       // Calculate score
       var scoreMultiplier = tier === 1 ? 1 : tier === 2 ? 0.8 : 0.6;
       var noteScore = _recPlayState.perNoteScore * scoreMultiplier;
       _recPlayState.currentScore += noteScore;
       _recPlayState.scoredNotes[noteKey] = true;
+      
+      // Update hit count
+      if (tier === 1) _recPlayState.perfectCount++;
+      else if (tier === 2) _recPlayState.greatCount++;
+      else _recPlayState.rightCount++;
       
       // Trigger score animation
       triggerScoreAnimation();
@@ -1982,9 +2211,14 @@ function startRecordPlay(recObj) {
     perNoteScore: perNoteScore,
     currentScore: 0,
     effectTexts: [],
-    scoredNotes: {}
+    scoredNotes: {},
+    perfectCount: 0,
+    greatCount: 0,
+    rightCount: 0,
+    missCount: 0
   };
   _hitFx = [];
+  _laneGradientFx = [];
 
   playBtn.classList.add("on");
   playBtn.textContent = '\u23f8';
@@ -2057,17 +2291,24 @@ function _recLoop() {
         canvasOffX = 0;
         if (canvas) {
           canvas.style.left = '0px';
-          // Reset canvas width to match scoreWrap
+          // Reset canvas width and height to match scoreWrap
           var scoreW2 = scoreWrap ? scoreWrap.clientWidth : 300;
+          var scoreH2 = scoreWrap ? scoreWrap.offsetHeight : 170;
           if (canvas.width !== scoreW2) {
             canvas.width = scoreW2;
             canvas.style.width = scoreW2 + 'px';
+          }
+          if (canvas.height !== scoreH2) {
+            canvas.height = scoreH2;
+            canvas.style.height = scoreH2 + 'px';
           }
         }
       }
       _recLoop();
     } else {
       // Score display finished - fully end playback
+      // Calculate miss count before finishing
+      _recPlayState.missCount = _recPlayState.totalNotes - _recPlayState.perfectCount - _recPlayState.greatCount - _recPlayState.rightCount;
       _recPlayState.finished = true;
       _recPlayState.paused   = true;
       playBtn.classList.remove("on");
@@ -2172,6 +2413,7 @@ function stopRecordPlay() {
   });
   _recPlayState = null;
   _hitFx = [];
+  _laneGradientFx = [];
   _stopRingLoop();
   if (typeof playBtn !== 'undefined') { playBtn.classList.remove("on"); playBtn.textContent = '\u25b6'; }
   if (canvas) { canvas.style.left = '20px'; canvasOffX = 20; }
@@ -2195,7 +2437,7 @@ function _ensureRingCanvas() {
   var c = document.createElement('canvas');
   c.id = '_recRingCanvas';
   // Fixed positioning covers the entire viewport, correctly tracking all elements
-  c.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:15;';
+  c.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:11;';
   // Append to <html> not <body>, so position:fixed is relative to true viewport
   // (CSS: position:fixed inside transformed element uses that element as container)
   document.documentElement.appendChild(c);
@@ -2430,67 +2672,6 @@ function drawRecordScore(elapsedMs, nowPerf) {
   // Draw rainbow grid background (fixed, doesn't scroll)
   drawRainbowGridBackground();
 
-  // Hit effects - draw first so they appear behind blocks
-  var nowT = nowPerf || performance.now();
-  _hitFx = _hitFx.filter(function(fx) {
-    var age  = nowT - fx.t0;
-    var DUR  = 650;
-    if (age > DUR) return false;
-    var prog = age / DUR;
-    var col  = fx.tier === 1 ? '#ffd700' : fx.tier === 2 ? '#4fc3f7' : '#4caf50';
-    var nRip = 4 - fx.tier; // tier1=3, tier2=2, tier3=1
-
-    // Block scale animation: grow then shrink
-    var scaleProg = prog < 0.25 ? (prog / 0.25) : (1 - (prog - 0.25) / 0.75);
-    var scale = 1 + scaleProg * 0.4; // max scale 1.4
-    var sw = fx.bw * scale;
-    var sh = fx.bh * scale;
-    var sx = fx.x - (sw - fx.bw) / 2;
-    var sy = fx.y - (sh - fx.bh) / 2;
-
-    // Draw scaled block with glow
-    ctx.fillStyle = col;
-    ctx.globalAlpha = 0.5 * (1 - prog * 0.3);
-    ctx.shadowColor = col;
-    ctx.shadowBlur = 10 * scaleProg;
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(sx, sy, sw, sh, 4);
-    else ctx.rect(sx, sy, sw, sh);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-
-    for (var r = 0; r < nRip; r++) {
-      var rp  = (prog + r / nRip) % 1.0;
-      var exp = rp * 16;
-      ctx.strokeStyle = col;
-      ctx.globalAlpha = (1 - rp) * 0.88;
-      ctx.lineWidth   = Math.max(0.5, 2 - rp * 1.5);
-      ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(fx.x - exp, fx.y - exp, fx.bw + exp*2, fx.bh + exp*2, 6);
-      else ctx.rect(fx.x - exp, fx.y - exp, fx.bw + exp*2, fx.bh + exp*2);
-      ctx.stroke();
-    }
-    // Center fill
-    var fa = Math.max(0, 0.5 - prog * 0.7);
-    if (fa > 0) {
-      ctx.fillStyle = col; ctx.globalAlpha = fa;
-      ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(fx.x, fx.y, fx.bw, fx.bh, 4);
-      else ctx.rect(fx.x, fx.y, fx.bw, fx.bh);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1.0;
-    
-    return true;
-  });
-
-  // Lane dividers
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-  ctx.lineWidth = 1;
-  for (var i = 1; i < LANE_COUNT; i++) {
-    ctx.beginPath(); ctx.moveTo(0, i * laneH); ctx.lineTo(w, i * laneH); ctx.stroke();
-  }
-
   // Playhead is drawn on the fixed background canvas (drawRainbowGridBackground).
   // We only keep scoreW / fixedX for score text positioning below.
   var scoreW = scoreWrap ? scoreWrap.clientWidth : 300;
@@ -2575,6 +2756,62 @@ function drawRecordScore(elapsedMs, nowPerf) {
     });
   });
 
+  // Hit effects - draw AFTER blocks so they appear on top
+  var nowT = nowPerf || performance.now();
+  _hitFx = _hitFx.filter(function(fx) {
+    var age  = nowT - fx.t0;
+    var DUR  = 650;
+    if (age > DUR) return false;
+    var prog = age / DUR;
+    var tierCol = fx.tier === 1 ? '#ffd700' : fx.tier === 2 ? '#4fc3f7' : '#4caf50'; // 后备颜色
+
+    // Block scale animation: grow then shrink
+    var scaleProg = prog < 0.25 ? (prog / 0.25) : (1 - (prog - 0.25) / 0.75);
+    var scale = 1 + scaleProg * 0.7; // max scale 1.7 (增大)
+    var sw = fx.bw * scale;
+    var sh = fx.bh * scale;
+    var sx = fx.x - (sw - fx.bw) / 2;
+    var sy = fx.y - (sh - fx.bh) / 2;
+
+    // 将音符块颜色调亮（亮度最大，饱和度稍微增加）
+    var blockCol = fx.noteColor || tierCol;
+    if (blockCol.charAt(0) === '#') {
+      var hex = blockCol.slice(1);
+      var r = parseInt(hex.substr(0, 2), 16);
+      var g = parseInt(hex.substr(2, 2), 16);
+      var b = parseInt(hex.substr(4, 2), 16);
+      // 亮度调到最大，饱和度稍微增加
+      r = Math.min(255, Math.round(r + (255 - r) * 0.7));
+      g = Math.min(255, Math.round(g + (255 - g) * 0.7));
+      b = Math.min(255, Math.round(b + (255 - b) * 0.7));
+      blockCol = 'rgba(' + r + ',' + g + ',' + b + ', 1)';
+    }
+
+    // Draw scaled block with glow (使用音符块的高亮颜色)
+    ctx.fillStyle = blockCol;
+    ctx.globalAlpha = 0.5 * (1 - prog * 0.3);
+    ctx.shadowColor = blockCol;
+    ctx.shadowBlur = 10 * scaleProg;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(sx, sy, sw, sh, 4);
+    else ctx.rect(sx, sy, sw, sh);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Center fill (使用音符块的高亮颜色)
+    var fa = Math.max(0, 0.5 - prog * 0.7);
+    if (fa > 0) {
+      ctx.fillStyle = blockCol; ctx.globalAlpha = fa;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(fx.x, fx.y, fx.bw, fx.bh, 4);
+      else ctx.rect(fx.x, fx.y, fx.bw, fx.bh);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
+    
+    return true;
+  });
+
   // Draw score and effect texts in top-right corner of visible area
   // Calculate font size with min/max limits
   var defaultScoreH = 34;
@@ -2583,23 +2820,24 @@ function drawRecordScore(elapsedMs, nowPerf) {
   var scoreFs = Math.min(maxFs, Math.max(minFs, fs * 1.2));
   var effectFs = Math.min(maxFs * 1.3, Math.max(minFs * 1.3, scoreFs * 1.3));
   
-  // Calculate position in canvas coordinates (visible area right edge)
-  var visibleRightX = scoreW - canvasOffX;
-  var textX = Math.max(10, Math.min(w - 10, visibleRightX - 10));
+  // Calculate position in canvas coordinates
+  // 分数显示在滚动栏中上下居中，与右边对齐，间距为滚动栏长度的20分之1
+  // 使用滚动栏的宽度（可视区域宽度），而不是canvas的宽度
+  var scoreW = scoreWrap ? scoreWrap.clientWidth : 300;
+  var rightMargin = scoreW / 20; // 滚动栏长度的20分之1
+  // 计算分数在canvas坐标系中的位置（考虑canvas的left偏移）
+  var textX = scoreW - rightMargin;
+  var textY = h / 2; // 上下居中
   
   // Check if playback finished - trigger score animation
   if (_recPlayState.finished && !_recPlayState.scoreAnimStart) {
     _recPlayState.scoreAnimStart = performance.now();
     // Save the starting position for animation (right edge of scoreWrap)
-    _recPlayState.scoreAnimStartX = scoreW - 10;
-    _recPlayState.scoreAnimStartY = 3;
+    _recPlayState.scoreAnimStartX = textX;
+    _recPlayState.scoreAnimStartY = textY;
   }
   
   // Score animation when finished
-  var scoreAnimFs = scoreFs;
-  var scoreAnimX = textX;
-  var scoreAnimY = 3;
-  var scoreAnimAlpha = 0.95;
   var isScoreFinished = false;
   
   if (_recPlayState.scoreAnimStart) {
@@ -2612,56 +2850,12 @@ function drawRecordScore(elapsedMs, nowPerf) {
       isScoreFinished = true;
     }
     
-    var animProg = Math.min(1, animElapsed / animDur);
-    var easeOut = 1 - Math.pow(1 - animProg, 3);
-    // Target: center of scoreWrap
-    var targetX = scoreW / 2;
-    var targetY = h / 2;
-    var targetFs = scoreFs * 1.5;
-    // Animate from saved starting position to center
-    var startX = _recPlayState.scoreAnimStartX || textX;
-    var startY = _recPlayState.scoreAnimStartY || 3;
-    scoreAnimX = startX + (targetX - startX) * easeOut;
-    scoreAnimY = startY + (targetY - startY) * easeOut;
-    scoreAnimFs = scoreFs + (targetFs - scoreFs) * easeOut;
-    scoreAnimAlpha = 0.95;
     // Hide effect texts during animation
     _recPlayState.effectTexts = [];
   }
   
-  // Draw score text
-  var scoreText = 'SCORE:' + Math.round(_recPlayState.currentScore);
-  
-  // Score scale animation when score increases (centered scaling)
-  var scoreScale = 1;
-  if (_scoreAnim.active) {
-    var scoreAnimElapsed = (nowPerf || performance.now()) - _scoreAnim.startTime;
-    if (scoreAnimElapsed < _scoreAnim.duration) {
-      var scoreProg = scoreAnimElapsed / _scoreAnim.duration;
-      // Scale up then down: peak at 0.3 progress
-      if (scoreProg < 0.3) {
-        scoreScale = 1 + (scoreProg / 0.3) * 0.3; // scale up to 1.3x
-      } else {
-        scoreScale = 1.3 - ((scoreProg - 0.3) / 0.7) * 0.3; // scale down to 1x
-      }
-    } else {
-      _scoreAnim.active = false;
-    }
-  }
-  
-  var finalScoreFs = scoreAnimFs * scoreScale;
-  
-  ctx.save();
-  ctx.font = 'bold italic ' + finalScoreFs + 'px Arial, sans-serif';
-  // Always use center alignment for proper center scaling
-  ctx.textBaseline = 'middle';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#ffd700';
-  ctx.globalAlpha = scoreAnimAlpha;
-  ctx.shadowColor = '#ff8c00';
-  ctx.shadowBlur = 6 + finalScoreFs * 0.1;
-  ctx.fillText(scoreText, scoreAnimX, scoreAnimY);
-  ctx.restore();
+  // Score is now drawn on the background canvas (drawRainbowGridBackground)
+  // This ensures it stays fixed and visible even when the main canvas scrolls
   
   // Return whether score display is finished (for ending the playback)
   return isScoreFinished;
@@ -3289,6 +3483,31 @@ function startNote(tid, ns, overrideInst){
         // Highlight this block in follow mode
         if (!_recPlayState.followHits) _recPlayState.followHits = {};
         _recPlayState.followHits[key] = performance.now();
+        
+        // Add lane gradient effect for follow mode
+        var h = canvas ? canvas.height : 170;
+        var scale = h / (_recPlayState.baseLaneH * 5);
+        var lane = (expected.ti * 3 + expected.ni) % 5;
+        var noteCol = _noteOctColor(expected.note);
+        _laneGradientFx.push({
+          lane: lane,
+          color: noteCol,
+          t0: performance.now()
+        });
+        
+        // Add hit effect (block highlight with outline) for follow mode
+        var bh = Math.round(_recPlayState.baseBlockH * scale);
+        var base_bw = bh * 1.5;
+        // Get the full note object from tracks to access _x and _hold_bw
+        var fullNote = _recPlayState.tracks[expected.ti].notes[expected.ni];
+        var hold_bw = (fullNote._hold_bw || 0) * scale;
+        var bw = base_bw + hold_bw;
+        var laneH = h / 5;
+        var x = fullNote._x * scale;
+        var y = lane * laneH + (laneH - bh) / 2;
+        var noteCol = _noteOctColor(expected.note); // 音符块的颜色
+        _hitFx.push({ x:x, y:y, bw:bw, bh:bh, tier:1, noteColor:noteCol, t0:performance.now() });
+        
         // Update pausedElapsed to this note's time so display advances
         _recPlayState.pausedElapsed = expected.atMs + (expected.holdMs || 0);
         // Update startTime so if user resumes, playback continues from here
@@ -3428,6 +3647,25 @@ function getKeyRowInst(keyEl) {
   const rowIdx = parseInt(row.dataset.rowIdx);
   if (isNaN(rowIdx)) return null;
   return rowInstMap[rowIdx] || null;
+}
+
+function isKeyRowDynamic(keyEl) {
+  if (!keyEl) return true;
+  const row = keyEl.closest('.octave-row');
+  if (!row) return true;
+  const rowIdx = parseInt(row.dataset.rowIdx);
+  if (isNaN(rowIdx)) return true;
+  return rowDynamicMap[rowIdx] !== false;
+}
+
+function adjustNoteByOctave(noteStr, octaveOffset) {
+  const match = noteStr.match(/^([A-G]#?)(\d)$/);
+  if (!match) return noteStr;
+  const baseNote = match[1];
+  const currentOctave = parseInt(match[2]);
+  // 不限制音域范围，允许超出1-7
+  const newOctave = currentOctave + octaveOffset;
+  return baseNote + newOctave;
 }
 
 // 只高亮/取消高亮 同行的同音符键（避免跨行干扰）
@@ -3905,11 +4143,27 @@ window.onload = function(){
         const key = String(vk.key).trim();
         // Handle function keys - same as keyboard shortcuts in pcKeyMap.control
         if (key === 'octaveDown') {
+          // 低8度：所有动态琴键行的音域偏移量减1
+          const rowCount = parseInt(sliderRows.value) || 7;
+          for (let i = 0; i < rowCount; i++) {
+            if (rowDynamicMap[i] !== false) {
+              rowOctaveOffsetMap[i] = (rowOctaveOffsetMap[i] || 0) - 1;
+            }
+          }
+          // 同时更新currentBaseOctave用于键盘快捷键映射
           currentBaseOctave = Math.max(1, currentBaseOctave - 1);
-          saveSettings(); renderPiano();
+          saveRowConfig(); saveSettings(); renderPiano();
         } else if (key === 'octaveUp') {
+          // 高8度：所有动态琴键行的音域偏移量加1
+          const rowCount = parseInt(sliderRows.value) || 7;
+          for (let i = 0; i < rowCount; i++) {
+            if (rowDynamicMap[i] !== false) {
+              rowOctaveOffsetMap[i] = (rowOctaveOffsetMap[i] || 0) + 1;
+            }
+          }
+          // 同时更新currentBaseOctave用于键盘快捷键映射
           currentBaseOctave = Math.min(7, currentBaseOctave + 1);
-          saveSettings(); renderPiano();
+          saveRowConfig(); saveSettings(); renderPiano();
         } else if (key === 'playPause') {
           // Same as pcKeyMap.control.playPause - simulate play button click
           const playBtn = document.getElementById('playBtn');
@@ -4283,7 +4537,6 @@ window.onload = function(){
   const inputHeight = document.getElementById("inputHeight");
   const sliderGap = document.getElementById("sliderGap");
   const inputGap = document.getElementById("inputGap");
-  const btnResetLayout = document.getElementById("btnResetLayout");
   const btnToolbarPos = document.getElementById("btnToolbarPos");
   const instScroll = document.getElementById("instScroll");
 
@@ -5165,28 +5418,6 @@ window.onload = function(){
     }
   }
 
-  btnResetLayout.onclick = () => {
-    // Clear saved layout settings
-    try { localStorage.removeItem('pianoLayoutSettings'); } catch(e) {}
-    // Reset sliders
-    sliderRows.value = 7; inputRows.value = 7;
-    sliderWidth.value = 7; inputWidth.value = 7;
-    sliderHeight.value = 140; inputHeight.value = 140;
-    sliderGap.value = 18; inputGap.value = 18;
-    // Reset screen rotation
-    ['rotated-90','rotated-180','rotated-270'].forEach(r => document.body.classList.remove(r));
-    document.body.classList.remove('landscape-mode');
-    try { localStorage.removeItem('screenMode'); } catch(e) {}
-    // Reset toolbar rotation
-    ['toolbar-rotated-90','toolbar-rotated-180','toolbar-rotated-270'].forEach(r => document.body.classList.remove(r));
-    if (btnToolbarPos) btnToolbarPos.textContent = '⬆ 顶栏';
-    try { localStorage.removeItem('toolbarRotation'); } catch(e) {}
-    // Re-render piano
-    updateLayout(); renderPiano();
-    settingOverlay.classList.remove("show");
-    updateLayoutToolbarPosition();
-  };
-
   const btnSaveLayout = document.getElementById("btnSaveLayout");
   btnSaveLayout.onclick = () => {
     exitLayoutMode(true); // saves settings, restores scroll, closes overlay
@@ -5226,10 +5457,17 @@ window.onload = function(){
       const saved = localStorage.getItem("pianoLayoutSettings");
       if (saved) {
         const settings = JSON.parse(saved);
-        sliderRows.value = settings.rows || 7; inputRows.value = settings.rows || 7;
-        sliderWidth.value = settings.width || 7; inputWidth.value = settings.width || 7;
-        sliderHeight.value = settings.height || 140; inputHeight.value = settings.height || 140;
-        sliderGap.value = settings.gap || 18; inputGap.value = settings.gap || 18;
+        // 根据横屏/竖屏模式设置默认值
+        const isLandscapeMode = settings.screenMode === 'landscape';
+        const defaultRows = isLandscapeMode ? 3 : 7;
+        const defaultWidth = isLandscapeMode ? 1 : 7;
+        const defaultHeight = 80;
+        const defaultGap = 0;
+        
+        sliderRows.value = settings.rows || defaultRows; inputRows.value = settings.rows || defaultRows;
+        sliderWidth.value = settings.width || defaultWidth; inputWidth.value = settings.width || defaultWidth;
+        sliderHeight.value = settings.height || defaultHeight; inputHeight.value = settings.height || defaultHeight;
+        sliderGap.value = settings.gap || defaultGap; inputGap.value = settings.gap || defaultGap;
         if (settings.screenRotation) {
           const screenRotations = ['', 'rotated-90', 'rotated-180', 'rotated-270'];
           for (const r of screenRotations) {
@@ -5280,6 +5518,11 @@ window.onload = function(){
     
     if (isLandscape) {
       document.body.classList.add('landscape-mode');
+      // 横屏模式：排数3，宽度6，高度80，间隙0
+      sliderRows.value = 3; inputRows.value = 3;
+      sliderWidth.value = 6; inputWidth.value = 6;
+      sliderHeight.value = 80; inputHeight.value = 80;
+      sliderGap.value = 0; inputGap.value = 0;
       try { localStorage.setItem('screenMode', 'landscape'); } catch(e) {}
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen().then(() => {
@@ -5292,6 +5535,11 @@ window.onload = function(){
       }
     } else {
       document.body.classList.remove('landscape-mode');
+      // 竖屏模式：排数7，宽度7，高度80，间隙0
+      sliderRows.value = 7; inputRows.value = 7;
+      sliderWidth.value = 7; inputWidth.value = 7;
+      sliderHeight.value = 80; inputHeight.value = 80;
+      sliderGap.value = 0; inputGap.value = 0;
       try { localStorage.setItem('screenMode', 'portrait'); } catch(e) {}
       if (screen.orientation && screen.orientation.unlock) {
         screen.orientation.unlock();
@@ -5306,6 +5554,7 @@ window.onload = function(){
     }, 100);
     updateLayoutToolbarPosition();
     updateLayout();
+    renderPiano();
   }
   
   btnPortrait.onclick = () => setScreenMode(false);
@@ -5351,6 +5600,23 @@ window.onload = function(){
     const savedMode = localStorage.getItem('screenMode');
     if (savedMode === 'landscape') {
       document.body.classList.add('landscape-mode');
+      // 横屏模式默认值：排数3，宽度6，高度80，间隙0
+      const savedSettings = localStorage.getItem('pianoSettings');
+      if (!savedSettings) {
+        sliderRows.value = 3; inputRows.value = 3;
+        sliderWidth.value = 6; inputWidth.value = 6;
+        sliderHeight.value = 80; inputHeight.value = 80;
+        sliderGap.value = 0; inputGap.value = 0;
+      }
+    } else {
+      // 竖屏模式默认值：排数7，宽度7，高度80，间隙0
+      const savedSettings = localStorage.getItem('pianoSettings');
+      if (!savedSettings) {
+        sliderRows.value = 7; inputRows.value = 7;
+        sliderWidth.value = 7; inputWidth.value = 7;
+        sliderHeight.value = 80; inputHeight.value = 80;
+        sliderGap.value = 0; inputGap.value = 0;
+      }
     }
   } catch(e) {}
   
@@ -5368,28 +5634,22 @@ window.onload = function(){
   setTimeout(updateLayout, 100);
 
   function updateLayout() {
-    const widthLevel = parseFloat(sliderWidth.value) || 4;
+    const widthLevel = parseFloat(sliderWidth.value) || 1;
     const height = sliderHeight.value;
     const gap = sliderGap.value;
-    const containerRect = container.getBoundingClientRect();
-    const screenCenterX = containerRect.width / 2;
-    const oldOctaveWidth = containerRect.width / Math.max(1, 8 - currentWidthScale);
-    const centerOctaveIndex = Math.floor((-container.scrollLeft + screenCenterX) / oldOctaveWidth);
     document.documentElement.style.setProperty('--key-width-scale', widthLevel);
     document.documentElement.style.setProperty('--key-height', height + 'px');
     document.documentElement.style.setProperty('--row-gap', gap + 'px');
-    const groupsPerScreen = Math.max(1, 8 - widthLevel);
-    const widthPercent = 100 / groupsPerScreen;
-    // 横屏模式下使用vh，竖屏模式下使用vw
-    const isLandscape = document.body.classList.contains('landscape-mode');
-    document.documentElement.style.setProperty('--octave-width', widthPercent + (isLandscape ? 'vh' : 'vw'));
+    // 宽度值决定每个音域的宽度
+    // 宽度=1：每个音域占1/7屏幕宽度，7个音域刚好占满整个琴键区域（从倍低音到倍高音）
+    // 宽度=7：每个音域占100%屏幕宽度，1个音域占满整个琴键区域（音阶1234567）
+    // 每个音域宽度 = (widthLevel / 7) * 100%
+    const octaveWidthPercent = (widthLevel * 100 / 7);
+    // 横屏和竖屏都使用vw（视口宽度）
+    document.documentElement.style.setProperty('--octave-width', octaveWidthPercent + 'vw');
     inputWidth.value = widthLevel; inputHeight.value = height; inputGap.value = gap; inputRows.value = sliderRows.value;
+    // 更新当前宽度值（宽度通过CSS变量控制，不需要重新渲染琴键）
     currentWidthScale = widthLevel;
-    requestAnimationFrame(() => {
-      const newOctaveWidth = containerRect.width / groupsPerScreen;
-      const newScrollLeft = centerOctaveIndex * newOctaveWidth - screenCenterX + newOctaveWidth / 2;
-      container.scrollLeft = Math.max(0, newScrollLeft);
-    });
     saveSettings();
   }
 
@@ -5482,24 +5742,25 @@ window.onload = function(){
   function renderPiano() {
     const rowCount = parseInt(sliderRows.value);
     container.innerHTML = "";
+    // 默认模式下，每列从低到高显示：倍低音(1) -> 低音(2) -> 中低音(3) -> 中音(4) -> 中高音(5) -> 高音(6) -> 倍高音(7)
     let focusOctaves = [];
     if (rowCount === 7) {
-      focusOctaves = [7, 6, 5, 4, 3, 2, 1];
+      focusOctaves = [1, 2, 3, 4, 5, 6, 7];
     } else if (rowCount === 6) {
-      focusOctaves = [7, 6, 5, 4, 3, 2];
+      focusOctaves = [1, 2, 3, 4, 5, 6];
     } else if (rowCount === 5) {
-      focusOctaves = [7, 6, 5, 4, 3];
+      focusOctaves = [1, 2, 3, 4, 5];
     } else if (rowCount === 4) {
-      focusOctaves = [7, 6, 5, 4];
+      focusOctaves = [1, 2, 3, 4];
     } else if (rowCount === 3) {
-      focusOctaves = [7, 6, 5];
+      focusOctaves = [1, 2, 3];
     } else if (rowCount === 2) {
-      focusOctaves = [7, 6];
+      focusOctaves = [1, 2];
     } else if (rowCount === 1) {
-      focusOctaves = [7];
+      focusOctaves = [4]; // 中音
     } else {
       for(let r=0; r<rowCount; r++) {
-        let octave = Math.max(1, Math.min(7, 7 - r));
+        let octave = Math.max(1, Math.min(7, r + 1));
         focusOctaves.push(octave);
       }
     }
@@ -5575,34 +5836,80 @@ window.onload = function(){
       const keysWrap = document.createElement("div");
       keysWrap.className = "octave-row-keys";
 
-      // 每行只显示一个音域（该行的焦点八度）
-      const actualOctave = currentFocusOctave;
-      const oct = octaveList[actualOctave - 1];
-      const group = document.createElement("div");
-      group.className = "octave-group focus-octave";
-      group.style.width = "100%";
-      const nameEl = document.createElement("div");
-      nameEl.className = "octave-name"; nameEl.textContent = oct.name;
-      group.appendChild(nameEl);
-      const pianoRow = document.createElement("div");
-      pianoRow.className = "piano-row";
-      whiteKeys.forEach(n => {
-        const k = document.createElement("div");
-        k.className = "key white"; k.dataset.note = n + actualOctave;
-        pianoRow.appendChild(k);
+      // 始终渲染7个音域，从左到右：倍低音(1) -> 低音(2) -> 中低音(3) -> 中音(4) -> 中高音(5) -> 高音(6) -> 倍高音(7)
+      // 宽度值通过CSS变量--octave-width控制每个音域的宽度
+      const octaveOrder = [1, 2, 3, 4, 5, 6, 7]; // 从倍低音到倍高音
+      const rowOctaveOffset = rowOctaveOffsetMap[rowIdx] || 0; // 该行的音域偏移量
+      const isDynamic = rowDynamicMap[rowIdx] !== false; // 该行是否是动态的
+      const octaveNames = {1:"倍低音",2:"低音",3:"中低音",4:"中音",5:"中高音",6:"高音",7:"倍高音"};
+      octaveOrder.forEach(function(octaveNum) {
+        const oct = octaveList[octaveNum - 1];
+        const group = document.createElement("div");
+        group.className = "octave-group";
+        // 宽度由CSS变量--octave-width控制，不在这里设置
+        const nameEl = document.createElement("div");
+        nameEl.className = "octave-name";
+        // 动态琴键行：根据偏移量计算实际音域名字
+        if (isDynamic) {
+          const actualOctave = octaveNum + rowOctaveOffset;
+          // 音域名字显示实际发音的音域（可以是任意整数，不限制在1-7范围）
+          let displayName;
+          if (actualOctave <= 1) {
+            displayName = "倍低音";
+          } else if (actualOctave >= 7) {
+            displayName = "倍高音";
+          } else {
+            displayName = octaveNames[actualOctave] || oct.name;
+          }
+          nameEl.textContent = displayName;
+        } else {
+          nameEl.textContent = oct.name;
+        }
+        group.appendChild(nameEl);
+        const pianoRow = document.createElement("div");
+        pianoRow.className = "piano-row";
+        whiteKeys.forEach(n => {
+          const k = document.createElement("div");
+          k.className = "key white"; k.dataset.note = n + octaveNum;
+          pianoRow.appendChild(k);
+        });
+        blackKeys.forEach(b => {
+          const kb = document.createElement("div");
+          kb.className = "key black"; kb.dataset.note = b.note + octaveNum;
+          kb.style.left = ((b.after + 1) * 100 / 7) + "%";
+          pianoRow.appendChild(kb);
+        });
+        group.appendChild(pianoRow);
+        keysWrap.appendChild(group);
       });
-      blackKeys.forEach(b => {
-        const kb = document.createElement("div");
-        kb.className = "key black"; kb.dataset.note = b.note + actualOctave;
-        kb.style.left = ((b.after + 1) * 100 / 7) + "%";
-        pianoRow.appendChild(kb);
-      });
-      group.appendChild(pianoRow);
-      keysWrap.appendChild(group);
       rowEl.appendChild(keysWrap);
       container.appendChild(rowEl);
       // 应用行配色
       applyRowColors(rowEl, rowIdx);
+      
+      // 设置默认滚动位置
+      // 音域顺序（从左到右）：倍低音(索引0)、低音(索引1)、中低音(索引2)、中音(索引3)、中高音(索引4)、高音(索引5)、倍高音(索引6)
+      const isLandscape = document.body.classList.contains('landscape-mode');
+      // 使用更长的延迟确保所有元素都已渲染完成
+      setTimeout(function() {
+        let targetOctaveIndex;
+        if (isLandscape) {
+          // 横屏模式：第1排中高音(索引4)、第2排中音(索引3)、第3排中低音(索引2)
+          targetOctaveIndex = 4 - rowIdx;
+        } else {
+          // 竖屏模式：第1排倍高音(索引6)、第2排高音(索引5)...第7排倍低音(索引0)
+          targetOctaveIndex = 6 - rowIdx;
+        }
+        // 获取实际的滚动内容总宽度（7个音域的总宽度）
+        const totalWidth = keysWrap.scrollWidth;
+        // 每个音域的实际宽度
+        const octaveWidth = totalWidth / 7;
+        // 可视区域宽度
+        const visibleWidth = keysWrap.clientWidth;
+        // 计算滚动位置，让目标音域居中显示在屏幕中间
+        const scrollLeft = targetOctaveIndex * octaveWidth - (visibleWidth / 2) + (octaveWidth / 2);
+        keysWrap.scrollLeft = Math.max(0, scrollLeft);
+      }, 300);
     }
     if (isLayoutMode) enableOctaveDragging();
   }
@@ -5800,6 +6107,14 @@ window.onload = function(){
       document.querySelectorAll('.song-tab-content').forEach(c => c.style.display = 'none');
       const tabName = tab.dataset.tab;
       document.getElementById(tabName + 'Content').style.display = 'flex';
+      // Clear score overlay when switching away from record tab
+      if (tabName !== 'record') {
+        var overlayCanvas = document.getElementById('scoreOverlayCanvas');
+        if (overlayCanvas) {
+          var octx = overlayCanvas.getContext('2d');
+          if (octx) octx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+        }
+      }
     });
   });
 
@@ -7235,9 +7550,14 @@ window.onload = function(){
       if(el && el.classList.contains("key")){
         e.preventDefault();
         const ns = el.dataset.note;
+        const isDynamic = isKeyRowDynamic(el);
+        const row = el.closest('.octave-row');
+        const rowIdx = row ? parseInt(row.dataset.rowIdx) : -1;
+        const rowOctaveOffset = (isDynamic && rowIdx >= 0) ? (rowOctaveOffsetMap[rowIdx] || 0) : 0;
+        const adjustedNs = isDynamic ? adjustNoteByOctave(ns, rowOctaveOffset) : ns;
         highlightSameRowNote(el, ns, true);
         const rowInstForTouch = getKeyRowInst(el);
-        startNote(t.identifier, ns, rowInstForTouch);
+        startNote(t.identifier, adjustedNs, rowInstForTouch);
         touchMap.set(t.identifier, {ns, rowEl: el, inst: rowInstForTouch});
       }
     }
@@ -7256,9 +7576,14 @@ window.onload = function(){
             if (oldRowEl) highlightSameRowNote(oldRowEl, oldNs, false);
             else container.querySelectorAll(`[data-note="${oldNs}"]`).forEach(k => k.classList.remove("active"));
           }
+          const isDynamic = isKeyRowDynamic(el);
+          const row = el.closest('.octave-row');
+          const rowIdx = row ? parseInt(row.dataset.rowIdx) : -1;
+          const rowOctaveOffset = (isDynamic && rowIdx >= 0) ? (rowOctaveOffsetMap[rowIdx] || 0) : 0;
+          const adjustedNs = isDynamic ? adjustNoteByOctave(newNs, rowOctaveOffset) : newNs;
           highlightSameRowNote(el, newNs, true);
           const rowInstForMove = getKeyRowInst(el);
-          startNote(t.identifier, newNs, rowInstForMove);
+          startNote(t.identifier, adjustedNs, rowInstForMove);
           touchMap.set(t.identifier, {ns: newNs, rowEl: el, inst: rowInstForMove});
         }
       } else {
@@ -7311,9 +7636,14 @@ window.onload = function(){
     e.preventDefault();
     const ns = el.dataset.note;
     mouseNote = ns; mouseRowEl = el;
+    const isDynamic = isKeyRowDynamic(el);
+    const row = el.closest('.octave-row');
+    const rowIdx = row ? parseInt(row.dataset.rowIdx) : -1;
+    const rowOctaveOffset = (isDynamic && rowIdx >= 0) ? (rowOctaveOffsetMap[rowIdx] || 0) : 0;
+    const adjustedNs = isDynamic ? adjustNoteByOctave(ns, rowOctaveOffset) : ns;
     highlightSameRowNote(el, ns, true);
     const rowInstForMouse = getKeyRowInst(el);
-    startNote("mouse", ns, rowInstForMouse);
+    startNote("mouse", adjustedNs, rowInstForMouse);
   });
   container.addEventListener("mousemove", (e) => {
     if (!mouseNote || isLayoutMode) return;
@@ -7324,10 +7654,15 @@ window.onload = function(){
     if (mouseRowEl) highlightSameRowNote(mouseRowEl, mouseNote, false);
     else container.querySelectorAll(`[data-note="${mouseNote}"]`).forEach(k => k.classList.remove("active"));
     stopNote("mouse"); mouseNote = newNs;
+    const isDynamic = isKeyRowDynamic(el);
+    const row = el.closest('.octave-row');
+    const rowIdx = row ? parseInt(row.dataset.rowIdx) : -1;
+    const rowOctaveOffset = (isDynamic && rowIdx >= 0) ? (rowOctaveOffsetMap[rowIdx] || 0) : 0;
+    const adjustedNs = isDynamic ? adjustNoteByOctave(newNs, rowOctaveOffset) : newNs;
     highlightSameRowNote(el, newNs, true);
     const rowInstForMouseMove = getKeyRowInst(el);
     mouseRowEl = el;
-    startNote("mouse", newNs, rowInstForMouseMove);
+    startNote("mouse", adjustedNs, rowInstForMouseMove);
   });
   const clearMouseNote = () => {
     if (!mouseNote) return;
@@ -7375,10 +7710,28 @@ window.onload = function(){
       }
     }
     if (pcKeyMap.control.prevOctave.includes(code)) {
-      currentBaseOctave = Math.max(1, currentBaseOctave - 1); saveSettings(); renderPiano(); return;
+      // 低8度：所有动态琴键行的音域偏移量减1
+      const rowCount = parseInt(sliderRows.value) || 7;
+      for (let i = 0; i < rowCount; i++) {
+        if (rowDynamicMap[i] !== false) { // 只影响动态琴键行
+          rowOctaveOffsetMap[i] = (rowOctaveOffsetMap[i] || 0) - 1;
+        }
+      }
+      // 同时更新currentBaseOctave用于键盘快捷键映射
+      currentBaseOctave = Math.max(1, currentBaseOctave - 1);
+      saveRowConfig(); saveSettings(); renderPiano(); return;
     }
     if (pcKeyMap.control.nextOctave.includes(code)) {
-      currentBaseOctave = Math.min(7, currentBaseOctave + 1); saveSettings(); renderPiano(); return;
+      // 高8度：所有动态琴键行的音域偏移量加1
+      const rowCount = parseInt(sliderRows.value) || 7;
+      for (let i = 0; i < rowCount; i++) {
+        if (rowDynamicMap[i] !== false) { // 只影响动态琴键行
+          rowOctaveOffsetMap[i] = (rowOctaveOffsetMap[i] || 0) + 1;
+        }
+      }
+      // 同时更新currentBaseOctave用于键盘快捷键映射
+      currentBaseOctave = Math.min(7, currentBaseOctave + 1);
+      saveRowConfig(); saveSettings(); renderPiano(); return;
     }
     // 播放暂停键处理
     if (pcKeyMap.control.playPause && pcKeyMap.control.playPause.includes(code)) {
@@ -7505,15 +7858,26 @@ window.onload = function(){
         autoBtn.classList.toggle("on", isMuted);
         autoBtn.textContent = isMuted ? "🔇" : "🔊";
       }
-      const savedKeyHeight = parseInt(settings.keyHeight !== undefined ? settings.keyHeight : 140);
-      const savedRowGap = parseInt(settings.rowGap !== undefined ? settings.rowGap : 18);
-      const savedWidthScale = parseInt(settings.keyWidthScale !== undefined ? settings.keyWidthScale : 7);
-      const savedRows = parseInt(settings.sliderRows !== undefined ? settings.sliderRows : 7);
+      // 根据横屏/竖屏模式设置默认值
+      const isLandscapeMode = document.body.classList.contains('landscape-mode');
+      const defaultKeyHeight = 80;
+      const defaultRowGap = 0;
+      const defaultWidthScale = isLandscapeMode ? 6 : 7;
+      const defaultRows = isLandscapeMode ? 3 : 7;
+      
+      const savedKeyHeight = parseInt(settings.keyHeight !== undefined ? settings.keyHeight : defaultKeyHeight);
+      const savedRowGap = parseInt(settings.rowGap !== undefined ? settings.rowGap : defaultRowGap);
+      const savedWidthScale = parseFloat(settings.keyWidthScale !== undefined ? settings.keyWidthScale : defaultWidthScale);
+      const savedRows = parseInt(settings.sliderRows !== undefined ? settings.sliderRows : defaultRows);
       document.documentElement.style.setProperty('--key-height', savedKeyHeight + 'px');
       document.documentElement.style.setProperty('--row-gap', savedRowGap + 'px');
       document.documentElement.style.setProperty('--key-width-scale', savedWidthScale);
-      const groupsPerScreen = 8 - savedWidthScale;
-      document.documentElement.style.setProperty('--octave-width', (100 / groupsPerScreen) + 'vw');
+      // 宽度值决定每个音域的宽度
+      // 宽度=1：每个音域占1/7屏幕宽度，7个音域刚好占满整个琴键区域（从倍低音到倍高音）
+      // 宽度=7：每个音域占100%屏幕宽度，1个音域占满整个琴键区域（音阶1234567）
+      const octaveWidthPercent = (savedWidthScale * 100 / 7);
+      // 横屏和竖屏都使用vw（视口宽度）
+      document.documentElement.style.setProperty('--octave-width', octaveWidthPercent + 'vw');
       sliderRows.value = savedRows; inputRows.value = savedRows;
       sliderWidth.value = savedWidthScale; inputWidth.value = savedWidthScale;
       sliderHeight.value = savedKeyHeight; inputHeight.value = savedKeyHeight;
@@ -7840,7 +8204,7 @@ document.addEventListener("touchcancel",endResize);
 
 updateFullscreenBtn(wrap.offsetHeight);
 
-window.addEventListener("resize",function(){_snapAutoBtn();updateFullscreenBtn(wrap.offsetHeight);});
+window.addEventListener("resize",function(){_snapAutoBtn();updateFullscreenBtn(wrap.offsetHeight);if(typeof _recPlayState!=='undefined'&&_recPlayState)drawRainbowGridBackground();});
 if(window.ResizeObserver){new ResizeObserver(function(){_snapAutoBtn();var f=document.getElementById("scoreFullscreenBtn");if(f)_applyFullPos(f);}).observe(musicBar);}
 
 })();
