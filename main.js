@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿// Global custom confirm - replaces window.confirm() for WebView compatibility
+﻿﻿﻿﻿﻿﻿﻿﻿﻿// Global custom confirm - replaces window.confirm() for WebView compatibility
 window.appConfirm = function(msg, onOk, onCancel) {
   var ov  = document.getElementById('appConfirmOverlay');
   var txt = document.getElementById('appConfirmContent');
