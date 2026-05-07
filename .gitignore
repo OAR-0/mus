@@ -1,1 +1,54 @@
-" " 
+# HBuilderX 配置目录
+.hbuilderx/
+
+# 备份文件
+index_backup.html
+main_backup.js
+
+# 下载脚本
+download-*.ps1
+download-*.bat
+
+# 临时数据文件
+bass-data.js
+clarinet-data.js
+drumkit-data.txt
+erhu-data.js
+flute-data.js
+frenchhorn-data.js
+saxophone-data.js
+samples-data-final.js
+samples-data-fixed.js
+samples-data-fixed2.js
+samples-data-new.js
+trombone-data.js
+
+# 二胡样本
+erhu-samples/
+erhu-samples.zip
+
+# 音色库
+soundfont/
+
+# 打包输出
+unpackage/
+
+# 临时目录
+temp_tonejs/
+
+# 文档（可选，根据需要决定是否上传）
+功能需求文档.md
+重大bug修复方法.md
+
+# 启动脚本
+start-server.bat
+上传到GitHub.bat
+
+# 其他临时文件
+fix_black_keys.js
+generate-samples.js
+onlinesampler.js
+sf2loader.js
+sf2player.js
+pages.json
+manifest.json

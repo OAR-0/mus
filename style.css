@@ -226,6 +226,20 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
   text-align: center;
   padding: 2px 0;
 }
+#recVisualBPM:focus,
+#recVisualTimeSig:focus,
+#recVisualMaxTimeInput:focus {
+  outline: none;
+  box-shadow: none;
+}
+#recVisualBPM::-webkit-inner-spin-button,
+#recVisualBPM::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#recVisualBPM {
+  -moz-appearance: textfield;
+}
 .toolbar-btn-simple {
   padding: 4px 12px;
   font-size: 12px;
@@ -935,6 +949,34 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
 .tone-waveform-handle-right {
   right: -6px;
 }
+.tone-waveform-loop-handle {
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.tone-waveform-loop-handle:hover {
+  background: rgba(0, 255, 100, 0.15);
+}
+.tone-waveform-loop-handle-bar {
+  width: 3px;
+  height: 24px;
+  background: #00ff66;
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(0, 255, 100, 0.5);
+}
+.tone-waveform-loop-handle-left {
+  left: 0;
+}
+.tone-waveform-loop-handle-right {
+  right: 0;
+}
 .tone-waveform-time {
   position: absolute;
   bottom: 4px;
@@ -953,11 +995,24 @@ body.rotated-90.toolbar-rotated-180 #layoutToolbar, body.rotated-270.toolbar-rot
 .tone-waveform-time-right {
   right: 4px;
 }
+.tone-waveform-info-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+.tone-sustain-label {
+  font-size: 11px;
+  color: #aaa;
+  flex-shrink: 0;
+}
+.tone-waveform-info-bar .setting-switch .setting-slider-round:before{height:14px;width:14px;left:3px;bottom:3px;}
+.tone-waveform-info-bar .setting-switch input:checked + .setting-slider-round:before{transform:translateX(16px);}
 .tone-waveform-info {
   font-size: 11px;
   color: #888;
-  margin-top: 6px;
   text-align: center;
+  flex: 1;
 }
 .tone-preset-btn {
   padding: 8px 16px;

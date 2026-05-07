@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿// Global custom confirm - replaces window.confirm() for WebView compatibility
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿// Global custom confirm - replaces window.confirm() for WebView compatibility
 window.appConfirm = function(msg, onOk, onCancel) {
   var ov  = document.getElementById('appConfirmOverlay');
   var txt = document.getElementById('appConfirmContent');
@@ -38,9 +38,10 @@ let currentInst = "piano";
 let keyHintEnabled = true;
 const INST_LIST = [
   {v:"piano",t:"钢琴"},{v:"guitar",t:"吉他"},{v:"violin",t:"小提琴"},{v:"cello",t:"大提琴"},
-  {v:"xiao",t:"箫"},{v:"dizi",t:"笛子"},{v:"guzheng",t:"古筝"},{v:"erhu",t:"二胡"},
-  {v:"pipa",t:"琵琶"},{v:"drumkit",t:"架子鼓"},
-  {v:"suona",t:"唢呐"},{v:"bass",t:"贝斯"},{v:"saxophone",t:"萨克斯"}
+  {v:"dizi",t:"笛子"},{v:"erhu",t:"二胡"},
+  {v:"drumkit",t:"架子鼓"},
+  {v:"bass",t:"贝斯"},{v:"saxophone",t:"萨克斯"},
+  {v:"flute",t:"长笛"},{v:"frenchhorn",t:"圆号"},{v:"clarinet",t:"单簧管"},{v:"trombone",t:"长号"}
 ];
 let instOrder = null;
 const activeNodes = new Map();
@@ -52,105 +53,138 @@ const defaultToneParams = {
     harm2: 0.5, harm3: 0.3, harm4: 0.15, harm5: 0.08, harm6: 0.04,
     filterType: 'lowpass', filterFreq: 8000, filterQ: 0.5,
     vibrato: 0, vibratoDepth: 0, noiseLevel: 0, noiseDecay: 0,
-    brightness: 0.7
+    brightness: 0.7,
+    sustainMode: false
   },
   guitar: { 
     waveType: 'noise', attack: 0.002, decay: 0.3, sustain: 0.0, release: 3.0,
     harm2: 0, harm3: 0, harm4: 0, harm5: 0, harm6: 0,
     filterType: 'lowpass', filterFreq: 5000, filterQ: 1.0,
     vibrato: 0, vibratoDepth: 0, noiseLevel: 1, noiseDecay: 0.8, blendFactor: 0.5,
-    brightness: 0.6
+    brightness: 0.6,
+    sustainMode: false
   },
   violin: { 
-    waveType: 'sawtooth', attack: 0.15, decay: 0.1, sustain: 0.8, release: 0.3,
+    waveType: 'sawtooth', attack: 0.15, decay: 0.1, sustain: 0.8, release: 1.0,
     harm2: 0.5, harm3: 0.25, harm4: 0.12, harm5: 0.06, harm6: 0.03,
     filterType: 'highpass', filterFreq: 150, filterQ: 0.7,
     vibrato: 5.5, vibratoDepth: 0.008, noiseLevel: 0, noiseDecay: 0,
-    brightness: 0.5
+    brightness: 0.5,
+    sustainMode: true,
+    loopStart: 0.15,
+    loopEnd: 0.7
   },
   cello: { 
-    waveType: 'sawtooth', attack: 0.2, decay: 0.15, sustain: 0.7, release: 0.5,
+    waveType: 'sawtooth', attack: 0.2, decay: 0.15, sustain: 0.7, release: 1.0,
     harm2: 0.4, harm3: 0.2, harm4: 0.1, harm5: 0.05, harm6: 0.02,
     filterType: 'lowpass', filterFreq: 2500, filterQ: 0.5,
     vibrato: 4.5, vibratoDepth: 0.01, noiseLevel: 0, noiseDecay: 0,
-    brightness: 0.4
-  },
-  xiao: { 
-    waveType: 'sine', attack: 0.25, decay: 0.3, sustain: 0.4, release: 1.0,
-    harm2: 0.15, harm3: 0.08, harm4: 0.03, harm5: 0.01, harm6: 0,
-    filterType: 'lowpass', filterFreq: 5000, filterQ: 0.3,
-    vibrato: 0, vibratoDepth: 0, noiseLevel: 0.1, noiseDecay: 0.3,
-    brightness: 0.5
+    brightness: 0.4,
+    sustainMode: true,
+    loopStart: 0.15,
+    loopEnd: 0.7
   },
   dizi: { 
-    waveType: 'sine', attack: 0.1, decay: 0.2, sustain: 0.6, release: 0.6,
+    waveType: 'sine', attack: 0.1, decay: 0.2, sustain: 0.6, release: 1.0,
     harm2: 0.6, harm3: 0.3, harm4: 0.12, harm5: 0.05, harm6: 0.02,
     filterType: 'lowpass', filterFreq: 7000, filterQ: 0.6,
     vibrato: 6, vibratoDepth: 0.006, noiseLevel: 0, noiseDecay: 0,
-    brightness: 0.6
-  },
-  guzheng: { 
-    waveType: 'noise', attack: 0.005, decay: 1.5, sustain: 0.0, release: 6.0,
-    harm2: 0, harm3: 0, harm4: 0, harm5: 0, harm6: 0,
-    filterType: 'lowpass', filterFreq: 3500, filterQ: 0.4,
-    vibrato: 5, vibratoDepth: 0.008, noiseLevel: 1, noiseDecay: 0.95, blendFactor: 0.496,
-    brightness: 0.5
-  },
-  pipa: { 
-    waveType: 'triangle', attack: 0.005, decay: 0.3, sustain: 0.0, release: 1.5,
-    harm2: 0.15, harm3: 0.35, harm4: 0.15, harm5: 0.08, harm6: 0.04,
-    filterType: 'lowpass', filterFreq: 6000, filterQ: 0.6,
-    vibrato: 0, vibratoDepth: 0, noiseLevel: 0, noiseDecay: 0,
-    brightness: 0.55
+    brightness: 0.6,
+    sustainMode: true,
+    loopStart: 0.15,
+    loopEnd: 0.7
   },
   erhu: { 
-    waveType: 'sawtooth', attack: 0.15, decay: 0.2, sustain: 0.6, release: 0.4,
+    waveType: 'sawtooth', attack: 0.15, decay: 0.2, sustain: 0.6, release: 1.0,
     harm2: 0.35, harm3: 0.15, harm4: 0.06, harm5: 0.02, harm6: 0.01,
     filterType: 'lowpass', filterFreq: 2000, filterQ: 0.8,
     vibrato: 5, vibratoDepth: 0.006, noiseLevel: 0, noiseDecay: 0,
-    brightness: 0.45
+    brightness: 0.45,
+    sustainMode: true,
+    loopStart: 0.15,
+    loopEnd: 0.7
   },
   drum: { 
     waveType: 'sine', attack: 0.001, decay: 0.08, sustain: 0.0, release: 0.4,
     harm2: 0, harm3: 0, harm4: 0, harm5: 0, harm6: 0,
     filterType: 'lowpass', filterFreq: 1500, filterQ: 1.5,
     vibrato: 0, vibratoDepth: 0, noiseLevel: 0.5, noiseDecay: 0.1,
-    brightness: 0.3
+    brightness: 0.3,
+    sustainMode: false
   },
   drumkit: { 
-    waveType: 'noise', attack: 0.001, decay: 0.1, sustain: 0.0, release: 0.5,
+    waveType: 'noise', attack: 0.001, decay: 0.01, sustain: 1.0, release: 0.05,
     harm2: 0, harm3: 0, harm4: 0, harm5: 0, harm6: 0,
-    filterType: 'bandpass', filterFreq: 2000, filterQ: 1.0,
+    filterType: 'lowpass', filterFreq: 20000, filterQ: 0.1,
     vibrato: 0, vibratoDepth: 0, noiseLevel: 1, noiseDecay: 0.5, blendFactor: 0.45,
-    brightness: 0.4
+    brightness: 0.5,
+    sustainMode: false
   },
   bell: { 
     waveType: 'sine', attack: 0.001, decay: 1.0, sustain: 0.5, release: 4.0,
     harm2: 0.6, harm3: 0.35, harm4: 0.2, harm5: 0.1, harm6: 0.05,
     filterType: 'lowpass', filterFreq: 10000, filterQ: 0.3,
     vibrato: 0, vibratoDepth: 0, noiseLevel: 0, noiseDecay: 0,
-    brightness: 0.8
-  },
-  suona: { 
-    waveType: 'square', attack: 0.03, decay: 0.1, sustain: 0.8, release: 0.2,
-    harm2: 0.5, harm3: 0.3, harm4: 0.15, harm5: 0.08, harm6: 0.04,
-    filterType: 'bandpass', filterFreq: 2000, filterQ: 2.0,
-    vibrato: 4, vibratoDepth: 0.004, noiseLevel: 0, noiseDecay: 0,
-    brightness: 0.6
+    brightness: 0.8,
+    sustainMode: false
   },
   bass: { 
     waveType: 'sawtooth', attack: 0.01, decay: 0.3, sustain: 0.4, release: 1.0,
     harm2: 0.3, harm3: 0.12, harm4: 0.05, harm5: 0.02, harm6: 0.01,
     filterType: 'lowpass', filterFreq: 1200, filterQ: 0.6,
     vibrato: 0, vibratoDepth: 0, noiseLevel: 0, noiseDecay: 0,
-    brightness: 0.3
+    brightness: 0.3,
+    sustainMode: false
   },
   saxophone: { 
-    waveType: 'square', attack: 0.08, decay: 0.15, sustain: 0.7, release: 0.3,
+    waveType: 'square', attack: 0.08, decay: 0.15, sustain: 0.7, release: 1.0,
     harm2: 0.45, harm3: 0.22, harm4: 0.1, harm5: 0.05, harm6: 0.02,
     filterType: 'lowpass', filterFreq: 4500, filterQ: 1.2,
     vibrato: 4, vibratoDepth: 0.004, noiseLevel: 0.03, noiseDecay: 0.15,
-    brightness: 0.5
+    brightness: 0.5,
+    sustainMode: true,
+    loopStart: 0.15,
+    loopEnd: 0.7
+  },
+  flute: { 
+    waveType: 'sine', attack: 0.08, decay: 0.15, sustain: 0.6, release: 1.0,
+    harm2: 0.3, harm3: 0.15, harm4: 0.06, harm5: 0.02, harm6: 0.01,
+    filterType: 'lowpass', filterFreq: 8000, filterQ: 0.5,
+    vibrato: 5, vibratoDepth: 0.005, noiseLevel: 0.05, noiseDecay: 0.2,
+    brightness: 0.7,
+    sustainMode: true,
+    loopStart: 0.15,
+    loopEnd: 0.7
+  },
+  frenchhorn: { 
+    waveType: 'sawtooth', attack: 0.12, decay: 0.2, sustain: 0.7, release: 1.0,
+    harm2: 0.35, harm3: 0.18, harm4: 0.08, harm5: 0.04, harm6: 0.02,
+    filterType: 'lowpass', filterFreq: 2500, filterQ: 0.8,
+    vibrato: 3, vibratoDepth: 0.003, noiseLevel: 0, noiseDecay: 0,
+    brightness: 0.4,
+    sustainMode: true,
+    loopStart: 0.15,
+    loopEnd: 0.7
+  },
+  clarinet: { 
+    waveType: 'square', attack: 0.06, decay: 0.18, sustain: 0.65, release: 1.0,
+    harm2: 0.4, harm3: 0.2, harm4: 0.1, harm5: 0.05, harm6: 0.02,
+    filterType: 'lowpass', filterFreq: 4000, filterQ: 1.0,
+    vibrato: 3.5, vibratoDepth: 0.003, noiseLevel: 0.02, noiseDecay: 0.1,
+    brightness: 0.55,
+    sustainMode: true,
+    loopStart: 0.15,
+    loopEnd: 0.7
+  },
+  trombone: { 
+    waveType: 'sawtooth', attack: 0.05, decay: 0.15, sustain: 0.75, release: 1.0,
+    harm2: 0.45, harm3: 0.22, harm4: 0.1, harm5: 0.05, harm6: 0.02,
+    filterType: 'lowpass', filterFreq: 3500, filterQ: 0.9,
+    vibrato: 4, vibratoDepth: 0.004, noiseLevel: 0, noiseDecay: 0,
+    brightness: 0.5,
+    sustainMode: true,
+    loopStart: 0.15,
+    loopEnd: 0.7
   }
 };
 let toneParams = JSON.parse(JSON.stringify(defaultToneParams));
@@ -165,6 +199,15 @@ function loadToneParams() {
           Object.assign(toneParams[inst], parsed[inst]);
         }
       });
+    }
+    if (!localStorage.getItem('toneParamsSustainV2')) {
+      Object.keys(toneParams).forEach(inst => {
+        if (defaultToneParams[inst] && defaultToneParams[inst].sustainMode !== undefined) {
+          toneParams[inst].sustainMode = defaultToneParams[inst].sustainMode;
+        }
+      });
+      localStorage.setItem('toneParamsSustainV2', '1');
+      saveToneParams();
     }
   } catch(e) {
     localStorage.removeItem('toneParams');
@@ -1031,9 +1074,10 @@ var _TRACK_COLORS = ['#4fc3f7','#81c784','#ffb74d','#f06292','#ce93d8'];
 
 var _INST_EN = {
   '\u94a2\u7434':'piano','\u5409\u4ed6':'guitar','\u5c0f\u63d0\u7434':'violin','\u5927\u63d0\u7434':'cello',
-  '\u7b2d':'xiao','\u7b1b\u5b50':'dizi','\u53e4\u7b5d':'guzheng','\u4e8c\u80e1':'erhu',
-  '\u7435\u7436':'pipa','\u9f13':'drum','\u67b6\u5b50\u9f13':'drumkit','\u949f\u58f0':'bell',
-  '\u5520\u5443':'suona','\u8d1d\u65af':'bass','\u8428\u514b\u65af':'saxophone'
+  '\u7b1b\u5b50':'dizi','\u4e8c\u80e1':'erhu',
+  '\u67b6\u5b50\u9f13':'drumkit',
+  '\u8d1d\u65af':'bass','\u8428\u514b\u65af':'saxophone',
+  '\u957f\u7b1b':'flute','\u5706\u53f7':'frenchhorn','\u5355\u7c27\u7ba1':'clarinet','\u957f\u53f7':'trombone'
 };
 
 var _OCT_COLORS = [
@@ -1194,6 +1238,224 @@ var _laneGradientFx = [];
 
 // ── play state ──────────────────────────────────────────────────────
 var _recPlayState = null;
+var _prerenderCache = {};
+var _prerenderSource = null;
+var _prerenderGain = null;
+var _recPlayId = 0;
+
+function prerenderRec(recObj, callback) {
+  if (!recObj || !recObj.display) { if (callback) callback(null); return; }
+  var cacheKey = recObj.key + '_' + (recObj.speed || 1) + '_' + recObj.display;
+  if (_prerenderCache[cacheKey]) { if (callback) callback(_prerenderCache[cacheKey]); return; }
+
+  var lines = recObj.display.split('\n').filter(function(s){ return s.trim(); });
+  if (!lines.length) { if (callback) callback(null); return; }
+
+  var allNotes = [];
+  lines.forEach(function(line) {
+    allNotes = allNotes.concat(_parseRecTrack(line));
+  });
+  if (!allNotes.length) { if (callback) callback(null); return; }
+
+  var speed = parseFloat(recObj.speed) || 1;
+  var maxEnd = 0;
+  allNotes.forEach(function(n) {
+    var end = n.atMs + n.holdMs + 2000;
+    if (end > maxEnd) maxEnd = end;
+  });
+  var totalDurSec = (maxEnd / speed) / 1000 + 1;
+
+  var sampleRate = 44100;
+  var offlineCtx = new OfflineAudioContext(2, Math.ceil(sampleRate * totalDurSec), sampleRate);
+
+  var samplerBuffers = SimpleSampler.getSampleBuffers();
+
+  allNotes.forEach(function(n) {
+    var instEn = _INST_EN[n.inst] || n.inst;
+    var freq = getFreq(n.note);
+    var midiNote = Math.round(69 + 12 * Math.log2(freq / 440));
+    var startSec = n.atMs / speed / 1000;
+    var holdSec = n.holdMs / speed / 1000;
+    var vol = (typeof n.volume === 'number') ? n.volume / 100 : 1;
+
+    var tp = toneParams[instEn] || defaultToneParams[instEn] || {};
+    var release = Math.max(0.1, tp.release || 1.5);
+    var noteTotalSec = holdSec + release + 0.2;
+
+    var instBufs = samplerBuffers[instEn];
+    var sampleBuffer = null;
+    var playbackRate = 1.0;
+
+    if (instBufs && Object.keys(instBufs).length > 0) {
+      for (var noteKey in instBufs) {
+        if (normalizeNoteNameGlobal(noteKey) === midiToNoteNameGlobal(midiNote)) {
+          sampleBuffer = instBufs[noteKey];
+          playbackRate = 1.0;
+          break;
+        }
+      }
+      if (!sampleBuffer) {
+        var closest = findClosestNoteGlobal(instBufs, midiNote);
+        if (closest) {
+          sampleBuffer = instBufs[closest];
+          var sampleMidi = noteToMidiGlobal(closest);
+          var pitchDiff = midiNote - sampleMidi;
+          playbackRate = Math.pow(2, pitchDiff / 12);
+        }
+      }
+    }
+
+    if (sampleBuffer) {
+      var src = offlineCtx.createBufferSource();
+      src.buffer = sampleBuffer;
+      src.playbackRate.value = playbackRate;
+
+      var gain = offlineCtx.createGain();
+      var attackTime = Math.min(tp.attack !== undefined ? tp.attack : 0.005, sampleBuffer.duration * 0.8);
+      var decayTime = Math.min(tp.decay !== undefined ? tp.decay : 0.5, sampleBuffer.duration * 0.5);
+      var sustainVal = Math.max(0.001, Math.min(1, tp.sustain !== undefined ? tp.sustain : 0.4));
+      var brightness = tp.brightness !== undefined ? tp.brightness : 0;
+      var peakVol = vol;
+      var sustainVol = peakVol * sustainVal;
+
+      gain.gain.setValueAtTime(0, startSec);
+      gain.gain.linearRampToValueAtTime(peakVol, startSec + attackTime);
+      gain.gain.linearRampToValueAtTime(sustainVol, startSec + attackTime + decayTime);
+      gain.gain.setValueAtTime(sustainVol, startSec + holdSec);
+      gain.gain.exponentialRampToValueAtTime(0.001, startSec + holdSec + release);
+
+      if (brightness > 0.001) {
+        var offFilter = offlineCtx.createBiquadFilter();
+        offFilter.type = 'lowpass';
+        var offFilterFreq = Math.max(50, tp.filterFreq || 5000);
+        var offFilterQ = Math.max(0.1, Math.min(20, tp.filterQ || 0.5));
+        var offAdjustedFreq = offFilterFreq * (0.2 + brightness * 3);
+        offFilter.frequency.value = Math.min(20000, Math.max(50, offAdjustedFreq));
+        offFilter.Q.value = Math.max(0.1, offFilterQ - brightness * 0.3);
+        src.connect(offFilter);
+        offFilter.connect(gain);
+      } else {
+        src.connect(gain);
+      }
+      gain.connect(offlineCtx.destination);
+      src.start(startSec);
+      src.stop(startSec + noteTotalSec);
+    } else {
+      var waveType = tp.waveType || 'sine';
+      var attack = tp.attack !== undefined ? tp.attack : 0.005;
+      var decay = tp.decay !== undefined ? tp.decay : 0.5;
+      var sustain = Math.max(0.001, Math.min(1, tp.sustain !== undefined ? tp.sustain : 0.4));
+      var harm2 = tp.harm2 || 0;
+      var harm3 = tp.harm3 || 0;
+      var harm4 = tp.harm4 || 0;
+      var harm5 = tp.harm5 || 0;
+      var harm6 = tp.harm6 || 0;
+      var filterType = tp.filterType || 'lowpass';
+      var filterFreq = Math.max(50, tp.filterFreq || 5000);
+      var filterQ = Math.max(0.1, Math.min(20, tp.filterQ || 0.5));
+
+      var masterGain = offlineCtx.createGain();
+      masterGain.connect(offlineCtx.destination);
+
+      var envGain = offlineCtx.createGain();
+      var biquad = offlineCtx.createBiquadFilter();
+      biquad.type = validFilterTypes.includes(filterType) ? filterType : 'lowpass';
+      biquad.frequency.value = filterFreq;
+      biquad.Q.value = filterQ;
+
+      if (waveType === 'noise') {
+        var nDur = Math.max(0.5, release + decay);
+        var bufSize = Math.ceil(sampleRate * nDur);
+        var delayLen = Math.max(1, Math.min(Math.round(sampleRate / freq), bufSize - 1));
+        var nBuf = offlineCtx.createBuffer(1, bufSize, sampleRate);
+        var nD = nBuf.getChannelData(0);
+        for (var i = 0; i < delayLen && i < bufSize; i++) nD[i] = Math.random() * 2 - 1;
+        for (var i = delayLen; i < bufSize; i++) {
+          var i1 = i - delayLen, i2 = i - delayLen + 1;
+          if (i2 >= 0 && i2 < i) nD[i] = (tp.blendFactor || 0.5) * (nD[i1] + nD[i2]);
+        }
+        var nSrc = offlineCtx.createBufferSource();
+        nSrc.buffer = nBuf;
+        nSrc.connect(biquad);
+        biquad.connect(envGain);
+        envGain.gain.setValueAtTime(0.7 * vol, startSec);
+        envGain.gain.exponentialRampToValueAtTime(0.001, startSec + nDur);
+        nSrc.start(startSec);
+        nSrc.stop(startSec + nDur);
+      } else {
+        var o1 = offlineCtx.createOscillator();
+        o1.type = waveType;
+        o1.frequency.value = freq;
+        o1.connect(biquad);
+        o1.start(startSec);
+        o1.stop(startSec + noteTotalSec);
+
+        if (harm2 > 0.01) { var o2 = offlineCtx.createOscillator(); o2.type='sine'; o2.frequency.value=freq*2; var g2=offlineCtx.createGain(); g2.gain.value=harm2*0.8; o2.connect(g2); g2.connect(biquad); o2.start(startSec); o2.stop(startSec+noteTotalSec); }
+        if (harm3 > 0.01) { var o3 = offlineCtx.createOscillator(); o3.type='sine'; o3.frequency.value=freq*3; var g3=offlineCtx.createGain(); g3.gain.value=harm3*0.6; o3.connect(g3); g3.connect(biquad); o3.start(startSec); o3.stop(startSec+noteTotalSec); }
+        if (harm4 > 0.01) { var o4 = offlineCtx.createOscillator(); o4.type='sine'; o4.frequency.value=freq*4; var g4=offlineCtx.createGain(); g4.gain.value=harm4*0.4; o4.connect(g4); g4.connect(biquad); o4.start(startSec); o4.stop(startSec+noteTotalSec); }
+        if (harm5 > 0.01) { var o5 = offlineCtx.createOscillator(); o5.type='sine'; o5.frequency.value=freq*5; var g5=offlineCtx.createGain(); g5.gain.value=harm5*0.3; o5.connect(g5); g5.connect(biquad); o5.start(startSec); o5.stop(startSec+noteTotalSec); }
+        if (harm6 > 0.01) { var o6 = offlineCtx.createOscillator(); o6.type='sine'; o6.frequency.value=freq*6; var g6=offlineCtx.createGain(); g6.gain.value=harm6*0.2; o6.connect(g6); g6.connect(biquad); o6.start(startSec); o6.stop(startSec+noteTotalSec); }
+
+        biquad.connect(envGain);
+        var peakVol = 0.6 * vol;
+        var sustainVol = peakVol * sustain;
+        envGain.gain.setValueAtTime(0, startSec);
+        envGain.gain.linearRampToValueAtTime(peakVol, startSec + attack);
+        envGain.gain.linearRampToValueAtTime(sustainVol, startSec + attack + decay);
+        envGain.gain.setValueAtTime(sustainVol, startSec + holdSec);
+        envGain.gain.exponentialRampToValueAtTime(0.001, startSec + holdSec + release);
+      }
+
+      envGain.connect(masterGain);
+    }
+  });
+
+  offlineCtx.startRendering().then(function(buffer) {
+    _prerenderCache[cacheKey] = buffer;
+    if (callback) callback(buffer);
+  }).catch(function() {
+    if (callback) callback(null);
+  });
+}
+
+function noteToMidiGlobal(note) {
+  var normalized = normalizeNoteNameGlobal(note);
+  var match = normalized.match(/^([A-G])([#b]?)(\d+)$/i);
+  if (!match) return 60;
+  var noteNames = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  var noteName = match[1].toUpperCase() + (match[2] === '#' ? '#' : '');
+  var octave = parseInt(match[3]);
+  var noteIndex = noteNames.indexOf(noteName);
+  if (noteIndex === -1) return 60;
+  return (octave + 1) * 12 + noteIndex;
+}
+
+function midiToNoteNameGlobal(midi) {
+  var noteNames = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  var octave = Math.floor(midi / 12) - 1;
+  var noteIndex = midi % 12;
+  return noteNames[noteIndex] + octave;
+}
+
+function normalizeNoteNameGlobal(noteName) {
+  var name = noteName.toUpperCase();
+  name = name.replace(/([A-G])S(\d)/g, '$1#$2');
+  var match = name.match(/^([A-G])(#?)(\d+)$/);
+  if (!match) return noteName;
+  return match[1] + match[2] + match[3];
+}
+
+function findClosestNoteGlobal(instBuffers, midiNote) {
+  if (!instBuffers || Object.keys(instBuffers).length === 0) return null;
+  var notes = Object.keys(instBuffers);
+  var closestNote = notes[0];
+  var closestDiff = Math.abs(noteToMidiGlobal(closestNote) - midiNote);
+  for (var i = 1; i < notes.length; i++) {
+    var diff = Math.abs(noteToMidiGlobal(notes[i]) - midiNote);
+    if (diff < closestDiff) { closestDiff = diff; closestNote = notes[i]; }
+  }
+  return closestNote;
+}
 
 // ── playhead vibration effect ───────────────────────────────────────
 var _playheadVibration = { active: false, startTime: 0, amplitude: 0, duration: 300 };
@@ -1533,6 +1795,44 @@ function startRecordPlay(recObj) {
     });
   }
   if (!recObj || !recObj.display) return;
+  _recPlayId++;
+  var cacheKey = recObj.key + '_' + (recObj.speed || 1) + '_' + recObj.display;
+  _startRecordPlayRealtime(recObj);
+  _recPlayState._playId = _recPlayId;
+  if (_prerenderCache[cacheKey]) {
+    _recPlayState.prerendered = true;
+    _playPrerenderedRec(recObj, _prerenderCache[cacheKey]);
+  } else {
+    prerenderRec(recObj, function(buffer) {});
+  }
+}
+
+function _playPrerenderedRec(recObj, buffer) {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  if (_prerenderSource) { try { _prerenderSource.stop(); } catch(e) {} }
+  _prerenderSource = audioCtx.createBufferSource();
+  _prerenderSource.buffer = buffer;
+  _prerenderGain = audioCtx.createGain();
+  _prerenderGain.gain.value = isMuted || isMutedTemporarily ? 0 : 1;
+  _prerenderSource.connect(_prerenderGain);
+  _prerenderGain.connect(audioCtx.destination);
+  _prerenderSource.start(0);
+  _recPlayState._prerenderStartTime = audioCtx.currentTime;
+  var currentSource = _prerenderSource;
+  var currentPlayId = _recPlayState._playId;
+  _prerenderSource.onended = function() {
+    if (_prerenderSource === currentSource) {
+      _prerenderSource = null;
+      _prerenderGain = null;
+    }
+    if (_recPlayState && _recPlayState._playId === currentPlayId && !_recPlayState.paused) {
+      stopRecordPlay();
+    }
+  };
+}
+
+function _startRecordPlayRealtime(recObj) {
   var lines = recObj.display.split('\n').filter(function(s){ return s.trim(); });
   if (!lines.length) return;
 
@@ -1662,21 +1962,20 @@ function _recLoop() {
       track.notes.forEach(function(n, ni) {
         var key = ti + '-' + ni;
         if (_recPlayState.scheduled[key]) return;
-        // Fire sound when block left edge is within 60ms of the playhead (accounts for rAF latency)
         if (elapsed >= n.atMs - 60) {
           _recPlayState.scheduled[key] = true;
-          var instEn = _INST_EN[n.inst] || n.inst;
-          var noteVolume = (typeof n.volume === 'number') ? n.volume : 100;
-          // Note: playhead vibration is only triggered by user key presses, not auto-playback
-          // Delay slightly if we're early so sound lands at visual crossing
-          var fireDelay = Math.max(0, (n.atMs - elapsed) / _recPlayState.speed);
-          (function(k, note, inst, hms, sp, delay, vol) {
-            setTimeout(function(){
-              if (!_recPlayState || _recPlayState.paused) return;
-              startNote('rec_' + k, note, inst, vol);
-              setTimeout(function(){ try{ stopNote('rec_' + k); }catch(e){} }, hms / sp);
-            }, delay);
-          })(key, n.note, instEn, n.holdMs, _recPlayState.speed, fireDelay, noteVolume);
+          if (!_recPlayState.prerendered) {
+            var instEn = _INST_EN[n.inst] || n.inst;
+            var noteVolume = (typeof n.volume === 'number') ? n.volume : 100;
+            var fireDelay = Math.max(0, (n.atMs - elapsed) / _recPlayState.speed);
+            (function(k, note, inst, hms, sp, delay, vol) {
+              setTimeout(function(){
+                if (!_recPlayState || _recPlayState.paused) return;
+                startNote('rec_' + k, note, inst, vol);
+                setTimeout(function(){ try{ stopNote('rec_' + k); }catch(e){} }, hms / sp);
+              }, delay);
+            })(key, n.note, instEn, n.holdMs, _recPlayState.speed, fireDelay, noteVolume);
+          }
         }
       });
     });
@@ -1746,12 +2045,19 @@ function pauseRecordPlay() {
   if (!_recPlayState || _recPlayState.paused) return;
   cancelAnimationFrame(_recPlayState.raf);
   _stopRingLoop();
-  // Stop ALL currently playing rec notes immediately
-  _recPlayState.tracks.forEach(function(t, ti) {
-    t.notes.forEach(function(n, ni) {
-      try { stopNote('rec_' + ti + '-' + ni); } catch(e) {}
+  if (_recPlayState.prerendered) {
+    if (_prerenderSource) {
+      _recPlayState._prerenderPauseOffset = audioCtx.currentTime - _recPlayState._prerenderStartTime;
+      try { _prerenderSource.stop(); } catch(e) {}
+      _prerenderSource = null;
+    }
+  } else {
+    _recPlayState.tracks.forEach(function(t, ti) {
+      t.notes.forEach(function(n, ni) {
+        try { stopNote('rec_' + ti + '-' + ni); } catch(e) {}
+      });
     });
-  });
+  }
   _recPlayState.paused       = true;
   _recPlayState.pausedAt     = performance.now();
   // Enter follow mode: user must play correct note to advance
@@ -1807,21 +2113,54 @@ function pauseRecordPlay() {
 function resumeRecordPlay() {
   if (!_recPlayState || !_recPlayState.paused) return;
   if (_recPlayState.finished) {
-    // Replay from start
     var obj = _recPlayState.recObj;
     stopRecordPlay();
     startRecordPlay(obj);
     return;
   }
-  // Exit follow mode
   _recPlayState.followMode   = false;
   _recPlayState.followNotes  = null;
-  // Shift startTime forward by pause duration so elapsed stays continuous
   var pauseDur = performance.now() - _recPlayState.pausedAt;
   _recPlayState.startTime += pauseDur;
   _recPlayState.pausedAt  = undefined;
   _recPlayState.paused    = false;
-  // Update canvas position immediately based on current elapsed
+  if (_recPlayState.prerendered) {
+    var cacheKey = _recPlayState.recObj.key + '_' + (_recPlayState.recObj.speed || 1) + '_' + _recPlayState.recObj.display;
+    var buffer = _prerenderCache[cacheKey];
+    if (buffer) {
+      var offset = _recPlayState._prerenderPauseOffset || 0;
+      _prerenderSource = audioCtx.createBufferSource();
+      _prerenderSource.buffer = buffer;
+      _prerenderGain = audioCtx.createGain();
+      _prerenderGain.gain.value = isMuted || isMutedTemporarily ? 0 : 1;
+      _prerenderSource.connect(_prerenderGain);
+      _prerenderGain.connect(audioCtx.destination);
+      _prerenderSource.start(0, offset);
+      _recPlayState._prerenderStartTime = audioCtx.currentTime - offset;
+      var currentSource2 = _prerenderSource;
+      var currentPlayId2 = _recPlayState._playId;
+      _prerenderSource.onended = function() {
+        if (_prerenderSource === currentSource2) {
+          _prerenderSource = null;
+          _prerenderGain = null;
+        }
+        if (_recPlayState && _recPlayState._playId === currentPlayId2 && !_recPlayState.paused) {
+          stopRecordPlay();
+        }
+      };
+    }
+  } else {
+    _recPlayState.scheduled = {};
+    var elapsed = _recPlayState.pausedElapsed || 0;
+    _recPlayState.tracks.forEach(function(track, ti) {
+      track.notes.forEach(function(n, ni) {
+        var key = ti + '-' + ni;
+        if (n.atMs + n.holdMs < elapsed) {
+          _recPlayState.scheduled[key] = true;
+        }
+      });
+    });
+  }
   var elapsed = _recPlayState.pausedElapsed || 0;
   var scoreW = scoreWrap ? scoreWrap.clientWidth : 300;
   var fixedX = scoreW / 4;
@@ -1837,13 +2176,16 @@ function resumeRecordPlay() {
 }
 
 function stopRecordPlay() {
+  if (_prerenderSource) { try { _prerenderSource.stop(); } catch(e) {} _prerenderSource = null; _prerenderGain = null; }
   if (!_recPlayState) return;
   cancelAnimationFrame(_recPlayState.raf);
-  _recPlayState.tracks.forEach(function(t, ti) {
-    t.notes.forEach(function(n, ni) {
-      try { stopNote('rec_' + ti + '-' + ni); } catch(e) {}
+  if (!_recPlayState.prerendered) {
+    _recPlayState.tracks.forEach(function(t, ti) {
+      t.notes.forEach(function(n, ni) {
+        try { stopNote('rec_' + ti + '-' + ni); } catch(e) {}
+      });
     });
-  });
+  }
   _recPlayState = null;
   _hitFx = [];
   _laneGradientFx = [];
@@ -2879,21 +3221,23 @@ function initAudio(){
   if(audioCtx.state==="suspended") audioCtx.resume();
   
   if (typeof SimpleSampler !== 'undefined' && !SimpleSampler.getIsLoaded()) {
-    console.log('[DEBUG] initAudio: loading samples...');
     SimpleSampler.setAudioContext(audioCtx);
-    SimpleSampler.loadAllSamples(
-      function(progress) {
-        console.log('[DEBUG] Sample loading progress:', Math.round(progress * 100) + '%');
-      },
-      function() {
-        console.log('[DEBUG] All samples loaded!');
-      },
-      function(error) {
-        console.log('[DEBUG] Sample loading error:', error);
+    SimpleSampler.loadAllSamples(null, function() {
+      console.log('[DEBUG] initAudio: 采样加载完成，刷新音色调整窗口');
+      if (typeof renderToneControls === 'function' && currentToneInst) {
+        renderToneControls();
       }
-    );
-  } else {
-    console.log('[DEBUG] initAudio: samples already loaded or SimpleSampler not available');
+    });
+  }
+  
+  // 初始化OnlineSampler用于没有本地采样的新乐器
+  // 单簧管、长笛、圆号和长号已有本地采样，不需要在线加载
+  if (typeof OnlineSampler !== 'undefined' && OnlineSampler.loadInstrument) {
+    OnlineSampler.setAudioContext(audioCtx);
+    var newInstruments = [];
+    newInstruments.forEach(function(inst) {
+      OnlineSampler.loadInstrument(inst);
+    });
   }
 }
 
@@ -2917,6 +3261,8 @@ function getFreq(s){
   return freq;
 }
 
+const validFilterTypes = ['lowpass', 'highpass', 'bandpass', 'lowshelf', 'highshelf', 'peaking', 'notch', 'allpass'];
+
 function startInstrumentNote(freq, autoVolume = 1, overrideInst = null){
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -2936,59 +3282,116 @@ function startInstrumentNote(freq, autoVolume = 1, overrideInst = null){
     const tp = toneParams[instName] || defaultToneParams[instName] || {};
     var trimS = tp.trimStart || 0;
     var trimE = tp.trimEnd !== undefined ? tp.trimEnd : 1;
-    var result = SimpleSampler.playNote(instName, midiNote, velocity, undefined, trimS, trimE);
+    var loopS = tp.loopStart !== undefined ? tp.loopStart : 0.15;
+    var loopE = tp.loopEnd !== undefined ? tp.loopEnd : 0.7;
+    
+    var result = SimpleSampler.playNote(instName, midiNote, velocity, undefined, trimS, trimE, loopS, loopE);
+    
+    // 如果SimpleSampler没有采样，尝试使用OnlineSampler
+    if (!result && typeof OnlineSampler !== 'undefined') {
+      OnlineSampler.setAudioContext(audioCtx);
+      result = OnlineSampler.playNote(instName, midiNote, velocity);
+    }
+    
     if (result) {
       const p = toneParams[instName] || defaultToneParams[instName] || {};
-      const brightness = p.brightness !== undefined ? p.brightness : 0;
+      
+      var instConfig = SimpleSampler.SAMPLE_CONFIG ? SimpleSampler.SAMPLE_CONFIG[instName] : null;
+      var volumeBoost = (instConfig && instConfig.volumeBoost) ? instConfig.volumeBoost : 1;
       
       var samplerGain = audioCtx.createGain();
       
       const now = audioCtx.currentTime;
-      const peakVol = autoVolume;
+      const peakVol = autoVolume * volumeBoost;
       
-      var sampleDuration = result.source.buffer ? result.source.buffer.duration : 2;
-      var sampAttackPct = p.attack !== undefined ? p.attack : 0;
-      var sampDecayPct = p.decay !== undefined ? p.decay : 30;
-      var sampSustain = Math.max(0, Math.min(1, p.sustain || 0.4));
+      var attackTime = p.attack !== undefined ? p.attack : 0.005;
+      var decayTime = p.decay !== undefined ? p.decay : 0.5;
+      var sampSustain = Math.max(0.001, Math.min(1, p.sustain !== undefined ? p.sustain : 0.7));
+      var sampBrightness = p.brightness !== undefined ? p.brightness : 0;
+      var sFilterFreq = Math.max(50, p.filterFreq || 5000);
+      var sFilterQ = Math.max(0.1, Math.min(20, p.filterQ || 0.5));
+      var sustainMode = p.sustainMode || false;
       
-      var attackTime = (sampAttackPct / 100) * sampleDuration * 0.8;
-      var decayTime = (sampDecayPct / 100) * sampleDuration * 0.5;
       var sustainVol = peakVol * sampSustain;
+      
+      var sFilter = audioCtx.createBiquadFilter();
+      sFilter.type = p.filterType || 'lowpass';
+      var sampAdjFreq = sFilterFreq * (0.2 + sampBrightness * 3);
+      sFilter.frequency.value = Math.min(20000, Math.max(50, sampAdjFreq));
+      sFilter.Q.value = Math.max(0.1, sFilterQ - sampBrightness * 0.3);
+      
+      var trimStart = result.trimStart || 0;
+      var trimEnd = result.trimEnd !== undefined ? result.trimEnd : 1;
+      var bufferDuration = result.buffer.duration;
+      
+      var selectedDuration = bufferDuration * (trimEnd - trimStart);
+      
+      var releaseTime = p.release !== undefined ? p.release : 1.5;
+      releaseTime = Math.max(0.1, releaseTime);
       
       samplerGain.gain.setValueAtTime(0, now);
       samplerGain.gain.linearRampToValueAtTime(peakVol, now + attackTime);
       samplerGain.gain.linearRampToValueAtTime(sustainVol, now + attackTime + decayTime);
       
+      if (sustainMode) {
+        samplerGain.gain.setValueAtTime(sustainVol, now + attackTime + decayTime + 600);
+      } else {
+        samplerGain.gain.setValueAtTime(sustainVol, now + attackTime + decayTime);
+        var naturalEndTime = now + selectedDuration;
+        samplerGain.gain.setValueAtTime(sustainVol, naturalEndTime);
+        samplerGain.gain.exponentialRampToValueAtTime(0.001, naturalEndTime + releaseTime);
+      }
+      
       result.source.disconnect();
-      result.source.connect(samplerGain);
+      result.source.connect(sFilter);
+      sFilter.connect(samplerGain);
       samplerGain.connect(audioCtx.destination);
       
-      if (brightness > 0.05) {
-        var wetGain = audioCtx.createGain();
-        wetGain.gain.value = brightness * 0.7;
+      if (sustainMode && result.buffer) {
+        var loopStartPos = p.loopStart !== undefined ? p.loopStart : 0.15;
+        var loopPointSec = bufferDuration * trimStart + selectedDuration * loopStartPos;
+        var timeToLoopPointSec = loopPointSec - (bufferDuration * trimStart);
         
-        var convolver = audioCtx.createConvolver();
-        var reverbTime = 1 + brightness * 3;
-        var sampleRate = audioCtx.sampleRate;
-        var length = Math.floor(sampleRate * reverbTime);
-        var impulse = audioCtx.createBuffer(2, length, sampleRate);
+        var mainSource = result.source;
+        mainSource.loop = false;
         
-        for (var channel = 0; channel < 2; channel++) {
-          var channelData = impulse.getChannelData(channel);
-          for (var i = 0; i < length; i++) {
-            var t = i / sampleRate;
-            var reverbDecay = Math.exp(-3 * t / reverbTime);
-            var noise = (Math.random() * 2 - 1);
-            var early = i < sampleRate * 0.1 ? Math.exp(-30 * t) : 0;
-            channelData[i] = (noise * reverbDecay + noise * early * 0.5) * 0.5;
-          }
+        var loopSource = audioCtx.createBufferSource();
+        loopSource.buffer = result.buffer;
+        loopSource.loop = true;
+        var sampleRate = result.buffer.sampleRate || 44100;
+        var minLoopDuration = 2 / sampleRate;
+        loopSource.loopStart = loopPointSec;
+        loopSource.loopEnd = loopPointSec + minLoopDuration;
+        loopSource.playbackRate.value = result.source.playbackRate.value;
+        
+        loopSource.connect(sFilter);
+        
+        // 先启动主音频源
+        if (trimStart > 0) {
+          mainSource.start(0, bufferDuration * trimStart);
+        } else {
+          mainSource.start();
         }
         
-        convolver.buffer = impulse;
+        // 调度主音频源在循环点停止
+        mainSource.stop(now + timeToLoopPointSec);
+        // 调度循环音频源在循环点开始播放
+        loopSource.start(now + timeToLoopPointSec, loopPointSec);
         
-        samplerGain.connect(convolver);
-        convolver.connect(wetGain);
-        wetGain.connect(audioCtx.destination);
+        result.loopSource = loopSource;
+        result.loopPoint = loopPointSec;
+        result.loopStartPos = loopStartPos;
+      } else {
+        // 非持续模式：先启动音频源，再调度停止
+        if (trimStart > 0) {
+          result.source.start(0, bufferDuration * trimStart);
+        } else {
+          result.source.start();
+        }
+        // 音频源在遮罩终点+释放时间后停止
+        if (selectedDuration > 0) {
+          result.source.stop(now + selectedDuration + releaseTime);
+        }
       }
       
       return { 
@@ -2996,7 +3399,19 @@ function startInstrumentNote(freq, autoVolume = 1, overrideInst = null){
         gain: samplerGain, 
         env: samplerGain, 
         samplerResult: result, 
-        instName: instName
+        instName: instName,
+        sustainMode: sustainMode,
+        peakVol: peakVol,
+        sustainVol: sustainVol,
+        attackTime: attackTime,
+        decayTime: decayTime,
+        startTime: now,
+        bufferDuration: bufferDuration,
+        trimStart: trimStart,
+        trimEnd: trimEnd,
+        selectedDuration: selectedDuration,
+        loopPoint: sustainMode ? (result.loopPoint || 0) : 0,
+        loopStartPos: sustainMode ? (result.loopStartPos || 0) : 0
       };
     }
   }
@@ -3007,9 +3422,9 @@ function startInstrumentNote(freq, autoVolume = 1, overrideInst = null){
   
   const p = toneParams[instName] || defaultToneParams[instName] || {};
   const waveType = p.waveType || 'sine';
-  const attackPercent = p.attack !== undefined ? p.attack : 0;
-  const decayPercent = p.decay !== undefined ? p.decay : 30;
-  const sustain = Math.max(0, Math.min(1, p.sustain || 0.4));
+  const attack = p.attack !== undefined ? p.attack : 0.005;
+  const decay = p.decay !== undefined ? p.decay : 0.5;
+  const sustain = Math.max(0.001, Math.min(1, p.sustain !== undefined ? p.sustain : 0.4));
   const release = Math.max(0.1, p.release || 1.0);
   const harm2 = p.harm2 || 0;
   const harm3 = p.harm3 || 0;
@@ -3025,18 +3440,16 @@ function startInstrumentNote(freq, autoVolume = 1, overrideInst = null){
   const noiseDecay = p.noiseDecay || 0;
   const blendFactor = p.blendFactor || 0.5;
   const brightness = p.brightness !== undefined ? p.brightness : 0;
-  
-  const attack = (attackPercent / 100) * 0.5;
-  const decay = (decayPercent / 100) * 1;
+  const isSustainMode = p.sustainMode || false;
   
   const oscillators = [];
-  const totalDur = attack + decay + release + 1;
+  const totalDur = isSustainMode ? 600 : (attack + decay + release + 1);
   
   const g1 = audioCtx.createGain();
   
   const mainFilter = audioCtx.createBiquadFilter();
   mainFilter.type = validFilterTypes.includes(filterType) ? filterType : 'lowpass';
-  adjustedFilterFreq = filterFreq * (0.2 + brightness * 3);
+  const adjustedFilterFreq = filterFreq * (0.2 + brightness * 3);
   mainFilter.frequency.value = Math.min(20000, Math.max(50, adjustedFilterFreq));
   mainFilter.Q.value = Math.max(0.1, filterQ - brightness * 0.3);
   
@@ -3191,13 +3604,28 @@ function startInstrumentNote(freq, autoVolume = 1, overrideInst = null){
     g1.gain.setValueAtTime(0, now);
     g1.gain.linearRampToValueAtTime(peakVol, now + attack);
     g1.gain.linearRampToValueAtTime(sustainVol, now + attack + decay);
-    g1.gain.setValueAtTime(sustainVol, now + attack + decay);
-    g1.gain.exponentialRampToValueAtTime(0.001, now + attack + decay + release);
+    if (isSustainMode) {
+      g1.gain.setValueAtTime(sustainVol, now + attack + decay + 600);
+    } else {
+      g1.gain.setValueAtTime(sustainVol, now + attack + decay);
+      g1.gain.exponentialRampToValueAtTime(0.001, now + attack + decay + release);
+    }
   }
   
   g1.connect(m);
   
-  return { nodes: oscillators, gain: m, env: g1, instName: instName };
+  return { 
+    nodes: oscillators, 
+    gain: m, 
+    env: g1, 
+    instName: instName, 
+    sustainMode: isSustainMode,
+    peakVol: 0.6 * autoVolume,
+    sustainVol: 0.6 * autoVolume * sustain,
+    attackTime: attack,
+    decayTime: decay,
+    startTime: now
+  };
 }
 
 // =====================================================
@@ -3277,20 +3705,25 @@ function startNote(tid, ns, overrideInst, noteVolume){
   const freq = getFreq(ns);
   stopNote(tid);
   const isAutoOrRec = (tid === "auto") || String(tid).startsWith("rec_");
+  if (!isAutoOrRec) {
+    var userKeys = [];
+    activeNodes.forEach(function(v, k) {
+      if (k !== "auto" && k !== "test" && !String(k).startsWith("rec_")) {
+        userKeys.push(k);
+      }
+    });
+    while (userKeys.length >= 8) {
+      stopNote(userKeys.shift());
+    }
+  }
   var volume = isAutoOrRec ? (isMuted || isMutedTemporarily ? 0 : 1) : 1;
   
   if (noteVolume !== undefined && noteVolume !== null) {
     volume = volume * (noteVolume / 100);
   }
   
-  console.log('startNote:', {tid, ns, overrideInst, currentInst, volume, noteVolume});
-  
   if (volume > 0) {
-    const prevInst = currentInst;
-    if (overrideInst) currentInst = overrideInst;
-    console.log('设置currentInst:', currentInst);
-    activeNodes.set(tid, startInstrumentNote(freq, volume));
-    if (overrideInst) currentInst = prevInst;
+    activeNodes.set(tid, startInstrumentNote(freq, volume, overrideInst));
   }
 
   // 跟弹模式：只有用户手动弹奏才触发，排除自动播放(auto)和测试音(test)和录制播放(rec_)
@@ -3473,49 +3906,101 @@ function stopNote(tid){
   const d=activeNodes.get(tid); if(!d) return;
   const now=audioCtx.currentTime;
   
-  // 获取正确的乐器名称（用于获取释放时间）
-  var instName = d.instName || currentInst;
-  
   if (d.samplerResult) {
-    // 采样声音：根据释放时间延迟停止
-    var release = 1.5;
-    if (toneParams[instName] && toneParams[instName].release) {
-      release = toneParams[instName].release;
-    }
-    // 使用 fadeOut 方式平滑停止，而不是立即 stop()
-    if (d.gain && d.gain.gain) {
-      try {
-        d.gain.gain.cancelScheduledValues(audioCtx.currentTime);
-        d.gain.gain.setValueAtTime(d.gain.gain.value, audioCtx.currentTime);
-        d.gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + release);
-      } catch(e) {}
-    }
     try {
-      var nodes = d.nodes || [d.samplerResult.source];
-      nodes.forEach(n => {
+      // 停止循环音频源
+      if (d.samplerResult.loopSource) {
         try {
-          n.stop(audioCtx.currentTime + release + 0.1);
+          d.samplerResult.loopSource.stop();
         } catch(e) {}
-      });
+        d.samplerResult.loopSource = null;
+      }
+      
+      var relInstName = d.instName;
+      var release = 1.5;
+      if (toneParams[relInstName] && toneParams[relInstName].release !== undefined) {
+        release = toneParams[relInstName].release;
+      } else if (defaultToneParams[relInstName] && defaultToneParams[relInstName].release !== undefined) {
+        release = defaultToneParams[relInstName].release;
+      }
+      release = Math.max(0.1, release);
+
+      var currentGain = d.sustainVol || 0.5;
+      if (d.peakVol && d.attackTime !== undefined && d.decayTime !== undefined && d.startTime) {
+        var elapsed = now - d.startTime;
+        if (elapsed < d.attackTime) {
+          currentGain = d.peakVol * (elapsed / d.attackTime);
+        } else if (elapsed < d.attackTime + d.decayTime) {
+          var decayProgress = (elapsed - d.attackTime) / d.decayTime;
+          currentGain = d.peakVol + (d.sustainVol - d.peakVol) * decayProgress;
+        } else {
+          currentGain = d.sustainVol;
+        }
+      }
+      currentGain = Math.max(0.001, currentGain);
+
+      var remainingTime = 0;
+      if (d.selectedDuration) {
+        var elapsedSinceStart = now - d.startTime;
+        
+        if (d.sustainMode && d.loopPoint) {
+          var trimStartOffset = d.bufferDuration * (d.trimStart || 0);
+          
+          if (elapsedSinceStart > (d.loopPoint - trimStartOffset)) {
+            // 已经在循环点，计算剩余时间
+            remainingTime = d.selectedDuration - (d.loopPoint - trimStartOffset);
+          } else if (elapsedSinceStart < d.selectedDuration) {
+            remainingTime = d.selectedDuration - elapsedSinceStart;
+          }
+        } else {
+          remainingTime = Math.max(0, d.selectedDuration - elapsedSinceStart);
+        }
+      }
+      remainingTime = Math.max(0, remainingTime);
+      
+      if (d.env && d.env.gain) {
+        d.env.gain.cancelScheduledValues(now);
+        d.env.gain.setValueAtTime(currentGain, now);
+        if (remainingTime > 0) {
+          d.env.gain.setValueAtTime(currentGain, now + remainingTime);
+        }
+        d.env.gain.exponentialRampToValueAtTime(0.001, now + remainingTime + release);
+      }
     } catch(e) {}
+    
     activeNodes.delete(tid);
     if(tid!=="auto"&&tid!=="test"&&window._REC&&window._REC.active) window._REC.onRelease(tid);
     return;
   }
   
   try{
-    d.env.gain.cancelScheduledValues(now);
-    d.env.gain.setValueAtTime(d.env.gain.value, now);
+    if (d.sustainMode) {
+      var release = 1.5;
+      if (toneParams[d.instName] && toneParams[d.instName].release !== undefined) {
+        release = toneParams[d.instName].release;
+      } else if (defaultToneParams[d.instName] && defaultToneParams[d.instName].release !== undefined) {
+        release = defaultToneParams[d.instName].release;
+      }
+      release = Math.max(0.1, release);
 
-    // 使用存储的乐器名称获取释放值
-    var release = 1.5;
-    if (toneParams[instName] && toneParams[instName].release) {
-      release = toneParams[instName].release;
+      var currentGain = d.sustainVol || 0.3;
+      if (d.peakVol && d.attackTime !== undefined && d.decayTime !== undefined && d.startTime) {
+        var elapsed = now - d.startTime;
+        if (elapsed < d.attackTime) {
+          currentGain = d.peakVol * (elapsed / d.attackTime);
+        } else if (elapsed < d.attackTime + d.decayTime) {
+          var decayProgress = (elapsed - d.attackTime) / d.decayTime;
+          currentGain = d.peakVol + (d.sustainVol - d.peakVol) * decayProgress;
+        } else {
+          currentGain = d.sustainVol;
+        }
+      }
+      currentGain = Math.max(0.001, currentGain);
+
+      d.env.gain.cancelScheduledValues(now);
+      d.env.gain.setValueAtTime(currentGain, now);
+      d.env.gain.exponentialRampToValueAtTime(0.001, now + release);
     }
-    release = Math.max(0.1, release);
-
-    d.env.gain.exponentialRampToValueAtTime(0.001, now + release);
-    d.nodes.forEach(n=>{try{n.stop(now + release + 0.1);}catch(e){}});
   }catch(e){}
   activeNodes.delete(tid);
   if(tid!=="auto"&&tid!=="test"&&window._REC&&window._REC.active) window._REC.onRelease(tid);
@@ -3574,9 +4059,10 @@ function highlightSameRowNote(keyEl, noteStr, add) {
 
 var _INST_ZH_MAP = {
   piano:'\u94a2\u7434',guitar:'\u5409\u4ed6',violin:'\u5c0f\u63d0\u7434',cello:'\u5927\u63d0\u7434',
-  xiao:'\u7b2d',dizi:'\u7b1b\u5b50',guzheng:'\u53e4\u7b5d',erhu:'\u4e8c\u80e1',
-  pipa:'\u7435\u7436',drum:'\u9f13',drumkit:'\u67b6\u5b50\u9f13',bell:'\u949f\u58f0',
-  suona:'\u5520\u5443',bass:'\u8d1d\u65af',saxophone:'\u8428\u514b\u65af'
+  dizi:'\u7b1b\u5b50',erhu:'\u4e8c\u80e1',
+  drumkit:'\u67b6\u5b50\u9f13',
+  bass:'\u8d1d\u65af',saxophone:'\u8428\u514b\u65af',
+  flute:'\u957f\u7b1b',frenchhorn:'\u5706\u53f7',clarinet:'\u5355\u7c27\u7ba1',trombone:'\u957f\u53f7'
 };
 
 // Note name -> octave number for rainbow color
@@ -3836,6 +4322,15 @@ function _noteColor(note) {
   var _recVisualPlayTime = 0;
   var _recVisualPlayStart = 0;
   var _recVisualPlayAnimId = null;
+  
+  // 录音波形背景相关变量
+  var _audioWaveformData = [];
+  var _audioWaveformVisible = false;
+  var _audioWaveformSampleRate = 44100;
+  var _audioWaveformStartTime = 0;
+  var _audioWaveformDuration = 0;
+  var _audioRecordActive = false;
+  var _audioRecordDuration = 0;
   var _recVisualSelectBox = null;
   var _recVisualMousePos = null;
   var _recVisualPianoScroll = null;
@@ -5157,17 +5652,18 @@ function _noteColor(note) {
     var bpmArea = document.getElementById('recVisualBPMArea');
     var timeArea = document.getElementById('recVisualTimeArea');
     var melodyControlBtn = document.getElementById('melodyControlBtn');
+    var snapBtn = document.getElementById('recVisualSnap');
     var propsContainer = document.getElementById('propsPanelContainer');
     
     if (!hasSelection) {
       restoreToolbarOriginalContent();
       
-      // 取消选择时：显示旋律控制、BPM、时长区域，隐藏编辑按钮区域
+      // 取消选择时：显示BPM、时长区域，隐藏编辑按钮区域
       if (playBtns) playBtns.style.display = 'flex';
       if (editBtns) editBtns.style.display = 'none';
       if (bpmArea) bpmArea.style.display = 'flex';
       if (timeArea) timeArea.style.display = 'flex';
-      if (melodyControlBtn) melodyControlBtn.style.display = '';
+      if (snapBtn) snapBtn.style.display = '';
       
       if (propsContainer) {
         propsContainer.style.display = 'none';
@@ -5181,8 +5677,8 @@ function _noteColor(note) {
       return;
     }
     
-    // 选中音符时：只隐藏旋律控制、BPM、拍号、吸附、时长，保留播放暂停按钮和顶部按钮
-    if (melodyControlBtn) melodyControlBtn.style.display = 'none';
+    // 选中音符时：隐藏BPM、拍号、吸附、时长，保留播放暂停按钮和旋律控制按钮
+    if (snapBtn) snapBtn.style.display = 'none';
     if (bpmArea) bpmArea.style.display = 'none';
     if (timeArea) timeArea.style.display = 'none';
     
@@ -5263,7 +5759,7 @@ function _noteColor(note) {
     // 乐器选择 - 根据屏幕宽度设置最小宽度（确保三个字完整显示）
     var instMinWidth = isVeryNarrowScreen ? '58px' : (isNarrowScreen ? '62px' : '68px');
     html += '<select id="propInst" class="toolbar-input" style="background:#222;border:1px solid #444;color:#eee;border-radius:4px;font-size:' + fontSize + ';padding:' + selectPadding + ';flex-shrink:0;height:' + btnHeight + ';min-width:' + instMinWidth + ';text-align:left;">';
-    var instruments = ['钢琴', '吉他', '小提琴', '大提琴', '箫', '笛子', '古筝', '二胡', '琵琶', '萨克斯'];
+    var instruments = ['钢琴', '吉他', '小提琴', '大提琴', '笛子', '二胡', '鼓', '架子鼓', '钟声', '贝斯', '萨克斯', '长笛', '圆号', '单簧管', '长号'];
     instruments.forEach(function(i) {
       html += '<option value="' + i + '"' + (i === inst ? ' selected' : '') + '>' + i + '</option>';
     });
@@ -5385,6 +5881,39 @@ function _noteColor(note) {
     rangeHandleRight.style.left = (rightPos - 6) + 'px';
   }
 
+  function handleVisualKeydown(e) {
+    var visualEditor = document.getElementById('recVisualEditor');
+    var recEditOverlay = document.getElementById('recEditOverlay');
+    if (!visualEditor || visualEditor.style.display === 'none') return;
+    if (!recEditOverlay || !recEditOverlay.classList.contains('show')) return;
+    
+    if (e.key === 'Delete') {
+      e.preventDefault();
+      deleteVisualNotes();
+    } else if (e.ctrlKey && e.key === 'z') {
+      e.preventDefault();
+      undoVisual();
+    } else if (e.ctrlKey && e.key === 'y') {
+      e.preventDefault();
+      redoVisual();
+    } else if (e.ctrlKey && e.key === 'c') {
+      e.preventDefault();
+      copyVisualNotes();
+    } else if (e.ctrlKey && e.key === 'v') {
+      e.preventDefault();
+      pasteVisualNotes();
+    } else if (e.ctrlKey && e.key === 'a') {
+      e.preventDefault();
+      _recVisualSelectedNotes = _recVisualNotes.slice();
+      _recVisualSelected = null;
+      updatePropsPanel();
+      renderRecVisual();
+    } else if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+      e.preventDefault();
+      saveVisualEditorWithoutClose();
+    }
+  }
+
   function initRecVisualEditor() {
     
     _recVisualStartAt = performance.now();
@@ -5407,6 +5936,7 @@ function _noteColor(note) {
     });
     
     function setupRecVisualKeyboardEvents() {
+      removeRecVisualKeyboardEvents();
       _recVisualKeydownHandler = function(e) {
         var visualEditor = document.getElementById('recVisualEditor');
         var recEditOverlay = document.getElementById('recEditOverlay');
@@ -6202,6 +6732,19 @@ function _noteColor(note) {
     
     setupRecVisualKeyboardEvents();
     
+    var recEditOverlay = document.getElementById('recEditOverlay');
+    if (recEditOverlay) {
+      recEditOverlay.addEventListener('click', function(e) {
+        var target = e.target;
+        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA' && target.tagName !== 'SELECT') {
+          var activeEl = document.activeElement;
+          if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+            activeEl.blur();
+          }
+        }
+      });
+    }
+    
     console.log('[DEBUG] initRecVisualEditor completed successfully');
   }
   
@@ -6249,38 +6792,6 @@ function _noteColor(note) {
   
   setTimeout(ensurePlayButtonWorks, 500);
 
-  function handleVisualKeydown(e) {
-    var visualEditor = document.getElementById('recVisualEditor');
-    var recEditOverlay = document.getElementById('recEditOverlay');
-    if (!visualEditor || visualEditor.style.display === 'none') return;
-    if (!recEditOverlay || !recEditOverlay.classList.contains('show')) return;
-    
-    if (e.key === 'Delete') {
-      deleteVisualNotes();
-    } else if (e.ctrlKey && e.key === 'z') {
-      e.preventDefault();
-      undoVisual();
-    } else if (e.ctrlKey && e.key === 'y') {
-      e.preventDefault();
-      redoVisual();
-    } else if (e.ctrlKey && e.key === 'c') {
-      e.preventDefault();
-      copyVisualNotes();
-    } else if (e.ctrlKey && e.key === 'v') {
-      e.preventDefault();
-      pasteVisualNotes();
-    } else if (e.ctrlKey && e.key === 'a') {
-      e.preventDefault();
-      _recVisualSelectedNotes = _recVisualNotes.slice();
-      _recVisualSelected = null;
-      updatePropsPanel();
-      renderRecVisual();
-    } else if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
-      e.preventDefault();
-      saveVisualEditorWithoutClose();
-    }
-  }
-  
   function saveVisualEditorWithoutClose() {
     var overlay = document.getElementById('recEditOverlay');
     var name = document.getElementById('recEditName').value.trim() || '未命名录制';
@@ -6308,6 +6819,10 @@ function _noteColor(note) {
     renderRecList();
     
     saveVisualEditorSettings();
+    var savedRec = idx === -1 ? customRecordings[customRecordings.length - 1] : customRecordings[idx];
+    if (savedRec && typeof prerenderRec === 'function') {
+      prerenderRec(savedRec);
+    }
   }
 
   function visualPlayLoop() {
@@ -6433,17 +6948,15 @@ function _noteColor(note) {
       '吉他': 'guitar',
       '小提琴': 'violin',
       '大提琴': 'cello',
-      '箫': 'xiao',
       '笛子': 'dizi',
-      '古筝': 'guzheng',
       '二胡': 'erhu',
-      '琵琶': 'pipa',
-      '鼓': 'drum',
       '架子鼓': 'drumkit',
-      '钟声': 'bell',
-      '唢呐': 'suona',
       '贝斯': 'bass',
-      '萨克斯': 'saxophone'
+      '萨克斯': 'saxophone',
+      '长笛': 'flute',
+      '圆号': 'frenchhorn',
+      '单簧管': 'clarinet',
+      '长号': 'trombone'
     };
     return map[inst] || 'piano';
   }
@@ -7061,7 +7574,7 @@ function _noteColor(note) {
     _recVisualScale = w / visibleTime;
     if (_recVisualScale <= 0) _recVisualScale = 1;
     
-    if (_recVisualPlaying || _recVisualTimelineDrag) {
+    if (_recVisualPlaying || _recVisualTimelineDrag || _audioRecordActive) {
       var centerScrollTime = _recVisualPlayTime - (w / 2) / _recVisualScale;
       centerScrollTime = Math.max(0, centerScrollTime);
       var centerMaxScrollTime = _recVisualMaxTime - visibleTime;
@@ -7155,6 +7668,35 @@ function _noteColor(note) {
         ctx.fillText(secLabel, tx, timelineH / 2);
       } else {
         drawTimelineMark(tx, timelineH * 0.5, '#404858');
+      }
+    }
+    
+    // 时间轴底部音符映射区域背景：2像素高度的占位区域（在刻度线之上）
+    ctx.fillStyle = '#4d4d5aff';
+    ctx.fillRect(0, timelineH - 2, w, 2);
+    
+    // 时间轴音符填充块映射：在时间轴底部2像素区域显示音符位置，使用对应音符的颜色（在刻度线之上）
+    if (_recVisualNotes && _recVisualNotes.length > 0) {
+      var noteColorsMap = {
+        'C': 'rgba(255, 80, 80, 0.6)',
+        'D': 'rgba(255, 165, 0, 0.6)',
+        'E': 'rgba(255, 255, 0, 0.6)',
+        'F': 'rgba(0, 200, 0, 0.6)',
+        'G': 'rgba(0, 200, 200, 0.6)',
+        'A': 'rgba(80, 80, 255, 0.6)',
+        'B': 'rgba(180, 80, 255, 0.6)'
+      };
+      for (var ni = 0; ni < _recVisualNotes.length; ni++) {
+        var nInfo = _recVisualNotes[ni];
+        if (!nInfo || nInfo.timeMs === undefined) continue;
+        var noteStartX = padding + (nInfo.timeMs - scrollTime) * _recVisualScale;
+        var noteWidth = Math.max(2, (nInfo.holdMs || 100) * _recVisualScale);
+        if (noteStartX + noteWidth < 0 || noteStartX > w) continue;
+        var noteStrVal = (typeof nInfo.note === 'string') ? nInfo.note : String(nInfo.note);
+        var noteKeyVal = noteStrVal.charAt(0).toUpperCase();
+        var noteColorVal = noteColorsMap[noteKeyVal] || 'rgba(100, 150, 200, 0.6)';
+        ctx.fillStyle = noteColorVal;
+        ctx.fillRect(noteStartX + 1, timelineH - 2, Math.max(1, noteWidth - 2), 2);
       }
     }
     
@@ -7256,6 +7798,74 @@ function _noteColor(note) {
       ctx.moveTo(tx2, timelineH);
       ctx.lineTo(tx2, h);
       ctx.stroke();
+    }
+    
+    // ========== 绘制录音波形背景 ==========
+    var waveformDuration = _audioWaveformDuration > 0 ? _audioWaveformDuration : _audioRecordDuration;
+    if (_audioWaveformVisible && _audioWaveformData && _audioWaveformData.length > 2048 && waveformDuration > 0) {
+      var waveformDataLen = _audioWaveformData.length;
+      var waveformTimePerSample = waveformDuration / waveformDataLen;
+      var windowSize = 2048;
+      var hopSize = 512;
+      var minFreq = 80;
+      var maxFreq = 1200;
+      
+      ctx.strokeStyle = 'rgba(0, 153, 255, 0.5)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      
+      var hasPoints = false;
+      
+      for (var wi = 0; wi < waveformDataLen - windowSize; wi += hopSize) {
+        var sampleTime = wi * waveformTimePerSample;
+        var x = padding + (sampleTime - scrollTime) * _recVisualScale;
+        
+        if (x < -50 || x > w + 50) continue;
+        
+        var windowSlice = new Float32Array(windowSize);
+        for (var si = 0; si < windowSize && (wi + si) < waveformDataLen; si++) {
+          windowSlice[si] = _audioWaveformData[wi + si];
+        }
+        
+        var freq = -1;
+        if (typeof window.yinDetect === 'function') {
+          freq = window.yinDetect(windowSlice, 44100);
+        }
+        if (freq <= 0 && typeof window.autoCorrelate === 'function') {
+          freq = window.autoCorrelate(windowSlice, 44100);
+        }
+        
+        if (freq > minFreq && freq < maxFreq) {
+          var midi = 12 * (Math.log(freq / 440) / Math.log(2)) + 69;
+          var noteNum = Math.round(midi);
+          if (noteNum >= 24 && noteNum <= 107) {
+            var noteNames2 = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            var octave2 = Math.floor(noteNum / 12) - 1;
+            var noteIndex2 = noteNum % 12;
+            var noteName2 = noteNames2[noteIndex2] + octave2;
+            
+            var trackIdx2 = _recVisualNoteToTrackMap[noteName2];
+            if (trackIdx2 === undefined) {
+              trackIdx2 = 0;
+            }
+            
+            var y2 = getTrackYPos(trackIdx2) + whiteKeyHeight / 2;
+            
+            if (y2 > timelineH && y2 < h) {
+              if (!hasPoints) {
+                ctx.moveTo(x, y2);
+                hasPoints = true;
+              } else {
+                ctx.lineTo(x, y2);
+              }
+            }
+          }
+        }
+      }
+      
+      if (hasPoints) {
+        ctx.stroke();
+      }
     }
     
     _recVisualNotes.forEach(function(n, idx) {
@@ -7368,6 +7978,35 @@ function _noteColor(note) {
         ctx.moveTo(tx2, 0);
         ctx.lineTo(tx2, timelineH * 0.4);
         ctx.stroke();
+      }
+    }
+    
+    // 时间轴底部音符映射区域背景：2像素高度的占位区域（在刻度线之上）
+    ctx.fillStyle = '#4d4d5aff';
+    ctx.fillRect(0, timelineH - 2, w, 2);
+    
+    // 时间轴音符填充块映射：在时间轴底部2像素区域显示音符位置，使用对应音符的颜色（在刻度线之上）
+    if (_recVisualNotes && _recVisualNotes.length > 0) {
+      var noteColorsMap2 = {
+        'C': 'rgba(255, 80, 80, 0.6)',
+        'D': 'rgba(255, 165, 0, 0.6)',
+        'E': 'rgba(255, 255, 0, 0.6)',
+        'F': 'rgba(0, 200, 0, 0.6)',
+        'G': 'rgba(0, 200, 200, 0.6)',
+        'A': 'rgba(80, 80, 255, 0.6)',
+        'B': 'rgba(180, 80, 255, 0.6)'
+      };
+      for (var ni2 = 0; ni2 < _recVisualNotes.length; ni2++) {
+        var nInfo2 = _recVisualNotes[ni2];
+        if (!nInfo2 || nInfo2.timeMs === undefined) continue;
+        var noteStartX2 = padding + (nInfo2.timeMs - scrollTime) * _recVisualScale;
+        var noteWidth2 = Math.max(2, (nInfo2.holdMs || 100) * _recVisualScale);
+        if (noteStartX2 + noteWidth2 < 0 || noteStartX2 > w) continue;
+        var noteStrVal2 = (typeof nInfo2.note === 'string') ? nInfo2.note : String(nInfo2.note);
+        var noteKeyVal2 = noteStrVal2.charAt(0).toUpperCase();
+        var noteColorVal2 = noteColorsMap2[noteKeyVal2] || 'rgba(100, 150, 200, 0.6)';
+        ctx.fillStyle = noteColorVal2;
+        ctx.fillRect(noteStartX2 + 1, timelineH - 2, Math.max(1, noteWidth2 - 2), 2);
       }
     }
     
@@ -8392,6 +9031,10 @@ function _noteColor(note) {
       }
       saveRecs();
       renderRecList();
+      var savedRec2 = idx2 === -1 ? customRecordings[customRecordings.length - 1] : customRecordings[idx2];
+      if (savedRec2 && typeof prerenderRec === 'function') {
+        prerenderRec(savedRec2);
+      }
       return;
     }
     if (tgt.id === 'recEditCancel') {
@@ -8527,6 +9170,31 @@ function _noteColor(note) {
   Object.defineProperty(window, '_recVisualTextTrack', {
     get: function() { return _recVisualTextTrack; },
     set: function(val) { _recVisualTextTrack = val; }
+  });
+  
+  Object.defineProperty(window, '_audioWaveformData', {
+    get: function() { return _audioWaveformData; },
+    set: function(val) { _audioWaveformData = val; }
+  });
+  
+  Object.defineProperty(window, '_audioWaveformVisible', {
+    get: function() { return _audioWaveformVisible; },
+    set: function(val) { _audioWaveformVisible = val; }
+  });
+  
+  Object.defineProperty(window, '_audioWaveformDuration', {
+    get: function() { return _audioWaveformDuration; },
+    set: function(val) { _audioWaveformDuration = val; }
+  });
+  
+  Object.defineProperty(window, '_audioRecordDuration', {
+    get: function() { return _audioRecordDuration; },
+    set: function(val) { _audioRecordDuration = val; }
+  });
+  
+  Object.defineProperty(window, '_audioRecordActive', {
+    get: function() { return _audioRecordActive; },
+    set: function(val) { _audioRecordActive = val; }
   });
 })();
 
@@ -9112,9 +9780,10 @@ window.onload = function(){
 
   function renderInstButtons() {
     instScroll.innerHTML = "";
-    const order = instOrder || INST_LIST.map(i => i.v);
+    var allInsts = INST_LIST.concat(customInstruments || []);
+    const order = instOrder || allInsts.map(i => i.v);
     order.forEach(instKey => {
-      const inst = INST_LIST.find(i => i.v === instKey);
+      const inst = allInsts.find(i => i.v === instKey);
       if (!inst) return;
       const btn = document.createElement("button");
       btn.className = "btn" + (currentInst === instKey ? " active" : "");
@@ -9368,6 +10037,13 @@ window.onload = function(){
   const tonePreviewBtn = document.getElementById('tonePreviewBtn');
   const toneResetBtn = document.getElementById('toneResetBtn');
   const toneSaveBtn = document.getElementById('toneSaveBtn');
+  const toneAddTab = document.getElementById('toneAddTab');
+  
+  if (toneAddTab) {
+    toneAddTab.onclick = () => {
+      showAddInstrumentDialog();
+    };
+  }
 
   let currentToneInst = 'piano';
   let customInstruments = [];
@@ -9418,7 +10094,15 @@ window.onload = function(){
         if (audioCtx.state === 'suspended') {
           audioCtx.resume();
         }
-        startInstrumentNote(440, 1);
+        if (window._toneTabPreviewId) {
+          stopNote(window._toneTabPreviewId);
+        }
+        window._toneTabPreviewId = 'tone_tab_preview';
+        activeNodes.set(window._toneTabPreviewId, startInstrumentNote(440, 1));
+        clearTimeout(window._toneTabPreviewTimer);
+        window._toneTabPreviewTimer = setTimeout(function() {
+          stopNote(window._toneTabPreviewId);
+        }, 500);
       };
       toneTabsContainer.appendChild(tab);
     });
@@ -9443,22 +10127,18 @@ window.onload = function(){
         if (audioCtx.state === 'suspended') {
           audioCtx.resume();
         }
-        startInstrumentNote(440, 1);
+        if (window._toneTabPreviewId) {
+          stopNote(window._toneTabPreviewId);
+        }
+        window._toneTabPreviewId = 'tone_tab_preview';
+        activeNodes.set(window._toneTabPreviewId, startInstrumentNote(440, 1));
+        clearTimeout(window._toneTabPreviewTimer);
+        window._toneTabPreviewTimer = setTimeout(function() {
+          stopNote(window._toneTabPreviewId);
+        }, 500);
       };
       toneTabsContainer.appendChild(tab);
     });
-    
-    const addTab = document.createElement('button');
-    addTab.className = 'tone-tab tone-add-tab';
-    addTab.innerHTML = '+';
-    addTab.style.fontSize = '18px';
-    addTab.style.fontWeight = 'bold';
-    addTab.style.minWidth = '36px';
-    addTab.style.padding = '4px 8px';
-    addTab.onclick = () => {
-      showAddInstrumentDialog();
-    };
-    toneTabsContainer.appendChild(addTab);
   }
   
   function showAddInstrumentDialog() {
@@ -9499,8 +10179,10 @@ window.onload = function(){
     saveToneParams();
     
     currentToneInst = v;
+    currentInst = v;
     renderToneTabs();
     renderToneControls();
+    if (typeof renderInstButtons === 'function') renderInstButtons();
   }
 
   function renderToneControls() {
@@ -9517,20 +10199,14 @@ window.onload = function(){
     
     var allNotes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
     var loadedSamples = typeof SimpleSampler !== 'undefined' ? SimpleSampler.getLoadedSamples(currentToneInst) : [];
-    var configSamples = (typeof SimpleSampler !== 'undefined' && SimpleSampler.SAMPLE_CONFIG && SimpleSampler.SAMPLE_CONFIG[currentToneInst]) 
-      ? SimpleSampler.SAMPLE_CONFIG[currentToneInst].notes : [];
     
     for (var octave = 1; octave <= 7; octave++) {
       html += '<div class="sample-octave-row">';
       for (var n = 0; n < allNotes.length; n++) {
         var noteName = allNotes[n] + octave;
         var isLoaded = loadedSamples.indexOf(noteName) !== -1;
-        var hasConfig = configSamples.indexOf(noteName) !== -1;
         var bgColor, borderColor;
         if (isLoaded) {
-          bgColor = 'rgba(100,180,100,0.6)';
-          borderColor = 'rgba(100,180,100,0.9)';
-        } else if (hasConfig) {
           bgColor = 'rgba(80,150,200,0.6)';
           borderColor = 'rgba(80,150,200,0.9)';
         } else {
@@ -9561,20 +10237,46 @@ window.onload = function(){
     html += '<div class="tone-waveform-handle tone-waveform-handle-right" id="toneWaveformHandleRight" data-side="right">';
     html += '<div class="tone-waveform-handle-bar"></div>';
     html += '</div>';
+    html += '<div class="tone-waveform-loop-handle tone-waveform-loop-handle-left" id="toneWaveformLoopHandleLeft" data-side="loopLeft" title="循环起点">';
+    html += '<div class="tone-waveform-loop-handle-bar"></div>';
+    html += '</div>';
+    html += '<div class="tone-waveform-loop-handle tone-waveform-loop-handle-right" id="toneWaveformLoopHandleRight" data-side="loopRight" title="循环终点">';
+    html += '<div class="tone-waveform-loop-handle-bar"></div>';
+    html += '</div>';
     html += '<div class="tone-waveform-time tone-waveform-time-left" id="toneWaveformTimeLeft">0.00s</div>';
     html += '<div class="tone-waveform-time tone-waveform-time-right" id="toneWaveformTimeRight">0.00s</div>';
     html += '</div>';
-    html += '<div class="tone-waveform-info" id="toneWaveformInfo">点击试听或上传采样后显示波形</div>';
+    html += '<div class="tone-waveform-info-bar">';
+    html += '<span class="tone-sustain-label">持续</span>';
+    html += '<label class="setting-switch" style="width:36px;height:20px;">';
+    html += '<input type="checkbox" id="toneSustainToggle">';
+    html += '<span class="setting-slider-round" style="height:20px;"></span>';
+    html += '</label>';
+    html += '<span class="tone-waveform-info" id="toneWaveformInfo">点击试听或上传采样后显示波形</span>';
+    html += '</div>';
     html += '</div>';
 
     html += '<div class="tone-control-group">';
-    html += createSliderRow('起音', 'attack', params.attack !== undefined ? params.attack : (defaults.attack || 0), 0, 100, 1, '%', '');
-    html += createSliderRow('衰减', 'decay', params.decay !== undefined ? params.decay : (defaults.decay || 30), 0, 100, 1, '%', '');
-    html += createSliderRow('延音', 'release', params.release || defaults.release || 1.0, 0.1, 15, 0.1, '秒', '');
-    html += createSliderRow('空间感', 'brightness', params.brightness !== undefined ? params.brightness : (defaults.brightness || 0), 0, 1, 0.01, '', '');
+    html += createSliderRow('起音', 'attack', params.attack !== undefined ? params.attack : (defaults.attack || 0), 0, 2, 0.01, '秒', '');
+    html += createSliderRow('衰减', 'decay', params.decay !== undefined ? params.decay : (defaults.decay || 0.5), 0, 8, 0.1, '秒', '');
+    html += createSliderRow('释放', 'release', params.release !== undefined ? params.release : (defaults.release || 1.0), 0.1, 15, 0.1, '秒', '');
+    html += createSliderRow('空间', 'brightness', params.brightness !== undefined ? params.brightness : (defaults.brightness || 0), 0, 1, 0.01, '', '');
     html += '</div>';
     
     toneControls.innerHTML = html;
+    
+    var sustainToggle = document.getElementById('toneSustainToggle');
+    if (sustainToggle) {
+      var sustainVal = params.sustainMode !== undefined ? params.sustainMode : (defaults.sustainMode || false);
+      sustainToggle.checked = sustainVal;
+      sustainToggle.addEventListener('change', function() {
+        if (!toneParams[currentToneInst]) toneParams[currentToneInst] = {};
+        toneParams[currentToneInst].sustainMode = this.checked;
+        saveToneParams();
+        // 重新绘制波形图以显示/隐藏绿色区域
+        if (window._toneWaveformRedraw) window._toneWaveformRedraw();
+      });
+    }
     
     (function initWaveformEditor() {
       var wfCanvas = document.getElementById('toneWaveformCanvas');
@@ -9583,6 +10285,8 @@ window.onload = function(){
       var maskRight = document.getElementById('toneWaveformMaskRight');
       var handleLeft = document.getElementById('toneWaveformHandleLeft');
       var handleRight = document.getElementById('toneWaveformHandleRight');
+      var loopHandleLeft = document.getElementById('toneWaveformLoopHandleLeft');
+      var loopHandleRight = document.getElementById('toneWaveformLoopHandleRight');
       var timeLeft = document.getElementById('toneWaveformTimeLeft');
       var timeRight = document.getElementById('toneWaveformTimeRight');
       var wfInfo = document.getElementById('toneWaveformInfo');
@@ -9598,6 +10302,9 @@ window.onload = function(){
       var canvasW = 0;
       var canvasH = 0;
       var rafId = null;
+      var playbackPosition = -1;
+      var playbackAnimId = null;
+      var playbackStartTime = 0;
       
       function resizeCanvas() {
         var rect = wfWrap.getBoundingClientRect();
@@ -9650,16 +10357,21 @@ window.onload = function(){
       function getEnvelopeParams() {
         var p2 = toneParams[currentToneInst] || defaultToneParams[currentToneInst] || {};
         return {
-          attackPct: p2.attack !== undefined ? p2.attack : 0,
-          decayPct: p2.decay !== undefined ? p2.decay : 30,
-          sustainVal: Math.max(0, Math.min(1, p2.sustain || 0.4)),
-          releaseVal: Math.max(0.1, p2.release || 1.0),
-          brightness: p2.brightness !== undefined ? p2.brightness : 0
+          attackTime: p2.attack !== undefined ? p2.attack : 0.005,
+          decayTime: p2.decay !== undefined ? p2.decay : 0.5,
+          sustainVal: Math.max(0, Math.min(1, p2.sustain !== undefined ? p2.sustain : 0.7)),
+          releaseTime: Math.max(0.1, p2.release || 1.0),
+          brightness: p2.brightness !== undefined ? p2.brightness : 0,
+          trimStart: p2.trimStart || 0,
+          trimEnd: p2.trimEnd !== undefined ? p2.trimEnd : 1,
+          loopStart: p2.loopStart !== undefined ? p2.loopStart : 0.15,
+          loopEnd: p2.loopEnd !== undefined ? p2.loopEnd : 0.7,
+          sustainMode: p2.sustainMode || false
         };
       }
       
       function getEnvelopeDuration(env) {
-        return (env.attackPct / 100) * 0.5 + (env.decayPct / 100) * 1 + env.releaseVal + 0.5;
+        return env.attackTime + env.decayTime + env.releaseTime + 0.5;
       }
       
       function fullRedraw() {
@@ -9675,6 +10387,59 @@ window.onload = function(){
           drawEnvelopeOnly(w, h, env);
         }
         updateHandles();
+        
+        if (env.sustainMode) {
+          var startX = trimStart * w;
+          var endX = trimEnd * w;
+          var loopPointX = startX + (endX - startX) * env.loopStart;
+          
+          // 绘制循环点刻度线（一条绿色竖线）
+          wfCtx.strokeStyle = 'rgba(0, 255, 100, 0.8)';
+          wfCtx.lineWidth = 2;
+          wfCtx.setLineDash([5, 3]);
+          wfCtx.beginPath();
+          wfCtx.moveTo(loopPointX, 0);
+          wfCtx.lineTo(loopPointX, h);
+          wfCtx.stroke();
+          wfCtx.setLineDash([]);
+          
+          // 绘制循环点标记（小三角形）
+          wfCtx.fillStyle = 'rgba(0, 255, 100, 0.9)';
+          wfCtx.beginPath();
+          wfCtx.moveTo(loopPointX - 5, 5);
+          wfCtx.lineTo(loopPointX + 5, 5);
+          wfCtx.lineTo(loopPointX, 12);
+          wfCtx.closePath();
+          wfCtx.fill();
+        }
+        
+        if (playbackPosition >= 0 && playbackPosition <= 1) {
+          var playX = playbackPosition * w;
+          if (playX > w) playX = w;
+          
+          var lineColor = '#ff4444';
+          if (env.sustainMode && typeof isReleasing !== 'undefined' && isReleasing) {
+            lineColor = '#ffaa00';
+          } else if (env.sustainMode && typeof isHolding !== 'undefined' && isHolding) {
+            // 检查是否在循环点附近（允许0.5%的误差）
+            var relPos = (playbackPosition - trimStart) / (trimEnd - trimStart);
+            if (Math.abs(relPos - env.loopStart) < 0.005) {
+              lineColor = '#00ff66';
+            }
+          }
+          
+          wfCtx.beginPath();
+          wfCtx.moveTo(playX, 0);
+          wfCtx.lineTo(playX, h);
+          wfCtx.strokeStyle = lineColor;
+          wfCtx.lineWidth = 2;
+          wfCtx.stroke();
+          
+          wfCtx.beginPath();
+          wfCtx.arc(playX, h / 2, 4, 0, Math.PI * 2);
+          wfCtx.fillStyle = lineColor;
+          wfCtx.fill();
+        }
       }
       
       function drawBackground(w, h) {
@@ -9747,21 +10512,30 @@ window.onload = function(){
         wfCtx.strokeStyle = 'rgba(0,153,255,0.5)';
         wfCtx.lineWidth = 0.5;
         wfCtx.stroke();
-        drawEnvelopeOverlay(w, h, env, cachedDuration);
-        if (wfInfo) wfInfo.textContent = '采样时长: ' + cachedDuration.toFixed(2) + 's | 包络: A' + env.attackPct + '% D' + env.decayPct + '% S' + Math.round(env.sustainVal * 100) + '% R' + env.releaseVal.toFixed(1) + 's';
+        
+        var selectedDuration = cachedDuration * (env.trimEnd - env.trimStart);
+        drawEnvelopeOverlay(w, h, env, selectedDuration, env.trimStart, env.trimEnd);
+        
+        if (wfInfo) wfInfo.textContent = '片段时长: ' + selectedDuration.toFixed(2) + 's | 包络: A' + env.attackTime.toFixed(2) + 's D' + env.decayTime.toFixed(2) + 's S' + Math.round(env.sustainVal * 100) + '% R' + env.releaseTime.toFixed(1) + 's';
       }
       
-      function drawEnvelopeOverlay(w, h, env, totalDur) {
-        var attackTime = (env.attackPct / 100) * totalDur * 0.8;
-        var decayTime = (env.decayPct / 100) * totalDur * 0.5;
-        var releaseTime = env.releaseVal;
-        var sustainTime = Math.max(0.01, totalDur - attackTime - decayTime - releaseTime);
+      function drawEnvelopeOverlay(w, h, env, selectedDur, trimStart, trimEnd) {
+        var startX = trimStart * w;
+        var endX = trimEnd * w;
+        var drawW = endX - startX;
+        
+        var attackTime = env.attackTime;
+        var decayTime = env.decayTime;
+        var releaseTime = env.releaseTime;
+        var sustainTime = Math.max(0.01, selectedDur - attackTime - decayTime);
+        
         var points = [];
-        points.push({x: 0, y: h * 0.05});
-        points.push({x: (attackTime / totalDur) * w, y: h * 0.05});
-        points.push({x: ((attackTime + decayTime) / totalDur) * w, y: h * 0.05 + (h * 0.9) * (1 - env.sustainVal)});
-        points.push({x: ((attackTime + decayTime + sustainTime) / totalDur) * w, y: h * 0.05 + (h * 0.9) * (1 - env.sustainVal)});
-        points.push({x: w, y: h * 0.95});
+        points.push({x: startX, y: h * 0.05});
+        points.push({x: startX + (attackTime / selectedDur) * drawW, y: h * 0.05});
+        points.push({x: startX + ((attackTime + decayTime) / selectedDur) * drawW, y: h * 0.05 + (h * 0.9) * (1 - env.sustainVal)});
+        points.push({x: startX + ((attackTime + decayTime + sustainTime) / selectedDur) * drawW, y: h * 0.05 + (h * 0.9) * (1 - env.sustainVal)});
+        points.push({x: endX, y: h * 0.95});
+        
         var envGrad = wfCtx.createLinearGradient(0, 0, 0, h);
         envGrad.addColorStop(0, 'rgba(255,180,0,0.15)');
         envGrad.addColorStop(1, 'rgba(255,180,0,0.02)');
@@ -9795,9 +10569,9 @@ window.onload = function(){
       function drawEnvelopeOnly(w, h, env) {
         drawBackground(w, h);
         var totalDur = getEnvelopeDuration(env);
-        var attackTime = (env.attackPct / 100) * 0.5;
-        var decayTime = (env.decayPct / 100) * 1;
-        var sustainTime = Math.max(0.1, totalDur - attackTime - decayTime - env.releaseVal);
+        var attackTime = env.attackTime;
+        var decayTime = env.decayTime;
+        var sustainTime = Math.max(0.1, totalDur - attackTime - decayTime - env.releaseTime);
         var points = [];
         points.push({x: 0, y: h * 0.9});
         points.push({x: (attackTime / totalDur) * w, y: h * 0.1});
@@ -9837,7 +10611,7 @@ window.onload = function(){
         wfCtx.fillText('D', points[1].x + 4, points[1].y + 12);
         wfCtx.fillText('S', points[2].x + 4, points[2].y - 4);
         wfCtx.fillText('R', points[3].x + 4, points[3].y - 4);
-        if (wfInfo) wfInfo.textContent = '合成波形 时长: ' + totalDur.toFixed(2) + 's';
+        if (wfInfo) wfInfo.textContent = '合成波形 | 包络: A' + env.attackTime.toFixed(2) + 's D' + env.decayTime.toFixed(2) + 's S' + Math.round(env.sustainVal * 100) + '% R' + env.releaseTime.toFixed(1) + 's';
       }
       
       function updateHandles() {
@@ -9853,6 +10627,22 @@ window.onload = function(){
         if (handleRight) handleRight.style.left = (trimEnd * w - 6) + 'px';
         if (timeLeft) timeLeft.textContent = (trimStart * waveformDuration).toFixed(2) + 's';
         if (timeRight) timeRight.textContent = (trimEnd * waveformDuration).toFixed(2) + 's';
+        
+        // 更新循环手柄位置（单点循环，只显示一个手柄）
+        var tp5 = toneParams[currentToneInst] || defaultToneParams[currentToneInst] || {};
+        var loopStartPos = tp5.loopStart !== undefined ? tp5.loopStart : 0.15;
+        var startX = trimStart * w;
+        var endX = trimEnd * w;
+        var loopPointX = startX + (endX - startX) * loopStartPos;
+        
+        // 隐藏右边的循环手柄，只显示一个
+        if (loopHandleLeft) {
+          loopHandleLeft.style.left = (loopPointX - 5) + 'px';
+          loopHandleLeft.style.display = tp5.sustainMode ? 'flex' : 'none';
+        }
+        if (loopHandleRight) {
+          loopHandleRight.style.display = 'none';
+        }
       }
       
       function requestRedraw() {
@@ -9884,12 +10674,14 @@ window.onload = function(){
           toneParams[currentToneInst].trimStart = trimStart;
           toneParams[currentToneInst].trimEnd = trimEnd;
           updateHandles();
+          requestRedraw();
         }
         function onUp() {
           document.removeEventListener('mousemove', onMove);
           document.removeEventListener('mouseup', onUp);
           document.removeEventListener('touchmove', onMove);
           document.removeEventListener('touchend', onUp);
+          saveToneParams();
         }
         document.addEventListener('mousemove', onMove);
         document.addEventListener('mouseup', onUp);
@@ -9906,6 +10698,63 @@ window.onload = function(){
         handleRight.addEventListener('touchstart', onHandleDrag, {passive: false});
       }
       
+      function onLoopHandleDrag(e) {
+        e.preventDefault();
+        var side = e.target.closest('.tone-waveform-loop-handle');
+        if (!side) return;
+        var isLoopLeft = side.dataset.side === 'loopLeft';
+        var rect3 = wfWrap.getBoundingClientRect();
+        
+        var tp4 = toneParams[currentToneInst] || defaultToneParams[currentToneInst] || {};
+        var loopStartPos = tp4.loopStart !== undefined ? tp4.loopStart : 0.15;
+        var loopEndPos = tp4.loopEnd !== undefined ? tp4.loopEnd : 0.7;
+        
+        function onLoopMove(ev) {
+          var clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+          var x = clientX - rect3.left;
+          var ratio = Math.max(0, Math.min(1, x / rect3.width));
+          
+          var relRatio = (ratio - trimStart) / (trimEnd - trimStart);
+          relRatio = Math.max(0, Math.min(1, relRatio));
+          
+          if (isLoopLeft) {
+            loopStartPos = Math.min(relRatio, loopEndPos - 0.01);
+            loopStartPos = Math.max(0, loopStartPos);
+          } else {
+            loopEndPos = Math.max(relRatio, loopStartPos + 0.01);
+            loopEndPos = Math.min(1, loopEndPos);
+          }
+          
+          if (!toneParams[currentToneInst]) toneParams[currentToneInst] = {};
+          toneParams[currentToneInst].loopStart = loopStartPos;
+          toneParams[currentToneInst].loopEnd = loopEndPos;
+          requestRedraw();
+          updateHandles();
+        }
+        
+        function onLoopUp() {
+          document.removeEventListener('mousemove', onLoopMove);
+          document.removeEventListener('mouseup', onLoopUp);
+          document.removeEventListener('touchmove', onLoopMove);
+          document.removeEventListener('touchend', onLoopUp);
+          saveToneParams();
+        }
+        
+        document.addEventListener('mousemove', onLoopMove);
+        document.addEventListener('mouseup', onLoopUp);
+        document.addEventListener('touchmove', onLoopMove, {passive: false});
+        document.addEventListener('touchend', onLoopUp);
+      }
+      
+      if (loopHandleLeft) {
+        loopHandleLeft.addEventListener('mousedown', onLoopHandleDrag);
+        loopHandleLeft.addEventListener('touchstart', onLoopHandleDrag, {passive: false});
+      }
+      if (loopHandleRight) {
+        loopHandleRight.addEventListener('mousedown', onLoopHandleDrag);
+        loopHandleRight.addEventListener('touchstart', onLoopHandleDrag, {passive: false});
+      }
+      
       setTimeout(function() {
         loadSampleWaveform();
       }, 100);
@@ -9916,6 +10765,79 @@ window.onload = function(){
       
       window._toneWaveformReload = function() {
         loadSampleWaveform();
+      };
+      
+      var isHolding = false;
+      var isReleasing = false;
+      var releaseStartTime = 0;
+      var releaseStartPosition = 0;
+      var playbackSustainMode = false;
+      var playbackSelectedDur = 1;
+      var playbackReleaseTime = 1;
+      var playbackLoopStart = 0.15;
+      var playbackLoopEnd = 0.7;
+      
+      window._toneWaveformStartPlayback = function(duration, sustainMode, releaseTime, holding) {
+        isHolding = holding || false;
+        isReleasing = false;
+        playbackPosition = trimStart;
+        playbackStartTime = audioCtx.currentTime;
+        playbackSustainMode = sustainMode;
+        var calcDur = duration || (cachedDuration * (trimEnd - trimStart));
+        playbackSelectedDur = Math.max(0.1, calcDur || 1);
+        playbackReleaseTime = releaseTime || 1.0;
+        
+        var tp3 = toneParams[currentToneInst] || defaultToneParams[currentToneInst] || {};
+        playbackLoopStart = tp3.loopStart !== undefined ? tp3.loopStart : 0.15;
+        
+        function animatePlayback() {
+          var elapsed = audioCtx.currentTime - playbackStartTime;
+          var useDuration = cachedDuration > 0 ? cachedDuration : playbackSelectedDur;
+          var loopPointPos = trimStart + (trimEnd - trimStart) * playbackLoopStart;
+          
+          if (playbackSustainMode && isHolding && !isReleasing) {
+            var timeToLoopPoint = (loopPointPos - trimStart) * useDuration;
+            if (elapsed < timeToLoopPoint) {
+              playbackPosition = trimStart + elapsed / useDuration;
+            } else {
+              playbackPosition = loopPointPos;
+            }
+          } else if (isReleasing) {
+            var releaseElapsed = audioCtx.currentTime - releaseStartTime;
+            var releaseProgress = releaseElapsed / playbackReleaseTime;
+            playbackPosition = Math.min(trimEnd, releaseStartPosition + (trimEnd - releaseStartPosition) * releaseProgress);
+            if (releaseElapsed >= playbackReleaseTime) {
+              return;
+            }
+          } else {
+            playbackPosition = trimStart + Math.min(trimEnd - trimStart, elapsed / useDuration);
+          }
+          
+          requestRedraw();
+          
+          if (playbackPosition < trimEnd || isReleasing) {
+            playbackAnimId = requestAnimationFrame(animatePlayback);
+          }
+        }
+        animatePlayback();
+      };
+      
+      window._toneWaveformRelease = function() {
+        isHolding = false;
+        isReleasing = true;
+        releaseStartTime = audioCtx.currentTime;
+        releaseStartPosition = playbackPosition;
+      };
+      
+      window._toneWaveformStopPlayback = function() {
+        if (playbackAnimId) {
+          cancelAnimationFrame(playbackAnimId);
+          playbackAnimId = null;
+        }
+        playbackPosition = -1;
+        isHolding = false;
+        isReleasing = false;
+        requestRedraw();
       };
     })();
 
@@ -9940,7 +10862,7 @@ window.onload = function(){
           
           renderToneTabs();
           renderToneControls();
-          updateInstButtons();
+          if (typeof renderInstButtons === 'function') renderInstButtons();
         }
       };
     }
@@ -10069,7 +10991,12 @@ window.onload = function(){
               }
               
               var midiNote = noteToMidiLocal(noteName);
-              var result = SimpleSampler.playNote(currentToneInst, midiNote, 100);
+              const tp2 = toneParams[currentToneInst] || defaultToneParams[currentToneInst] || {};
+              var trimS2 = tp2.trimStart || 0;
+              var trimE2 = tp2.trimEnd !== undefined ? tp2.trimEnd : 1;
+              var loopS2 = tp2.loopStart !== undefined ? tp2.loopStart : 0.15;
+              var loopE2 = tp2.loopEnd !== undefined ? tp2.loopEnd : 0.7;
+              var result = SimpleSampler.playNote(currentToneInst, midiNote, 100, undefined, trimS2, trimE2, loopS2, loopE2);
               if (result) {
                 progressEl.innerHTML = '♪ 试听: ' + noteName;
                 result.source.onended = function() {
@@ -10118,11 +11045,10 @@ window.onload = function(){
   function formatParamValue(param, value) {
     if (param === 'vibrato') return value.toFixed(1) + ' Hz';
     if (param === 'filterFreq') return Math.round(value) + ' Hz';
-    if (param === 'attack' || param === 'decay') return Math.round(value) + '%';
-    if (param === 'release' || param === 'noiseDecay') return value.toFixed(1) + 's';
+    if (param === 'attack' || param === 'decay' || param === 'release' || param === 'noiseDecay') return value.toFixed(2) + 's';
     if (param === 'vibratoDepth' || param === 'blendFactor') return value.toFixed(3);
     if (param === 'filterQ') return value.toFixed(1);
-    if (param === 'brightness') return (value * 100).toFixed(0) + '%';
+    if (param === 'brightness' || param === 'sustain') return (value * 100).toFixed(0) + '%';
     return value.toFixed(2);
   }
 
@@ -10229,28 +11155,62 @@ window.onload = function(){
   if (tonePreviewBtn) {
     var previewTimeout = null;
     var previewKeyId = 'tone_preview_' + Date.now();
+    var previewIsHolding = false;
     
     var startPreview = function(e) {
       if (e && e.preventDefault) e.preventDefault();
       if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.AudioContext)();
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
+      
+      // 先停止之前的音符，避免噪音累积
+      stopNote(previewKeyId);
+      
       const freq = 440;
       const prevInst = currentInst;
       currentInst = currentToneInst;
-      activeNodes.set(previewKeyId, startInstrumentNote(freq, 1));
+      var noteData = startInstrumentNote(freq, 1);
+      activeNodes.set(previewKeyId, noteData);
       currentInst = prevInst;
+      
+      var tp = toneParams[currentToneInst] || defaultToneParams[currentToneInst] || {};
+      var sustainMode = tp.sustainMode || false;
+      var trimStart = tp.trimStart || 0;
+      var trimEnd = tp.trimEnd !== undefined ? tp.trimEnd : 1;
+      var releaseTime = tp.release !== undefined ? tp.release : 1.0;
+      var buffers = SimpleSampler.getSampleBuffers();
+      var instBufs = buffers[currentToneInst];
+      var bufferDuration = 1;
+      if (instBufs) {
+        var keys = Object.keys(instBufs);
+        if (keys.length > 0 && instBufs[keys[0]]) {
+          bufferDuration = instBufs[keys[0]].duration;
+        }
+      }
+      var selectedDur = bufferDuration * (trimEnd - trimStart);
+      
+      previewIsHolding = true;
+      
+      if (window._toneWaveformStartPlayback) {
+        window._toneWaveformStartPlayback(selectedDur, sustainMode, releaseTime, true);
+      }
     };
     
     var stopPreview = function(e) {
       if (e && e.preventDefault) e.preventDefault();
+      previewIsHolding = false;
+      
       const prevInst = currentInst;
       currentInst = currentToneInst;
       stopNote(previewKeyId);
       currentInst = prevInst;
+      
+      if (window._toneWaveformRelease) {
+        window._toneWaveformRelease();
+      }
     };
     
     tonePreviewBtn.onmousedown = startPreview;
@@ -10689,9 +11649,10 @@ window.onload = function(){
 
     const INST_LIST_KB = [
       {v:"piano",t:"钢琴"},{v:"guitar",t:"吉他"},{v:"violin",t:"小提琴"},{v:"cello",t:"大提琴"},
-      {v:"xiao",t:"箫"},{v:"dizi",t:"笛子"},{v:"guzheng",t:"古筝"},{v:"erhu",t:"二胡"},
-      {v:"pipa",t:"琵琶"},{v:"drum",t:"鼓"},{v:"drumkit",t:"架子鼓"},{v:"bell",t:"钟声"},
-      {v:"suona",t:"唢呐"},{v:"bass",t:"贝斯"},{v:"saxophone",t:"萨克斯"}
+      {v:"dizi",t:"笛子"},{v:"erhu",t:"二胡"},
+      {v:"drumkit",t:"架子鼓"},
+      {v:"bass",t:"贝斯"},{v:"saxophone",t:"萨克斯"},
+      {v:"flute",t:"长笛"},{v:"frenchhorn",t:"圆号"},{v:"clarinet",t:"单簧管"},{v:"trombone",t:"长号"}
     ];
 
     // 容器：横向排列，自动换行
@@ -10879,13 +11840,6 @@ window.onload = function(){
     
     if (doSave) saveLayoutSettings();
 
-    // Capture scroll positions before renderPiano resets them
-    const _savedScrolls = [];
-    container.querySelectorAll('.octave-row').forEach((row, i) => {
-      const kw = row.querySelector('.octave-row-keys');
-      _savedScrolls[i] = kw ? kw.scrollLeft : 0;
-    });
-
     isLayoutMode = false;
     layoutBtn.classList.remove("active");
     layoutToolbar.classList.remove("active");
@@ -10921,19 +11875,6 @@ window.onload = function(){
     document.documentElement.style.setProperty('--octave-width', octaveWidthPercent + 'vw');
     currentWidthScale = widthLevel;
     disableOctaveDragging();
-
-    // Restore scroll positions after renderPiano's default scroll timer (300ms)
-    if (doSave) {
-      setTimeout(() => {
-        container.querySelectorAll('.octave-row').forEach((row, i) => {
-          const kw = row.querySelector('.octave-row-keys');
-          if (kw && _savedScrolls[i] > 0) kw.scrollLeft = _savedScrolls[i];
-        });
-        container.querySelectorAll('.octave-gap-row').forEach((gapRow, i) => {
-          if (_savedScrolls[i] > 0) gapRow.scrollLeft = _savedScrolls[i];
-        });
-      }, 350);
-    }
   }
 
   const btnSaveLayout = document.getElementById("btnSaveLayout");
@@ -11482,6 +12423,12 @@ window.onload = function(){
           if ((rowInstMap[rowIdx] || "") === inst.v) opt.selected = true;
           instSel2.appendChild(opt);
         });
+        (customInstruments || []).forEach(inst => {
+          const opt = document.createElement("option");
+          opt.value = inst.v; opt.textContent = inst.t;
+          if ((rowInstMap[rowIdx] || "") === inst.v) opt.selected = true;
+          instSel2.appendChild(opt);
+        });
         instSel2.onchange = () => { rowInstMap[rowIdx] = instSel2.value || null; saveRowConfig(); };
         instRow.appendChild(instSel2);
         rowCtrl.appendChild(instRow);
@@ -11615,9 +12562,6 @@ window.onload = function(){
         const visibleWidth = keysWrap.clientWidth;
         // 计算滚动位置，让目标音域居中显示在屏幕中间
         const scrollLeft = targetOctaveIndex * octaveWidth - (visibleWidth / 2) + (octaveWidth / 2);
-        console.log('[DEBUG] rowIdx=' + rowIdx + ' targetOctaveIndex=' + targetOctaveIndex + ' totalWidth=' + totalWidth + ' octaveWidth=' + octaveWidth + ' visibleWidth=' + visibleWidth + ' scrollLeft=' + scrollLeft + ' clampedScrollLeft=' + Math.max(0, scrollLeft) + ' keysWrap.scrollWidth=' + keysWrap.scrollWidth + ' keysWrap.clientWidth=' + keysWrap.clientWidth + ' row.offsetWidth=' + row.offsetWidth + ' gapRow.offsetWidth=' + gapRow.offsetWidth + ' gapRow.clientWidth=' + gapRow.clientWidth + ' gapRow.scrollWidth=' + gapRow.scrollWidth + ' container.clientWidth=' + container.clientWidth + ' window.innerWidth=' + window.innerWidth);
-        var groups = keysWrap.querySelectorAll('.octave-group');
-        if (groups.length > 0) console.log('[DEBUG-GROUP] rowIdx=' + rowIdx + ' group0.offsetWidth=' + groups[0].offsetWidth + ' group0.style.width=' + groups[0].style.width + ' pianoRow0.offsetWidth=' + (groups[0].querySelector('.piano-row') ? groups[0].querySelector('.piano-row').offsetWidth : 'N/A'));
         keysWrap.scrollLeft = Math.max(0, scrollLeft);
         gapRow.scrollLeft = Math.max(0, scrollLeft);
         // 根据容器宽度和间隙高度设置音域名称样式
@@ -13190,11 +14134,11 @@ window.onload = function(){
   autoBtn.onclick = () => {
     isMuted = !isMuted;
     autoBtn.classList.toggle("on", isMuted);
-    // 切换 SVG 图标显示
     const waves = autoBtn.querySelectorAll('.volume-wave');
     const muteX = autoBtn.querySelectorAll('.mute-x');
     waves.forEach(el => el.style.display = isMuted ? 'none' : 'block');
     muteX.forEach(el => el.style.display = isMuted ? 'block' : 'none');
+    if (_prerenderGain) _prerenderGain.gain.value = isMuted || isMutedTemporarily ? 0 : 1;
     saveSettings();
     if(isMuted) {
       stopNote("auto");
@@ -13208,6 +14152,7 @@ window.onload = function(){
     if(!currentSong && !currentTupu) return;
     isDraggingScore = true; dragStartX = x; dragStartOffX = canvasOffX;
     playSpeed = 0; isMutedTemporarily = true;
+    if (_prerenderGain) _prerenderGain.gain.value = 0;
     cancelAnimationFrame(scrollRAF); isScrolling = false;
     wasTupuScrolling = isTupuScrolling;
     cancelAnimationFrame(tupuScrollRAF); isTupuScrolling = false;
@@ -13256,6 +14201,7 @@ window.onload = function(){
   const endScoreDrag = () => {
     if (!isDraggingScore) return;
     isDraggingScore = false; isMutedTemporarily = false;
+    if (_prerenderGain) _prerenderGain.gain.value = isMuted ? 0 : 1;
     isScrolling = false; cancelAnimationFrame(scrollRAF);
     isTupuScrolling = false; cancelAnimationFrame(tupuScrollRAF);
     
@@ -13606,6 +14552,15 @@ window.onload = function(){
       try {
         const savedOrder = localStorage.getItem('instOrder');
         if (savedOrder) instOrder = JSON.parse(savedOrder);
+        // 检查是否有新乐器需要添加到 instOrder
+        const allInstKeys = INST_LIST.map(i => i.v);
+        if (instOrder) {
+          allInstKeys.forEach(function(key) {
+            if (instOrder.indexOf(key) === -1) {
+              instOrder.push(key);
+            }
+          });
+        }
       } catch(e) {}
       renderInstButtons();
       if (settings.isMuted !== undefined) {
@@ -13748,6 +14703,72 @@ window.onload = function(){
     return -1;
   };
 
+  window.yinDetect = function(buffer, sampleRate) {
+    var bufferSize = buffer.length;
+    var halfSize = Math.floor(bufferSize / 2);
+    var yinBuffer = new Float32Array(halfSize);
+    var i, j;
+    var runningSum = 0;
+    var tau;
+    var prob = 0;
+    var minTau = 2;
+    var maxTau = halfSize;
+    var threshold = 0.15;
+
+    for (i = 0; i < halfSize; i++) {
+      yinBuffer[i] = 0;
+    }
+
+    for (i = 1; i < halfSize; i++) {
+      for (j = 0; j < halfSize; j++) {
+        var delta = buffer[j] - buffer[j + i];
+        yinBuffer[i] += delta * delta;
+      }
+      runningSum += yinBuffer[i];
+      if (runningSum > 0) {
+        yinBuffer[i] = yinBuffer[i] / runningSum;
+      } else {
+        yinBuffer[i] = 1;
+      }
+    }
+
+    for (tau = minTau; tau < maxTau; tau++) {
+      if (yinBuffer[tau] < threshold) {
+        while (tau + 1 < maxTau && yinBuffer[tau + 1] < yinBuffer[tau]) {
+          tau++;
+        }
+        prob = yinBuffer[tau];
+        break;
+      }
+    }
+
+    if (tau >= maxTau) {
+      var minVal = Infinity;
+      for (i = minTau; i < maxTau; i++) {
+        if (yinBuffer[i] < minVal) {
+          minVal = yinBuffer[i];
+          tau = i;
+        }
+      }
+      if (minVal > 0.45) return -1;
+    }
+
+    var betterTau;
+    var x0, x1, x2;
+    if (tau > 0 && tau < halfSize - 1) {
+      x0 = yinBuffer[tau - 1];
+      x1 = yinBuffer[tau];
+      x2 = yinBuffer[tau + 1];
+      betterTau = tau + (x2 - x0) / (2 * (2 * x1 - x2 - x0));
+    } else {
+      betterTau = tau;
+    }
+
+    var freq = sampleRate / betterTau;
+    if (freq < 50 || freq > 2000) return -1;
+    return freq;
+  };
+
   window.frequencyToNote = function(frequency) {
     var noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     var noteNum = 12 * (Math.log(frequency / 440) / Math.log(2)) + 69;
@@ -13780,6 +14801,7 @@ window.onload = function(){
   var pdCurrentNoteName = null;
   var pdCurrentNoteStartTime = 0;
   var pdHasNote = false;
+  var pdLastNoteIndex = -1;
   
   // 自适应噪声门
   var pdNoiseFloor = 0.015;
@@ -13873,6 +14895,13 @@ window.onload = function(){
   }
 
   function stopPitchDetection() {
+    if (pdHasNote) {
+      var duration = Date.now() - pdCurrentNoteStartTime;
+      updateLastNoteDuration(duration);
+      pdHasNote = false;
+      pdCurrentNoteMidi = -1;
+      pdCurrentNoteName = null;
+    }
     pitchDetectActive = false;
     if (pitchDetectRAF) { cancelAnimationFrame(pitchDetectRAF); pitchDetectRAF = null; }
     if (pitchDetectAudioCtx && pitchDetectAudioCtx.state === 'running') {
@@ -13883,8 +14912,9 @@ window.onload = function(){
       pitchDetectBtn.style.borderColor = '#444';
       pitchDetectBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0099ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="1" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
     }
+    var pdInfoEl = document.getElementById('pitchDetectInfo');
+    if (pdInfoEl) pdInfoEl.style.display = 'none';
     
-    // 关闭麦克风后，恢复所有音量为0的音符为100
     try {
       if (typeof window._recVisualNotes !== 'undefined') {
         var notes = window._recVisualNotes;
@@ -13896,11 +14926,9 @@ window.onload = function(){
           }
         }
         if (changed) {
-          // 同步文本
           if (typeof window.parseVisualToText === 'function') {
             window.parseVisualToText();
           }
-          // 重新渲染
           if (typeof window.renderRecVisual === 'function') {
             window.renderRecVisual();
           }
@@ -13914,6 +14942,488 @@ window.onload = function(){
       console.log('[音阶识别] 恢复音量失败:', e);
     }
   }
+
+  // ========== 录音后识别功能 ==========
+  var _audioRecordCtx = null;
+  var _audioRecordSource = null;
+  var _audioRecordStream = null;
+  var _audioRecordScriptProcessor = null;
+  var _audioRecordChunks = [];
+  var _audioRecordStartTime = 0;
+  var _audioRecordRAF = null;
+  window._audioRecordActive = _audioRecordActive;
+  
+  function startAudioRecording() {
+    if (_audioRecordActive) return;
+    
+    function activateRecording(stream) {
+      _audioRecordStream = stream;
+      _audioRecordCtx = new (window.AudioContext || window.webkitAudioContext)();
+      _audioRecordSource = _audioRecordCtx.createMediaStreamSource(stream);
+      _audioRecordScriptProcessor = _audioRecordCtx.createScriptProcessor(4096, 1, 1);
+      
+      _audioRecordChunks = [];
+      _audioWaveformData = [];
+      _audioRecordStartTime = Date.now();
+      _audioRecordDuration = 0;
+      
+      _audioRecordSource.connect(_audioRecordScriptProcessor);
+      _audioRecordScriptProcessor.connect(_audioRecordCtx.destination);
+      
+      _audioRecordScriptProcessor.onaudioprocess = function(e) {
+        var inputData = e.inputBuffer.getChannelData(0);
+        var chunk = new Float32Array(inputData.length);
+        chunk.set(inputData);
+        _audioRecordChunks.push(chunk);
+        
+        var step = Math.max(1, Math.floor(inputData.length / 100));
+        for (var i = 0; i < inputData.length; i += step) {
+          _audioWaveformData.push(inputData[i]);
+        }
+        
+        _audioRecordDuration = Date.now() - _audioRecordStartTime;
+      };
+      
+      _audioRecordActive = true;
+      window._audioRecordActive = true;
+      
+      if (pitchDetectBtn) {
+        pitchDetectBtn.style.background = '#ff4444';
+        pitchDetectBtn.style.borderColor = '#ff4444';
+        pitchDetectBtn.innerHTML = '<div class="rec-dot"></div>';
+      }
+      
+      var pdInfoEl = document.getElementById('pitchDetectInfo');
+      if (pdInfoEl) {
+        pdInfoEl.style.display = 'block';
+        var pdNoteEl = document.getElementById('pitchDetectNote');
+        if (pdNoteEl) pdNoteEl.textContent = '录音中';
+        var pdCentsEl = document.getElementById('pitchDetectCents');
+        if (pdCentsEl) pdCentsEl.textContent = '0:00';
+      }
+      
+      _audioWaveformStartTime = performance.now();
+      _audioWaveformVisible = true;
+      
+      if (typeof window.showAudioWaveformTrack === 'function') {
+        window.showAudioWaveformTrack(true);
+      }
+      
+      startRecordingTimeline();
+      
+      console.log('[录音] 开始录音');
+    }
+    
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function(stream) {
+        activateRecording(stream);
+      })
+      .catch(function(err) {
+        console.error('麦克风访问失败:', err);
+        if (typeof showAppAlert === 'function') {
+          showAppAlert('无法访问麦克风，请检查权限设置');
+        }
+      });
+  }
+  
+  var _recordingTimelineRAF = null;
+  var _recordingTimelineStartTime = 0;
+  
+  function startRecordingTimeline() {
+    _recordingTimelineStartTime = performance.now();
+    _recVisualPlayTime = 0;
+    _recVisualPlayStart = performance.now();
+    recordingTimelineLoop();
+  }
+  
+  function recordingTimelineLoop() {
+    if (!_audioRecordActive) {
+      _recordingTimelineRAF = null;
+      return;
+    }
+    
+    var elapsed = performance.now() - _recordingTimelineStartTime;
+    _recVisualPlayTime = elapsed;
+    
+    var pdCentsEl = document.getElementById('pitchDetectCents');
+    if (pdCentsEl) {
+      var seconds = Math.floor(elapsed / 1000);
+      var minutes = Math.floor(seconds / 60);
+      var secs = seconds % 60;
+      pdCentsEl.textContent = minutes + ':' + (secs < 10 ? '0' : '') + secs;
+    }
+    
+    if (typeof window.renderRecVisual === 'function') {
+      window.renderRecVisual();
+    }
+    
+    _recordingTimelineRAF = requestAnimationFrame(recordingTimelineLoop);
+  }
+  
+  function stopRecordingTimeline() {
+    if (_recordingTimelineRAF) {
+      cancelAnimationFrame(_recordingTimelineRAF);
+      _recordingTimelineRAF = null;
+    }
+  }
+  
+  function updateRecordingTimeDisplay() {
+    if (!_audioRecordActive) return;
+    
+    var pdCentsEl = document.getElementById('pitchDetectCents');
+    if (pdCentsEl) {
+      var seconds = Math.floor(_audioRecordDuration / 1000);
+      var minutes = Math.floor(seconds / 60);
+      var secs = seconds % 60;
+      pdCentsEl.textContent = minutes + ':' + (secs < 10 ? '0' : '') + secs;
+    }
+    
+    if (typeof window.renderRecVisual === 'function') {
+      window.renderRecVisual();
+    }
+    
+    _audioRecordRAF = requestAnimationFrame(updateRecordingTimeDisplay);
+  }
+  
+  function stopAudioRecording() {
+    if (!_audioRecordActive) return;
+    
+    _audioRecordActive = false;
+    window._audioRecordActive = false;
+    
+    stopRecordingTimeline();
+    
+    if (_audioRecordRAF) {
+      cancelAnimationFrame(_audioRecordRAF);
+      _audioRecordRAF = null;
+    }
+    
+    if (_audioRecordScriptProcessor) {
+      _audioRecordScriptProcessor.disconnect();
+      _audioRecordScriptProcessor = null;
+    }
+    if (_audioRecordSource) {
+      _audioRecordSource.disconnect();
+      _audioRecordSource = null;
+    }
+    if (_audioRecordCtx) {
+      _audioRecordCtx.close();
+      _audioRecordCtx = null;
+    }
+    
+    if (pitchDetectBtn) {
+      pitchDetectBtn.style.background = '#222';
+      pitchDetectBtn.style.borderColor = '#444';
+      pitchDetectBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0099ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="1" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
+    }
+    
+    var pdInfoEl = document.getElementById('pitchDetectInfo');
+    if (pdInfoEl) {
+      pdInfoEl.style.display = 'block';
+      var pdNoteEl = document.getElementById('pitchDetectNote');
+      if (pdNoteEl) pdNoteEl.textContent = '识别中';
+      var pdCentsEl = document.getElementById('pitchDetectCents');
+      if (pdCentsEl) pdCentsEl.textContent = '请稍候...';
+    }
+    
+    console.log('[录音] 停止录音，开始识别，时长:', _audioRecordDuration, 'ms');
+    
+    processRecordedAudio();
+  }
+  
+  function downsampleForWaveform(data, sampleRate, targetSamples) {
+    var step = Math.max(1, Math.floor(data.length / targetSamples));
+    var result = [];
+    for (var i = 0; i < data.length; i += step) {
+      result.push(data[i]);
+    }
+    return result;
+  }
+  
+  function processRecordedAudio() {
+    if (_audioRecordChunks.length === 0) {
+      console.log('[录音] 没有录音数据');
+      var pdInfoEl = document.getElementById('pitchDetectInfo');
+      if (pdInfoEl) pdInfoEl.style.display = 'none';
+      return;
+    }
+    
+    var totalLength = 0;
+    for (var i = 0; i < _audioRecordChunks.length; i++) {
+      totalLength += _audioRecordChunks[i].length;
+    }
+    
+    var audioData = new Float32Array(totalLength);
+    var offset = 0;
+    for (var j = 0; j < _audioRecordChunks.length; j++) {
+      audioData.set(_audioRecordChunks[j], offset);
+      offset += _audioRecordChunks[j].length;
+    }
+    
+    var sampleRate = 44100;
+    
+    var detectedNotes = detectPitchFromAudioData(audioData, sampleRate);
+    
+    addDetectedNotesToScore(detectedNotes);
+    
+    var pdInfoEl2 = document.getElementById('pitchDetectInfo');
+    if (pdInfoEl2) {
+      pdInfoEl2.style.display = 'block';
+      var pdNoteEl2 = document.getElementById('pitchDetectNote');
+      if (pdNoteEl2) pdNoteEl2.textContent = '完成';
+      var pdCentsEl2 = document.getElementById('pitchDetectCents');
+      if (pdCentsEl2) pdCentsEl2.textContent = '识别了 ' + detectedNotes.length + ' 个音符';
+      
+      setTimeout(function() {
+        if (pdInfoEl2) pdInfoEl2.style.display = 'none';
+      }, 2000);
+    }
+    
+    console.log('[录音] 识别完成，检测到', detectedNotes.length, '个音符');
+  }
+  
+  function detectPitchFromAudioData(audioData, sampleRate) {
+    var detectedNotes = [];
+    var windowSize = 2048;
+    var hopSize = 1024;
+    var minFreq = 80;
+    var maxFreq = 1000;
+    var noiseThreshold = 0.01;
+    
+    var currentNote = null;
+    var noteStartTime = 0;
+    var notePitches = [];
+    
+    for (var i = 0; i < audioData.length - windowSize; i += hopSize) {
+      var windowData = audioData.slice(i, i + windowSize);
+      
+      var rms = 0;
+      for (var j = 0; j < windowData.length; j++) {
+        rms += windowData[j] * windowData[j];
+      }
+      rms = Math.sqrt(rms / windowData.length);
+      
+      if (rms < noiseThreshold) {
+        if (currentNote !== null) {
+          var noteEndTime = (i / sampleRate) * 1000;
+          var duration = noteEndTime - noteStartTime;
+          if (duration >= 100) {
+            var avgMidi = 0;
+            for (var k = 0; k < notePitches.length; k++) {
+              avgMidi += notePitches[k];
+            }
+            avgMidi = avgMidi / notePitches.length;
+            var roundedMidi = Math.round(avgMidi);
+            var noteName = midiToNoteName(roundedMidi);
+            if (noteName) {
+              detectedNotes.push({
+                note: noteName,
+                timeMs: noteStartTime,
+                holdMs: duration,
+                volume: Math.min(100, Math.max(30, Math.round(rms * 500)))
+              });
+            }
+          }
+          currentNote = null;
+          notePitches = [];
+        }
+        continue;
+      }
+      
+      var freq = 0;
+      if (typeof window.yinDetect === 'function') {
+        freq = window.yinDetect(windowData, sampleRate);
+      }
+      if (freq <= 0 && typeof window.autoCorrelate === 'function') {
+        freq = window.autoCorrelate(windowData, sampleRate);
+      }
+      
+      if (freq > minFreq && freq < maxFreq) {
+        var midi = freqToMidi(freq);
+        var timeMs = (i / sampleRate) * 1000;
+        
+        if (currentNote === null) {
+          currentNote = Math.round(midi);
+          noteStartTime = timeMs;
+          notePitches = [midi];
+        } else {
+          var roundedMidi = Math.round(midi);
+          if (Math.abs(roundedMidi - currentNote) <= 1) {
+            notePitches.push(midi);
+          } else {
+            var noteEndTime = timeMs;
+            var duration = noteEndTime - noteStartTime;
+            if (duration >= 100) {
+              var avgMidi2 = 0;
+              for (var m = 0; m < notePitches.length; m++) {
+                avgMidi2 += notePitches[m];
+              }
+              avgMidi2 = avgMidi2 / notePitches.length;
+              var roundedMidi2 = Math.round(avgMidi2);
+              var noteName2 = midiToNoteName(roundedMidi2);
+              if (noteName2) {
+                detectedNotes.push({
+                  note: noteName2,
+                  timeMs: noteStartTime,
+                  holdMs: duration,
+                  volume: 100
+                });
+              }
+            }
+            currentNote = roundedMidi;
+            noteStartTime = timeMs;
+            notePitches = [midi];
+          }
+        }
+      }
+    }
+    
+    if (currentNote !== null && notePitches.length > 0) {
+      var finalTimeMs = (audioData.length / sampleRate) * 1000;
+      var finalDuration = finalTimeMs - noteStartTime;
+      if (finalDuration >= 100) {
+        var avgMidi3 = 0;
+        for (var n = 0; n < notePitches.length; n++) {
+          avgMidi3 += notePitches[n];
+        }
+        avgMidi3 = avgMidi3 / notePitches.length;
+        var roundedMidi3 = Math.round(avgMidi3);
+        var noteName3 = midiToNoteName(roundedMidi3);
+        if (noteName3) {
+          detectedNotes.push({
+            note: noteName3,
+            timeMs: noteStartTime,
+            holdMs: finalDuration,
+            volume: 100
+          });
+        }
+      }
+    }
+    
+    return detectedNotes;
+  }
+  
+  function addDetectedNotesToScore(detectedNotes) {
+    if (detectedNotes.length === 0) return;
+    
+    if (typeof window._recVisualNotes === 'undefined') {
+      console.log('[录音] _recVisualNotes未定义');
+      return;
+    }
+    
+    if (typeof window.saveVisualHistory === 'function') {
+      window.saveVisualHistory();
+    }
+    
+    var pianoInstSelect = document.getElementById('recVisualPianoInst');
+    var instEn = pianoInstSelect ? pianoInstSelect.value : 'piano';
+    var instZh = window._INST_ZH_MAP ? (window._INST_ZH_MAP[instEn] || instEn) : instEn;
+    
+    var activeTrack = 'main';
+    if (typeof window._recVisualActiveTrack !== 'undefined') {
+      activeTrack = window._recVisualActiveTrack;
+    }
+    
+    for (var i = 0; i < detectedNotes.length; i++) {
+      var dn = detectedNotes[i];
+      window._recVisualNotes.push({
+        inst: instZh,
+        note: dn.note,
+        volume: dn.volume,
+        holdMs: dn.holdMs,
+        timeMs: dn.timeMs,
+        track: 0,
+        melodyId: activeTrack
+      });
+    }
+    
+    if (typeof window.parseVisualToText === 'function') {
+      window.parseVisualToText();
+    }
+    if (typeof window.renderRecVisual === 'function') {
+      window.renderRecVisual();
+    }
+    if (typeof window.updateRangeBar === 'function') {
+      window.updateRangeBar();
+    }
+    
+    console.log('[录音] 已添加', detectedNotes.length, '个音符到乐谱');
+  }
+  
+  function freqToMidi(freq) {
+    return 12 * (Math.log(freq / 440) / Math.log(2)) + 69;
+  }
+  
+  function midiToNoteName(midi) {
+    var noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    var noteNum = Math.round(midi);
+    if (noteNum < 24 || noteNum > 107) return null;
+    var octave = Math.floor(noteNum / 12) - 1;
+    var noteIndex = noteNum % 12;
+    return noteNames[noteIndex] + octave;
+  }
+  window.midiToNoteName = midiToNoteName;
+  
+  // ========== 录音波形背景显示函数 ==========
+  function showAudioWaveformTrack(show) {
+    _audioWaveformVisible = show;
+    if (!show) {
+      _audioWaveformData = [];
+      _audioWaveformDuration = 0;
+    }
+    if (typeof window.renderRecVisual === 'function') {
+      window.renderRecVisual();
+    }
+  }
+  window.showAudioWaveformTrack = showAudioWaveformTrack;
+  
+  function renderAudioWaveform(waveformData) {
+    if (!waveformData || waveformData.length === 0) return;
+    _audioWaveformData = waveformData;
+    _audioWaveformDuration = _audioRecordDuration || 0;
+    if (typeof window.renderRecVisual === 'function') {
+      window.renderRecVisual();
+    }
+  }
+  window.renderAudioWaveform = renderAudioWaveform;
+  
+  function freqToTrackY(freq, timelineH, trackAreaH, whiteKeyHeight, _recVisualStartTrack, _recVisualTotalTracks) {
+    if (freq <= 0) return -1;
+    var midi = 12 * (Math.log(freq / 440) / Math.log(2)) + 69;
+    var noteNum = Math.round(midi);
+    if (noteNum < 24 || noteNum > 107) return -1;
+    
+    var noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    var octave = Math.floor(noteNum / 12) - 1;
+    var noteIndex = noteNum % 12;
+    var noteName = noteNames[noteIndex] + octave;
+    
+    var trackIndex = -1;
+    var displayOrder = [7, 6, 5, 4, 3, 2, 1];
+    var octaveDisplayOrder = [
+      {note: 'B'}, {note: 'A#'}, {note: 'A'}, {note: 'G#'}, {note: 'G'},
+      {note: 'F#'}, {note: 'F'}, {note: 'E'}, {note: 'D#'}, {note: 'D'}, {note: 'C#'}, {note: 'C'}
+    ];
+    
+    var found = false;
+    var idx = 0;
+    for (var o = 0; o < displayOrder.length && !found; o++) {
+      for (var n = 0; n < octaveDisplayOrder.length && !found; n++) {
+        var currentNote = octaveDisplayOrder[n].note + displayOrder[o];
+        if (currentNote === noteName) {
+          trackIndex = idx;
+          found = true;
+        }
+        idx++;
+      }
+    }
+    
+    if (trackIndex < 0) return -1;
+    
+    var y = timelineH + (trackIndex - _recVisualStartTrack) * whiteKeyHeight + whiteKeyHeight / 2;
+    return y;
+  }
+  window.freqToTrackY = freqToTrackY;
 
   function detectPitchLoop() {
     if (!pitchDetectActive) return;
@@ -13956,6 +15466,29 @@ window.onload = function(){
     
     // 检查是否到达量化间隔
     if (now - pdLastQuantizeTime < PD_QUANTIZE_MS) {
+      if (rawFreq > 0 && rms >= pdNoiseFloor) {
+        var rawMidi = freqToMidi(rawFreq);
+        var roundedMidi = Math.round(rawMidi);
+        var cents = Math.round((rawMidi - roundedMidi) * 100);
+        var detectedName = midiToNoteName(roundedMidi);
+        var pdInfoEl2 = document.getElementById('pitchDetectInfo');
+        var pdNoteEl2 = document.getElementById('pitchDetectNote');
+        var pdCentsEl2 = document.getElementById('pitchDetectCents');
+        if (pdInfoEl2 && pdNoteEl2 && pdCentsEl2 && detectedName) {
+          pdInfoEl2.style.display = 'block';
+          pdNoteEl2.textContent = detectedName;
+          if (cents > 0) {
+            pdCentsEl2.textContent = '+' + cents + ' cents';
+            pdCentsEl2.style.color = '#ff9944';
+          } else if (cents < 0) {
+            pdCentsEl2.textContent = cents + ' cents';
+            pdCentsEl2.style.color = '#44aaff';
+          } else {
+            pdCentsEl2.textContent = '准';
+            pdCentsEl2.style.color = '#44ff88';
+          }
+        }
+      }
       pitchDetectRAF = requestAnimationFrame(detectPitchLoop);
       return;
     }
@@ -13970,10 +15503,38 @@ window.onload = function(){
     
     // 这一段是否静音
     var isSilent = segAvgRms < pdNoiseFloor;
-    
+
+    var pdInfoEl = document.getElementById('pitchDetectInfo');
+    var pdNoteEl = document.getElementById('pitchDetectNote');
+    var pdCentsEl = document.getElementById('pitchDetectCents');
+    if (rawFreq > 0 && !isSilent) {
+      var rawMidi = freqToMidi(rawFreq);
+      var roundedMidi = Math.round(rawMidi);
+      var cents = Math.round((rawMidi - roundedMidi) * 100);
+      var detectedName = midiToNoteName(roundedMidi);
+      if (pdInfoEl && pdNoteEl && pdCentsEl && detectedName) {
+        pdInfoEl.style.display = 'block';
+        pdNoteEl.textContent = detectedName;
+        if (cents > 0) {
+          pdCentsEl.textContent = '+' + cents + ' cents';
+          pdCentsEl.style.color = '#ff9944';
+        } else if (cents < 0) {
+          pdCentsEl.textContent = cents + ' cents';
+          pdCentsEl.style.color = '#44aaff';
+        } else {
+          pdCentsEl.textContent = '准';
+          pdCentsEl.style.color = '#44ff88';
+        }
+      }
+    } else {
+      if (pdInfoEl) pdInfoEl.style.display = 'none';
+    }
+
     if (isSilent || pdSegmentPitches.length === 0) {
       if (pdHasNote) {
         console.log('[音阶识别] 音符结束（静音）:', pdCurrentNoteName);
+        var duration = now - pdCurrentNoteStartTime;
+        updateLastNoteDuration(duration);
         pdHasNote = false;
         pdCurrentNoteMidi = -1;
         pdCurrentNoteName = null;
@@ -14022,14 +15583,16 @@ window.onload = function(){
       
       if (!pdHasNote) {
         console.log('[音阶识别] 新音符:', noteName, 'MIDI:', modePitch, '众数:', maxCount + '/' + roundedPitches.length);
-        addNoteToEditor(noteName);
+        addNoteToEditor(noteName, PD_QUANTIZE_MS);
         pdCurrentNoteMidi = modePitch;
         pdCurrentNoteName = noteName;
         pdCurrentNoteStartTime = now;
         pdHasNote = true;
       } else if (semitoneChange >= PD_MIN_SEMITONE_CHANGE) {
         console.log('[音阶识别] 音高变化:', noteName, 'MIDI:', modePitch, '变化:', semitoneChange + '半音');
-        addNoteToEditor(noteName);
+        var duration = now - pdCurrentNoteStartTime;
+        updateLastNoteDuration(duration);
+        addNoteToEditor(noteName, PD_QUANTIZE_MS);
         pdCurrentNoteMidi = modePitch;
         pdCurrentNoteName = noteName;
         pdCurrentNoteStartTime = now;
@@ -14042,7 +15605,41 @@ window.onload = function(){
     pitchDetectRAF = requestAnimationFrame(detectPitchLoop);
   }
   
-  function addNoteToEditor(noteName) {
+  function updateLastNoteDuration(duration) {
+    if (duration < 50) duration = 50;
+    if (duration > 5000) duration = 5000;
+    duration = Math.round(duration);
+    var scoreTextArea = document.getElementById('recEditScoreText');
+    if (!scoreTextArea) return;
+    var currentText = scoreTextArea.value.trim();
+    if (!currentText) return;
+    var notes = currentText.split('_');
+    var lastIdx = notes.length - 1;
+    if (lastIdx < 0) return;
+    var parts = notes[lastIdx].split('|');
+    if (parts.length >= 4) {
+      parts[3] = String(duration);
+      notes[lastIdx] = parts.join('|');
+      scoreTextArea.value = notes.join('_');
+      if (typeof window._melodyList !== 'undefined' && window._melodyList.length > 0) {
+        var targetTrackId = 'main';
+        if (typeof window._recVisualTextTrack !== 'undefined') { targetTrackId = window._recVisualTextTrack; }
+        for (var i = 0; i < window._melodyList.length; i++) {
+          if (window._melodyList[i].id === targetTrackId) { window._melodyList[i].text = notes.join('_'); break; }
+        }
+        if (i === window._melodyList.length && window._melodyList[0]) { window._melodyList[0].text = notes.join('_'); }
+      }
+      try {
+        if (typeof window.parseTextToVisual === 'function') {
+          window.parseTextToVisual();
+          if (typeof window.renderRecVisual === 'function') window.renderRecVisual();
+          if (typeof window.updateRangeBar === 'function') window.updateRangeBar();
+        }
+      } catch (e) {}
+    }
+  }
+
+  function addNoteToEditor(noteName, duration) {
     var overlay = document.getElementById('recEditOverlay');
     if (!overlay || !overlay.classList.contains('show')) return;
     
@@ -14068,7 +15665,9 @@ window.onload = function(){
       }
     } catch (e) {}
     
-    var newNoteStr = instZh + '|' + noteName + '|0|500|' + currentTime;
+    if (!duration || duration < 50) duration = 150;
+    duration = Math.round(duration);
+    var newNoteStr = instZh + '|' + noteName + '|0|' + duration + '|' + currentTime;
     if (currentText) { currentText = currentText + '_' + newNoteStr; } else { currentText = newNoteStr; }
     scoreTextArea.value = currentText;
     
@@ -14096,9 +15695,63 @@ window.onload = function(){
   }
 
   if (pitchDetectBtn) {
-    pitchDetectBtn.onclick = function() {
-      if (pitchDetectActive) { stopPitchDetection(); } else { startPitchDetection(); }
+    var pitchDetectMenu = document.getElementById('pitchDetectMenu');
+    var pitchMenuRealtime = document.getElementById('pitchMenuRealtime');
+    var pitchMenuRecord = document.getElementById('pitchMenuRecord');
+    var pitchDetectMenuVisible = false;
+    var pitchRecordMode = 'realtime';
+    
+    function hidePitchDetectMenu() {
+      if (pitchDetectMenu) {
+        pitchDetectMenu.style.display = 'none';
+        pitchDetectMenuVisible = false;
+      }
+    }
+    
+    function showPitchDetectMenu() {
+      if (pitchDetectMenu) {
+        pitchDetectMenu.style.display = 'block';
+        pitchDetectMenuVisible = true;
+      }
+    }
+    
+    pitchDetectBtn.onclick = function(e) {
+      e.stopPropagation();
+      if (pitchDetectActive || _audioRecordActive) {
+        if (pitchDetectActive) { stopPitchDetection(); }
+        if (_audioRecordActive) { stopAudioRecording(); }
+      } else {
+        showPitchDetectMenu();
+      }
     };
+    
+    if (pitchMenuRealtime) {
+      pitchMenuRealtime.onmouseover = function() { this.style.background = 'rgba(0,153,255,0.3)'; };
+      pitchMenuRealtime.onmouseout = function() { this.style.background = ''; };
+      pitchMenuRealtime.onclick = function(e) {
+        e.stopPropagation();
+        hidePitchDetectMenu();
+        pitchRecordMode = 'realtime';
+        startPitchDetection();
+      };
+    }
+    
+    if (pitchMenuRecord) {
+      pitchMenuRecord.onmouseover = function() { this.style.background = 'rgba(0,153,255,0.3)'; };
+      pitchMenuRecord.onmouseout = function() { this.style.background = ''; };
+      pitchMenuRecord.onclick = function(e) {
+        e.stopPropagation();
+        hidePitchDetectMenu();
+        pitchRecordMode = 'record';
+        startAudioRecording();
+      };
+    }
+    
+    document.addEventListener('click', function(e) {
+      if (pitchDetectMenuVisible && !pitchDetectBtn.contains(e.target) && !pitchDetectMenu.contains(e.target)) {
+        hidePitchDetectMenu();
+      }
+    });
   }
 };
 (function(){

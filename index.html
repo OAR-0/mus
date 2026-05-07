@@ -297,24 +297,24 @@
             </svg>
           </button>
           <button id="melodyControlBtn" class="toolbar-btn" title="旋律控制" style="background:#222;border:1px solid #444;color:#eee;padding:0 10px;border-radius:4px;cursor:pointer;font-size:12px;height:28px;">旋律控制</button>
+          <button id="recVisualSnap" class="toolbar-btn" title="网格吸附" style="background:#222;border:1px solid #444;color:#eee;padding:0 4px;border-radius:4px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;height:28px;width:28px;">
+            <span style="display:inline-block;font-weight:bold;font-size:14px;font-family:Arial,sans-serif;transform:rotate(-90deg);line-height:1;">U</span>
+          </button>
         </div>
         <div id="recVisualEditBtns" class="toolbar-btns" style="display:flex;align-items:center;gap:4px;">
           <button id="recVisualCopy" class="toolbar-btn" title="复制 (Ctrl+C)" style="background:#222;border:1px solid #444;color:#eee;padding:0 8px;border-radius:4px;cursor:pointer;font-size:11px;height:28px;">复制</button>
           <button id="recVisualPaste" class="toolbar-btn" title="粘贴 (Ctrl+V)" style="background:#222;border:1px solid #444;color:#eee;padding:0 8px;border-radius:4px;cursor:pointer;font-size:11px;height:28px;">粘贴</button>
           <button id="recVisualDel" class="toolbar-btn" title="删除 (Delete)" style="background:#222;border:1px solid #444;color:#eee;padding:0 8px;border-radius:4px;cursor:pointer;font-size:11px;height:28px;">删除</button>
         </div>
-        <div id="recVisualBPMArea" class="toolbar-area" style="display:flex;align-items:center;gap:6px;font-size:11px;color:#888;flex-wrap:nowrap;min-width:0;flex-shrink:0;">
+        <div id="recVisualBPMArea" class="toolbar-area" style="display:flex;align-items:center;gap:2px;font-size:11px;color:#888;flex-wrap:nowrap;min-width:0;flex-shrink:0;margin-left:12px;">
           <span class="toolbar-label">BPM</span>
-          <input type="number" id="recVisualBPM" class="toolbar-input" min="30" max="240" value="120" style="width:50px;background:#222;border:1px solid #444;color:#eee;padding:0 4px;border-radius:4px;font-size:11px;min-width:0;height:28px;">
-          <span class="toolbar-label">拍号</span>
-          <input type="text" id="recVisualTimeSig" class="toolbar-input" value="4/4" placeholder="如4/4" style="width:50px;background:#222;border:1px solid #444;color:#eee;padding:0 4px;border-radius:4px;font-size:11px;text-align:center;min-width:0;height:28px;">
-          <button id="recVisualSnap" class="toolbar-btn" title="网格吸附" style="background:#222;border:1px solid #444;color:#eee;padding:0 4px;border-radius:4px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;height:28px;width:28px;">
-            <span style="display:inline-block;font-weight:bold;font-size:14px;font-family:Arial,sans-serif;transform:rotate(-90deg);line-height:1;">U</span>
-          </button>
+          <input type="number" id="recVisualBPM" class="toolbar-input" min="30" max="240" value="120" style="width:50px;background:transparent;border:none;color:#eee;padding:0 4px;border-radius:4px;font-size:11px;min-width:0;height:28px;">
+          <span class="toolbar-label" style="margin-left:8px;">拍号</span>
+          <input type="text" id="recVisualTimeSig" class="toolbar-input" value="4/4" placeholder="如4/4" style="width:50px;background:transparent;border:none;color:#eee;padding:0 4px;border-radius:4px;font-size:11px;text-align:center;min-width:0;height:28px;">
         </div>
-        <div id="recVisualTimeArea" class="toolbar-area" style="display:flex;align-items:center;gap:6px;font-size:11px;color:#888;flex-wrap:nowrap;min-width:0;flex-shrink:0;">
+        <div id="recVisualTimeArea" class="toolbar-area" style="display:flex;align-items:center;gap:2px;font-size:11px;color:#888;flex-wrap:nowrap;min-width:0;flex-shrink:0;margin-left:12px;">
           <span class="toolbar-label" style="flex-shrink:0;">时长</span>
-          <input type="text" id="recVisualMaxTimeInput" class="toolbar-input" placeholder="10s" style="width:46px;background:#333;border:1px solid #444;color:#eee;padding:0 4px;border-radius:3px;font-size:11px;text-align:center;flex-shrink:0;height:28px;">
+          <input type="text" id="recVisualMaxTimeInput" class="toolbar-input" placeholder="10s" style="width:46px;background:transparent;border:none;color:#eee;padding:0 4px;border-radius:3px;font-size:11px;text-align:center;flex-shrink:0;height:28px;">
         </div>
       </div>
       <div style="display:flex;gap:0;flex:1;min-height:0;align-items:stretch;">
@@ -327,17 +327,15 @@
                 <option value="guitar">吉他</option>
                 <option value="violin">小提琴</option>
                 <option value="cello">大提琴</option>
-                <option value="xiao">箫</option>
                 <option value="dizi">笛子</option>
-                <option value="guzheng">古筝</option>
                 <option value="erhu">二胡</option>
-                <option value="pipa">琵琶</option>
-                <option value="drum">鼓</option>
                 <option value="drumkit">架子鼓</option>
-                <option value="bell">钟声</option>
-                <option value="suona">唢呐</option>
                 <option value="bass">贝斯</option>
                 <option value="saxophone">萨克斯</option>
+                <option value="flute">长笛</option>
+                <option value="frenchhorn">圆号</option>
+                <option value="clarinet">单簧管</option>
+                <option value="trombone">长号</option>
               </select>
             </div>
             <div id="recVisualPiano" style="background:#1a1a1a;overflow:hidden;flex:1;width:100%;min-height:0;"></div>
@@ -367,10 +365,183 @@
       </div>
     </div>
     <!-- 右下角麦克风按钮 -->
-    <div id="recEditFloatBtn" style="position:absolute;right:16px;bottom:16px;z-index:100;">
-      <button id="pitchDetectBtn" style="width:44px;height:44px;border-radius:8px;background:#222;border:1px solid #444;color:#0099ff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;">
+    <div id="recEditFloatBtn" style="position:absolute;right:16px;bottom:16px;z-index:100;display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div id="pitchDetectInfo" style="display:none;background:rgba(0,0,0,0.85);border:1px solid #333;border-radius:8px;padding:6px 10px;text-align:center;min-width:60px;">
+        <div id="pitchDetectNote" style="font-size:18px;font-weight:bold;color:#0099ff;line-height:1.2;">--</div>
+        <div id="pitchDetectCents" style="font-size:10px;color:#888;line-height:1.2;margin-top:2px;">&nbsp;</div>
+      </div>
+      <!-- 功能选择菜单 -->
+      <div id="pitchDetectMenu" style="display:none;position:absolute;bottom:54px;right:0;background:rgba(30,30,30,0.95);border:1px solid #444;border-radius:8px;padding:4px 0;min-width:120px;box-shadow:0 4px 12px rgba(0,0,0,0.5);">
+        <div id="pitchMenuRealtime" onclick="startPitchDetection()" style="padding:8px 16px;cursor:pointer;font-size:13px;color:#eee;white-space:nowrap;display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="3"/></svg>
+          实时识别
+        </div>
+        <div id="pitchMenuRecord" onclick="startAudioRecording()" style="padding:8px 16px;cursor:pointer;font-size:13px;color:#eee;white-space:nowrap;display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+          录制后识别
+        </div>
+      </div>
+      <button id="pitchDetectBtn" style="width:44px;height:44px;border-radius:8px;background:#222;border:1px solid #444;color:#0099ff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;" title="语音转音符" onclick="togglePitchDetectMenu()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0099ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="1" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       </button>
+      <script>
+        window.togglePitchDetectMenu = function() {
+          var menu = document.getElementById('pitchDetectMenu');
+          if (menu) {
+            if (menu.style.display === 'none' || !menu.style.display) {
+              menu.style.display = 'block';
+            } else {
+              menu.style.display = 'none';
+            }
+          }
+        };
+        
+        var _htmlRecordActive = false;
+        var _htmlRecordChunks = [];
+        var _htmlRecordStream = null;
+        var _htmlRecordAudioCtx = null;
+        var _htmlRecordSource = null;
+        var _htmlRecordProcessor = null;
+        var _htmlRecordStartTime = 0;
+        var _htmlRecordAnimId = null;
+        
+        window.startPitchDetection = function() {
+          var menu = document.getElementById('pitchDetectMenu');
+          if (menu) menu.style.display = 'none';
+          console.log('[实时识别] 开始实时识别');
+          alert('实时识别功能需要main.js支持，请检查代码');
+        };
+        
+        window.startAudioRecording = function() {
+          var menu = document.getElementById('pitchDetectMenu');
+          if (menu) menu.style.display = 'none';
+          
+          if (_htmlRecordActive) {
+            stopHtmlRecording();
+            return;
+          }
+          
+          navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+              _htmlRecordStream = stream;
+              _htmlRecordChunks = [];
+              _htmlRecordStartTime = Date.now();
+              
+              _htmlRecordAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              _htmlRecordSource = _htmlRecordAudioCtx.createMediaStreamSource(stream);
+              _htmlRecordProcessor = _htmlRecordAudioCtx.createScriptProcessor(4096, 1, 1);
+              
+              _htmlRecordSource.connect(_htmlRecordProcessor);
+              _htmlRecordProcessor.connect(_htmlRecordAudioCtx.destination);
+              
+              _htmlRecordProcessor.onaudioprocess = function(e) {
+                var inputData = e.inputBuffer.getChannelData(0);
+                var step = Math.max(1, Math.floor(inputData.length / 200));
+                for (var i = 0; i < inputData.length; i += step) {
+                  _htmlRecordChunks.push(inputData[i]);
+                }
+              };
+              
+              _htmlRecordActive = true;
+              
+              var btn = document.getElementById('pitchDetectBtn');
+              if (btn) {
+                btn.style.background = '#ff4444';
+                btn.innerHTML = '■';
+              }
+              
+              updateHtmlRecordingTimeline();
+              
+              console.log('[录制识别] 开始录音');
+            })
+            .catch(function(err) {
+              console.error('麦克风访问失败:', err);
+              alert('无法访问麦克风，请检查权限设置');
+            });
+        };
+        
+        function updateHtmlRecordingTimeline() {
+          if (!_htmlRecordActive) return;
+          
+          var elapsed = Date.now() - _htmlRecordStartTime;
+          
+          if (typeof window._audioRecordDuration !== 'undefined') {
+            window._audioRecordDuration = elapsed;
+          }
+          if (typeof window._audioWaveformDuration !== 'undefined') {
+            window._audioWaveformDuration = elapsed;
+          }
+          if (typeof window._recVisualPlayTime !== 'undefined') {
+            window._recVisualPlayTime = elapsed;
+          }
+          if (typeof window._audioWaveformData !== 'undefined') {
+            window._audioWaveformData = _htmlRecordChunks;
+          }
+          if (typeof window._audioWaveformVisible !== 'undefined') {
+            window._audioWaveformVisible = true;
+          }
+          
+          if (typeof window.renderRecVisual === 'function') {
+            window.renderRecVisual();
+          }
+          
+          _htmlRecordAnimId = requestAnimationFrame(updateHtmlRecordingTimeline);
+        }
+        
+        function stopHtmlRecording() {
+          if (_htmlRecordAnimId) {
+            cancelAnimationFrame(_htmlRecordAnimId);
+            _htmlRecordAnimId = null;
+          }
+          
+          if (_htmlRecordProcessor) {
+            _htmlRecordProcessor.disconnect();
+            _htmlRecordProcessor = null;
+          }
+          if (_htmlRecordSource) {
+            _htmlRecordSource.disconnect();
+            _htmlRecordSource = null;
+          }
+          if (_htmlRecordAudioCtx) {
+            _htmlRecordAudioCtx.close();
+            _htmlRecordAudioCtx = null;
+          }
+          
+          if (_htmlRecordStream) {
+            _htmlRecordStream.getTracks().forEach(function(track) { track.stop(); });
+            _htmlRecordStream = null;
+          }
+          
+          _htmlRecordActive = false;
+          
+          if (typeof window._audioWaveformData !== 'undefined') {
+            window._audioWaveformData = _htmlRecordChunks;
+          }
+          if (typeof window._audioWaveformVisible !== 'undefined') {
+            window._audioWaveformVisible = true;
+          }
+          
+          var btn = document.getElementById('pitchDetectBtn');
+          if (btn) {
+            btn.style.background = '#222';
+            btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0099ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="1" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
+          }
+          
+          console.log('[录制识别] 录音完成，数据长度:', _htmlRecordChunks.length);
+          
+          if (typeof window.renderRecVisual === 'function') {
+            window.renderRecVisual();
+          }
+        }
+        
+        document.addEventListener('click', function(e) {
+          var menu = document.getElementById('pitchDetectMenu');
+          var btn = document.getElementById('pitchDetectBtn');
+          if (menu && menu.style.display === 'block' && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+            menu.style.display = 'none';
+          }
+        });
+      </script>
     </div>
   </div>
 </div>
@@ -481,7 +652,15 @@
 </div>
 
 <script src="samples-data.js"></script>
+<script src="clarinet-data.js"></script>
+<script src="flute-data.js"></script>
+<script src="frenchhorn-data.js"></script>
+<script src="trombone-data.js"></script>
+<script src="saxophone-data.js"></script>
+<script src="bass-data.js"></script>
+<script src="erhu-data.js"></script>
 <script src="simple-sampler.js"></script>
+<script src="onlinesampler.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 <script src="main.js"></script>
 
